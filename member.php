@@ -18,10 +18,10 @@
 
             <div class="button-area">
                 <!-- 会員登録画面に遷移にする -->
-                <button class="action-button register-button" onclick="location.href='member-signUp.php'">会員登録</button>
+                <button class="action-button register-button" onclick="location.href='member-signUp.html'">会員登録</button>
 
                 <!-- ログイン画面に遷移にする -->
-                <button class="action-button login-button" onclick="location.href='login.php'">ログイン</button>
+                <button class="action-button login-button" onclick="location.href='login.html'">ログイン</button>
             </div>
         </div>
     </div>
