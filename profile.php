@@ -1,3 +1,7 @@
+<?php
+    require 'header.php';
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,18 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-
-    <!-- 堀くんが作ってる部分あとで修正
-        <header class="app-header">
-            <h1>会員登録画面</h1>
-            <div class="logo-area">
-                <div class="logo-placeholder">ざ<span class="logo-text">SATONOMI</span></div>
-            </div>
-            <button class="header-button cart-button" aria-label="カート">🛒</button>
-            <button class="header-button mypage-button" aria-label="マイページ">👤</button>
-        </header>
-    -->
-
     <button class="back-button" onclick="location.href='member.html'">←</button>
     <h1>マイページ</h1>
 
