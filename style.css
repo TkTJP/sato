@@ -6,35 +6,56 @@ body {
     padding: 0;
 }
 
-/* --- ヘッダー部分 --- */
-.header {
+/* ===== ヘッダー全体 ===== */
+.site-header {
     background-color: #f8eedf;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.header .logo {
+/* ===== ヘッダー内レイアウト ===== */
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ===== 左側：ロゴ + タイトル ===== */
+.header-left {
     display: flex;
     align-items: center;
 }
 
-.header .logo img {
+.header-logo {
     height: 40px;
     margin-right: 10px;
 }
 
-.header .icons {
+.header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+/* ===== 右側：アイコン群 ===== */
+.header-icons {
     display: flex;
     align-items: center;
 }
 
-.header .icons i {
+.icon-link {
+    text-decoration: none;
+    color: #333;
     font-size: 22px;
     margin-left: 15px;
-    color: #333;
+    transition: color 0.3s;
 }
+
+.icon-link:hover {
+    color: #666;
+}
+
 
 /* --- マイページタイトル部分 --- */
 .mypage-header {
