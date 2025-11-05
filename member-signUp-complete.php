@@ -1,7 +1,3 @@
-<?php
-    require 'header.php';
-?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -12,9 +8,6 @@
 </head>
 <body>
     <div class="app-container">
-        <main class="login-container">
-            <button class="back-button" onclick="location.href='member.html'">←</button>
-            <form class="login-form" action="login-output.php" method="post">
 
         <!-- 堀くんが作ってる部分あとで修正
         <header class="app-header">
@@ -36,28 +29,12 @@
                 <!-- メールアドレスを入力する -->
                 <div class="form-group">
                     <label for="email">メールアドレス</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        maxlength="64"
-                        placeholder="メールアドレスを入力"
-                        required
-                    >
                     <input type="email" id="email" maxlength="64" placeholder="メールアドレスを入力" required>
                 </div>
 
                 <!-- パスワードを入力する -->
                 <div class="form-group">
                     <label for="password">パスワード</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        maxlength="64"
-                        placeholder="パスワードを入力"
-                        required
-                    >
                     <input type="password" id="password" maxlength="64" placeholder="パスワードを入力" required>
                 </div>
 
