@@ -13,6 +13,7 @@
 
   <div class="mypage-container">
     <div class="mypage-header">
+      <button class="back-button" onclick="location.href='member.php'">←</button>
       マイページ
     </div>
 
