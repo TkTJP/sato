@@ -16,17 +16,6 @@
             <button class="back-button" onclick="location.href='member.html'">←</button>
             <form class="login-form" action="login-output.php" method="post">
 
-        <!-- 堀くんが作ってる部分あとで修正
-        <header class="app-header">
-            <h1>ログイン画面</h1>
-            <div class="logo-area">
-                <div class="logo-placeholder">ざ<span class="logo-text">SATONOMI</span></div>
-            </div>
-            <button class="header-button cart-button" aria-label="カート">🛒</button>
-            <button class="header-button mypage-button" aria-label="マイページ">👤</button>
-        </header>
-        -->
-
         <main class="login-container">
             <button class="back-button" onclick="location.href='member.html'">←</button>
 
