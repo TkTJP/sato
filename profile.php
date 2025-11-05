@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>マイページ</title>
-  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/mypage.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -12,9 +12,7 @@
   <?php include('header.php'); ?>
 
   <div class="mypage-container">
-    <div class="mypage-header">
-      マイページ
-    </div>
+    <div class="mypage-header">マイページ</div>
 
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
@@ -29,9 +27,7 @@
       <button><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
     </div>
 
-    <div class="logout">
-      ログアウト
-    </div>
+    <div class="logout">ログアウト</div>
   </div>
 
 </body>
