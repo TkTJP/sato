@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <header class="site-header">
   <div class="header-inner">
     <div class="header-left">
