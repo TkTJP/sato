@@ -1,4 +1,9 @@
-/* --- 全体設定 --- */
+/* =============================
+   SATONOMI マイページ共通CSS
+   header + profile 全体統合版
+============================= */
+
+/* ===== 全体設定 ===== */
 body {
     font-family: "Noto Sans JP", sans-serif;
     background-color: #f5f5f5;
@@ -6,21 +11,21 @@ body {
     padding: 0;
 }
 
-/* ===== ヘッダー全体 ===== */
+/* =============================
+   ヘッダー部分
+============================= */
 .site-header {
     background-color: #f8eedf;
     padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* ===== ヘッダー内レイアウト ===== */
 .header-inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-/* ===== 左側：ロゴ + タイトル ===== */
 .header-left {
     display: flex;
     align-items: center;
@@ -38,7 +43,6 @@ body {
     letter-spacing: 1px;
 }
 
-/* ===== 右側：アイコン群 ===== */
 .header-icons {
     display: flex;
     align-items: center;
@@ -56,8 +60,15 @@ body {
     color: #666;
 }
 
+/* =============================
+   マイページ本体
+============================= */
+.mypage-container {
+    text-align: center;
+    padding-bottom: 50px;
+}
 
-/* --- マイページタイトル部分 --- */
+/* ===== タイトルバー ===== */
 .mypage-header {
     background-color: #b2f2d1;
     text-align: center;
@@ -66,11 +77,10 @@ body {
     font-size: 18px;
 }
 
-/* --- プロフィール部分 --- */
+/* ===== プロフィール情報 ===== */
 .profile {
-    text-align: center;
-    padding: 30px 0;
     background-color: #fff;
+    padding: 30px 0;
 }
 
 .profile img {
@@ -92,7 +102,7 @@ body {
     margin-top: 5px;
 }
 
-/* --- ボタンセクション --- */
+/* ===== メニュー部分 ===== */
 .menu {
     display: flex;
     flex-direction: column;
@@ -124,10 +134,10 @@ body {
     margin-right: 10px;
 }
 
-/* --- ログアウト部分 --- */
+/* ===== ログアウト部分 ===== */
 .logout {
     text-align: center;
-    margin: 30px 0;
+    margin-top: 30px;
     font-size: 14px;
     color: #333;
 }
