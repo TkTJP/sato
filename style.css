@@ -91,7 +91,6 @@ body {
 
 .mypage-header::after {
     content: "マイページ";
-    position: absolute;
     width: 100%;
     text-align: center;
     left: 0;
