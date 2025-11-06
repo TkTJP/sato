@@ -69,8 +69,11 @@ function toggleFilter() {
     <?php $rank = 1; foreach ($favorites as $f): ?>
         <div>
             <strong><?php echo $rank; ?>位</strong><br>
-            <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>" alt="<?php echo htmlspecialchars($f['name']); ?>" width="150"><br>
-            <?php echo htmlspecialchars($f['name']); ?><br>
+            <a href="product_detail.php?id=<?php echo $f['product_id']; ?>">
+                <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>" alt="<?php echo htmlspecialchars($f['name']); ?>" width="150">
+                <br>
+                <?php echo htmlspecialchars($f['name']); ?>
+            </a><br>
             ¥<?php echo number_format($f['price']); ?>
         </div>
         <hr>
@@ -113,8 +116,10 @@ function toggleFilter() {
 <?php if (!empty($products)): ?>
     <?php foreach ($products as $p): ?>
         <div>
-            <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" width="150"><br>
-            <?php echo htmlspecialchars($p['name']); ?><br>
+            <a href="product_detail.php?id=<?php echo $p['product_id']; ?>">
+                <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" width="150"><br>
+                <?php echo htmlspecialchars($p['name']); ?>
+            </a><br>
             ¥<?php echo number_format($p['price']); ?>
         </div>
         <hr>
