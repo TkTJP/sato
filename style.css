@@ -124,6 +124,11 @@ body {
     justify-content: space-between;
     transition: background-color 0.3s;
     cursor: pointer;
+    /* モバイルのデフォルトボタンスタイル（青文字など）を上書き */
+    appearance: none;
+    -webkit-appearance: none;
+    -webkit-text-fill-color: #000;
+    color: #000;
 }
 
 .menu button:hover {
@@ -137,8 +142,10 @@ body {
 }
 
 /* ボタン内の文字色を黒に固定（ブラウザ既定の色や継承による青表示を防ぐ） */
-.menu button {
-    color: #000;
+.menu button,
+.menu button * {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
 }
 
 /* ===== ログアウト部分 ===== */
