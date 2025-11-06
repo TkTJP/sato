@@ -1,0 +1,150 @@
+/* =============================
+   SATONOMI マイページ共通CSS
+   header + profile 全体統合版
+============================= */
+
+/* ===== 全体設定 ===== */
+body {
+    font-family: "Noto Sans JP", sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* =============================
+   ヘッダー部分
+============================= */
+.site-header {
+    background-color: #f8eedf;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    height: 65px;
+    margin-right: 10px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+}
+
+.icon-link {
+    text-decoration: none;
+    color: #333;
+    font-size: 22px;
+    margin-left: 15px;
+    transition: color 0.3s;
+}
+
+.icon-link:hover {
+    color: #666;
+}
+
+/* =============================
+   マイページ本体
+============================= */
+.mypage-container {
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+/* ===== タイトルバー ===== */
+.mypage-header {
+    background-color: #b2f2d1;
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* ===== プロフィール情報 ===== */
+.profile {
+    background-color: #fff;
+    padding: 30px 0;
+}
+
+.profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.profile .name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.profile .points {
+    color: #555;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* ===== メニュー部分 ===== */
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu button {
+    width: 80%;
+    background-color: #b2f2d1;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 8px 0;
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background-color: #a0e5c3;
+}
+
+.menu button i {
+    margin-right: 10px;
+    color: #000;
+    /* アイコン色を黒に固定 */
+}
+
+/* ボタン内の文字色を黒に固定（ブラウザ既定の色や継承による青表示を防ぐ） */
+.menu button {
+    color: #000;
+}
+
+/* ===== ログアウト部分 ===== */
+.logout {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: #333;
+}
