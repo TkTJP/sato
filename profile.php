@@ -1,68 +1,34 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>マイページ</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マイページ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- 堀くんが作ってる部分あとで修正
-        <header class="app-header">
-            <h1>会員登録画面</h1>
-            <div class="logo-area">
-                <div class="logo-placeholder">ざ<span class="logo-text">SATONOMI</span></div>
-            </div>
-            <button class="header-button cart-button" aria-label="カート">🛒</button>
-            <button class="header-button mypage-button" aria-label="マイページ">👤</button>
-        </header>
-    -->
+  <?php include('header.php'); ?>
 
-    <button class="back-button" onclick="location.href='member.html'">←</button>
-    <h1>マイページ</h1>
+  <div class="mypage-container">
+    <div class="mypage-header">マイページ</div>
 
-        <section id="profile">
-        <div id="avatar">
-            <img src="placeholder_icon.png" alt="ユーザーアイコン" style="width: 100px; height: 100px; border-radius: 50%;">
-        </div>
+    <div class="profile">
+      <img src="https://via.placeholder.com/100" alt="プロフィール画像">
+      <div class="name">里野　美里</div>
+      <div class="points">所持ポイント：1500</div>
+    </div>
 
-        <!-- ⑦ 名前 -->
-        <p id="user-name">山田 太郎</p>
+    <div class="menu">
+      <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i>My情報 <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-clock"></i>購入履歴 <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
+    </div>
 
-        <!-- ⑧ ポイント -->
-        <p id="user-points">所持ポイント：1500</p>
-    </section>
-
-    <!-- ここから各種リンクを入れる まだリンク入れてないので飛べません -->
-    <section id="menu">
-
-        <!-- MY情報閲覧に遷移する -->
-        <div class="menu-item">
-            <a href="">My情報</a>
-        </div>
-
-        <!-- 購入履歴に遷移する -->
-        <div class="menu-item">
-            <a href="">購入履歴</a>
-        </div>
-
-        <!-- サブスクリプション登録に遷移する -->
-        <div class="menu-item">
-            <a href="">サブスクリプション登録</a>
-        </div>
-
-        <!-- スタンプカードに遷移する -->
-        <div class="menu-item">
-            <a href="">スタンプカード</a>
-        </div>
-    </section>
-
-    <!-- ログアウトした時用 まだリンク入れてないです -->
-    <footer>
-        <div id="logout">
-            <a href="">ログアウト</a>
-        </div>
-    </footer>
+    <div class="logout">ログアウト</div>
+  </div>
 
 </body>
 </html>
