@@ -12,6 +12,7 @@
   <?php include('header.php'); ?>
 
   <div class="mypage-container">
+    <button class="back-button" onclick="location.href='member.php'">←</button>
     <div class="mypage-header">マイページ</div>
 
     <div class="profile">
