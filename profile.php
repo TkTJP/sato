@@ -12,7 +12,7 @@
   <?php include('header.php'); ?>
 
   <div class="mypage-container">
-    <div class="mypage-header">マイページ</div>
+    <div class="mypage-header"><button class="back-button" onclick="location.href='member.php'">←</button></div>
 
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
@@ -21,10 +21,10 @@
     </div>
 
     <div class="menu">
-      <button><i class="fa-solid fa-user"></i>My情報 <i class="fa-solid fa-angle-right"></i></button>
-      <button><i class="fa-solid fa-clock"></i>購入履歴 <i class="fa-solid fa-angle-right"></i></button>
-      <button><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
-      <button><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i>My情報 <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-clock"></i>購入履歴 <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href=''"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
     </div>
 
     <div class="logout">ログアウト</div>
