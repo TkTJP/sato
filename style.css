@@ -103,7 +103,7 @@ body {
 }
 
 .back-button {
-    left: 15px;
+    margin-left: 15px;
     top: 15px;
     background: none;
     border: none;
