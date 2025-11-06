@@ -12,7 +12,7 @@
   <?php include('header.php'); ?>
 
   <div class="mypage-container">
-    <div class="mypage-header"><button class="back-button" onclick="location.href='member.php'">←</button>マイページ</div>
+    <div class="mypage-header"><button class="back-button" onclick="location.href='member.php'">←</button></div>
 
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
