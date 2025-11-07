@@ -7,7 +7,7 @@
       <span class="header-title">SATONOMI</span>
     </div>
     <div class="header-icons">
-      <a href="cart.php" class="icon-link"><i class="fa-solid fa-cart-shopping"></i></a>
+      <a href="cart-confirm.php" class="icon-link"><i class="fa-solid fa-cart-shopping"></i></a>
       <a href="profile.php" class="icon-link"><i class="fa-solid fa-user"></i></a>
     </div>
   </div>
