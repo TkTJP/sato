@@ -88,7 +88,7 @@ if (!$product) {
 </div>
 
 <!-- カートに追加フォーム -->
-<form action="cart_add.php" method="post">
+<form action="cart-confirm.php" method="post">
   <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
   <input type="number" name="count" value="1" min="1" max="<?php echo $product['stock']; ?>">
   <input type="submit" value="カートに入れる">
