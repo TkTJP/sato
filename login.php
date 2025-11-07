@@ -1,61 +1,91 @@
 <?php
-    require 'header.php';
-?>
+// --- 1. データベース接続設定の読み込み ---
+// db-connect.php が定数 (SERVER, DBNAME, USER, PASS) や接続文字列 ($connect) を定義している前提
+require_once('db-connect.php');
 
+// 認証成功時にセッションを使うため
+session_start();
+
+$error = '';
+$email = '';
+
+// --- 2. フォーム送信後の処理 ---
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    // ユーザー入力を取得
+    $email = htmlspecialchars(trim($_POST['email'] ?? ''));
+    $password = $_POST['password'] ?? ''; 
+
+    if (empty($email) || empty($password)) {
+        $error = "メールアドレスとパスワードを入力してください。";
+    } else {
+        try {
+            // --- 3. PDOによるデータベース接続 ---
+            // $connect は db-connect.php で定義されていることを想定
+            $pdo = new PDO($connect, USER, PASS);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            // --- 4. ユーザー情報の取得と認証 ---
+            $sql = "SELECT customer_id, password, name FROM customers WHERE email = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$email]);
+            $customer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($customer && password_verify($password, $customer['password'])) {
+                
+                // 認証成功！セッションに情報を保存
+                $_SESSION['customer_id'] = $customer['customer_id'];
+                $_SESSION['customer_name'] = $customer['name'];
+                
+                // ログイン後のページにリダイレクト
+                header("Location: index.php"); 
+                exit;
+                
+            } else {
+                // 認証失敗
+                $error = "メールアドレスまたはパスワードが正しくありません。";
+            }
+            
+        } catch (PDOException $e) {
+            // データベース接続/クエリ実行エラー
+            $error = "データベースエラーが発生しました。時間を置いてお試しください。";
+            // 開発中は次の行を有効にするとデバッグに役立ちます
+            // error_log("PDO Error: " . $e->getMessage()); 
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン画面</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ログイン</title>
 </head>
 <body>
-    <div class="app-container">
-        <main class="login-container">
-            <button class="back-button" onclick="location.href='member.html'">←</button>
-            <form class="login-form" action="login-output.php" method="post">
 
-        <main class="login-container">
-            <button class="back-button" onclick="location.href='member.html'">←</button>
+<div style="background-color: #aed581; padding: 10px; text-align: center; color: black; font-weight: bold;">
+    ← ログイン
+</div>
 
-            <form class="login-form" action="">
-                <p class="login-title">ログイン</p>
+<div style="padding: 20px;">
 
-                <!-- メールアドレスを入力する -->
-                <div class="form-group">
-                    <label for="email">メールアドレス</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        maxlength="64"
-                        placeholder="メールアドレスを入力"
-                        required
-                    >
-                    <input type="email" id="email" maxlength="64" placeholder="メールアドレスを入力" required>
-                </div>
+    <?php if ($error): ?>
+        <p style="color: red;"><?php echo $error; ?></p>
+    <?php endif; ?>
 
-                <!-- パスワードを入力する -->
-                <div class="form-group">
-                    <label for="password">パスワード</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        maxlength="64"
-                        placeholder="パスワードを入力"
-                        required
-                    >
-                    <input type="password" id="password" maxlength="64" placeholder="パスワードを入力" required>
-                </div>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+        
+        <label for="email">メールアドレス</label><br>
+        <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required><br><br>
 
-                <!-- マイページに遷移する -->
-                <div class="form-group submit-group">
-                    <button type="submit" class="login-button">ログイン</button>
-                </div>
-            </form>
-        </main>
-    </div>
+        <label for="password">パスワード</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <input type="submit" value="ログイン" 
+               style="background-color: #81c784; color: white; border: none; padding: 10px 20px; border-radius: 5px;">
+    </form>
+    
+</div>
+
 </body>
 </html>
