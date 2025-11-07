@@ -19,7 +19,7 @@
 
             <!-- トップ画面に遷移する -->
             <div class="button-area">
-                <a href="" class="top-button">トップページへ戻る</a>
+                <a href="profile.php" class="top-button">トップページへ戻る</a>
             </div>
         </main>
     </div>
