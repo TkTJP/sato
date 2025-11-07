@@ -16,6 +16,7 @@ $cart = $_SESSION['cart'];
     <title>カート確認画面</title>
 </head>
 <body>
+    <?php include('header.php'); ?>
 <div class="cart-container">
 
     <!-- ① ロゴ -->
