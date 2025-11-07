@@ -1,7 +1,8 @@
+<link rel="stylesheet" href="style.css">
 <header class="site-header">
   <div class="header-inner">
     <div class="header-left">
-      <img src="logo.png" alt="SATONOMI ロゴ" class="header-logo">
+      <img src="img/logo.png" alt="SATONOMI ロゴ" class="header-logo">
       <span class="header-title">SATONOMI</span>
     </div>
     <div class="header-icons">
