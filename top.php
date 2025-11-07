@@ -31,39 +31,86 @@ try {
 </head>
 <body>
 
-<!-- ヘッダー -->
-<?php include 'header.php'; ?>
+<?php require 'header.php'; ?>
 
-<main class="mypage-container">
-    <div class="mypage-header">
-        <button class="back-button" onclick="history.back()">←</button>
-        商品一覧
-    </div>
+<!-- 検索フォーム -->
+<div>
+  <form action="" method="get">
+    <input type="text" name="keyword" placeholder="商品名または説明で検索" value="<?php echo htmlspecialchars($keyword); ?>">
+    <button type="submit">検索</button>
+  </form>
+</div>
 
-    <section class="profile">
-        <h2>全国のご当地ドリンク</h2>
-        <p>各地のユニークな飲み物をお楽しみください！</p>
-    </section>
+<!-- 人気ランキング -->
+<h3>人気ランキング</h3>
+<div>
+<?php if (!empty($favorites)): ?>
+    <?php $rank = 1; foreach ($favorites as $f): ?>
+        <div>
+            <strong><?php echo $rank; ?>位</strong><br>
+            <!-- 🔹 リンク先修正：product_detail.php -->
+            <a href="product_detail.php?id=<?php echo urlencode($f['product_id']); ?>">
+                <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>" 
+                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="150"><br>
+                <?php echo htmlspecialchars($f['name']); ?>
+            </a><br>
+            ¥<?php echo number_format($f['price']); ?>
+        </div>
+        <hr>
+    <?php $rank++; endforeach; ?>
+<?php else: ?>
+    <p>人気商品はありません</p>
+<?php endif; ?>
+</div>
 
-    <section class="menu">
-        <?php if ($products): ?>
-            <?php foreach ($products as $p): ?>
-                <div class="product-card" style="width:80%; background:#fff; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                    <a href="product_detail.php?id=<?php echo htmlspecialchars($p['product_id']); ?>" style="text-decoration:none; color:#000;">
-                        <div style="text-align:center;">
-                            <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" alt="" style="width:100%; max-width:200px; border-radius:10px;">
-                        </div>
-                        <h3 style="margin-top:10px; font-size:18px;"><?php echo htmlspecialchars($p['name']); ?></h3>
-                        <p style="color:#555;"><?php echo htmlspecialchars($p['description']); ?></p>
-                        <p style="color:#e60033; font-weight:bold;">¥<?php echo number_format($p['price']); ?></p>
-                    </a>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>現在、商品は登録されていません。</p>
-        <?php endif; ?>
-    </section>
-</main>
+<!-- 名産マップボタン -->
+<div>
+    <a href="map.php">名産マップを見てみよう！</a>
+</div>
+
+<!-- 商品一覧タイトル -->
+<h2>商品一覧</h2>
+
+<!-- 絞り込みボタン -->
+<div onclick="toggleFilter()" style="cursor:pointer;">絞り込み ▼</div>
+
+<!-- 絞り込みフォーム -->
+<div id="filterBox" style="display:none;">
+    <form action="" method="get">
+        <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
+        <?php
+        $filterOptions = ['ソフトドリンク','炭酸飲料','ノーラベル','地方'];
+        foreach($filterOptions as $opt):
+        ?>
+            <label>
+                <input type="checkbox" name="filter[]" value="<?php echo $opt; ?>" 
+                       <?php if(in_array($opt,$filters)) echo 'checked'; ?>>
+                <?php echo $opt; ?>
+            </label>
+        <?php endforeach; ?>
+        <button type="submit">絞り込み</button>
+    </form>
+</div>
+
+<!-- 商品一覧 -->
+<div>
+<?php if (!empty($products)): ?>
+    <?php foreach ($products as $p): ?>
+        <div>
+            <!-- 🔹 リンク先修正：確実にproduct_detail.phpに接続 -->
+            <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
+                <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" 
+                     alt="<?php echo htmlspecialchars($p['name']); ?>" width="150"><br>
+                <?php echo htmlspecialchars($p['name']); ?>
+            </a><br>
+            ¥<?php echo number_format($p['price']); ?>
+        </div>
+        <hr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>該当する商品がありません。</p>
+<?php endif; ?>
+</div>
 
 </body>
 </html>
