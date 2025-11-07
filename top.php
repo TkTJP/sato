@@ -1,70 +1,69 @@
 <?php
-require 'db-connect.php';
-$pdo = new PDO($connect, USER, PASS, [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-]);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+date_default_timezone_set('Asia/Tokyo');
 
-// 🔹 検索キーワード取得
-$keyword = $_GET['keyword'] ?? '';
-$params = [];
-$sql = "SELECT * FROM products WHERE 1";
+require_once __DIR__ . '/db-connect.php';
 
-// 🔹 検索ワードがある場合
-if (!empty($keyword)) {
-    $sql .= " AND (name LIKE ? OR description LIKE ?)";
-    $params[] = "%{$keyword}%";
-    $params[] = "%{$keyword}%";
+try {
+    $pdo = new PDO($connect, USER, PASS, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    exit('DB接続エラー: ' . htmlspecialchars($e->getMessage()));
 }
 
-// 🔹 新着順に並べる
-$sql .= " ORDER BY created_at DESC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll();
+// 商品一覧取得
+try {
+    $stmt = $pdo->query("SELECT * FROM products ORDER BY created_at DESC");
+    $products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    exit('商品取得エラー: ' . htmlspecialchars($e->getMessage()));
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>商品一覧</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>商品一覧 | SATONOMI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<?php require 'header.php'; ?>
+<!-- ヘッダー -->
+<?php include 'header.php'; ?>
 
-<div class="container">
-    <h1>商品一覧</h1>
-
-    <!-- 🔍 検索フォーム -->
-    <div class="search-box">
-        <form method="get">
-            <input type="text" name="keyword" placeholder="商品名または説明で検索" value="<?= htmlspecialchars($keyword) ?>">
-            <button type="submit">検索</button>
-        </form>
+<main class="mypage-container">
+    <div class="mypage-header">
+        <button class="back-button" onclick="history.back()">←</button>
+        商品一覧
     </div>
 
-    <!-- 🧃 商品一覧 -->
-    <div class="products">
+    <section class="profile">
+        <h2>全国のご当地ドリンク</h2>
+        <p>各地のユニークな飲み物をお楽しみください！</p>
+    </section>
+
+    <section class="menu">
         <?php if ($products): ?>
             <?php foreach ($products as $p): ?>
-                <div class="product-card">
-                    <a href="product_detail.php?id=<?= $p['product_id'] ?>">
-                        <img src="img/<?= htmlspecialchars($p['image'] ?: 'noimage.png') ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                <div class="product-card" style="width:80%; background:#fff; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                    <a href="product_detail.php?id=<?php echo htmlspecialchars($p['product_id']); ?>" style="text-decoration:none; color:#000;">
+                        <div style="text-align:center;">
+                            <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" alt="" style="width:100%; max-width:200px; border-radius:10px;">
+                        </div>
+                        <h3 style="margin-top:10px; font-size:18px;"><?php echo htmlspecialchars($p['name']); ?></h3>
+                        <p style="color:#555;"><?php echo htmlspecialchars($p['description']); ?></p>
+                        <p style="color:#e60033; font-weight:bold;">¥<?php echo number_format($p['price']); ?></p>
                     </a>
-                    <h3><?= htmlspecialchars($p['name']) ?></h3>
-                    <p><?= htmlspecialchars($p['description']) ?></p>
-                    <p class="price">¥<?= number_format($p['price']) ?></p>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p>該当する商品がありません。</p>
+            <p>現在、商品は登録されていません。</p>
         <?php endif; ?>
-    </div>
-</div>
+    </section>
+</main>
 
 </body>
 </html>
