@@ -1,54 +1,33 @@
 <?php
-require 'db-connect.php';
-$pdo = new PDO($connect, USER, PASS);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+date_default_timezone_set('Asia/Tokyo');
 
-// 🔹 人気商品取得（最大5件）
-$favStmt = $pdo->query("
-    SELECT p.* 
-    FROM products p
-    JOIN product_details pd ON p.product_id = pd.product_id
-    WHERE pd.product_explain LIKE '%人気%'
-    ORDER BY p.created_at DESC
-    LIMIT 5
-");
-$favorites = $favStmt->fetchAll(PDO::FETCH_ASSOC);
+require_once __DIR__ . '/db-connect.php';
 
-// 🔹 検索・絞り込み処理
-$keyword = $_GET['keyword'] ?? '';
-$filters = $_GET['filter'] ?? [];
-if (!is_array($filters)) $filters = [$filters];
-
-$sql = 'SELECT * FROM products WHERE 1';
-$params = [];
-
-if ($keyword !== '') {
-    $sql .= ' AND (name LIKE ? OR description LIKE ?)';
-    $params[] = '%' . $keyword . '%';
-    $params[] = '%' . $keyword . '%';
+try {
+    $pdo = new PDO($connect, USER, PASS, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    exit('DB接続エラー: ' . htmlspecialchars($e->getMessage()));
 }
 
-if (!empty($filters)) {
-    $sql .= ' AND (' . implode(' OR ', array_fill(0, count($filters), 'name LIKE ?')) . ')';
-    foreach ($filters as $f) $params[] = '%' . $f . '%';
+// 商品一覧取得
+try {
+    $stmt = $pdo->query("SELECT * FROM products ORDER BY created_at DESC");
+    $products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    exit('商品取得エラー: ' . htmlspecialchars($e->getMessage()));
 }
-
-$sql .= ' ORDER BY created_at DESC';
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>商品一覧</title>
-<script>
-function toggleFilter() {
-    const box = document.getElementById('filterBox');
-    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-}
-</script>
+    <meta charset="UTF-8">
+    <title>商品一覧 | SATONOMI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
