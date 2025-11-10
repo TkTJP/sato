@@ -1,87 +1,61 @@
-<?php 
-session_start();
-
-// セッションにカートがない場合の初期データ
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [
-        ['name' => '長州地サイダー', 'price' => 1080, 'quantity' => 1, 'image' => 'images/cider.jpg']
-    ];
-}
-$cart = $_SESSION['cart'];
-?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>カート確認画面</title>
+  <meta charset="UTF-8">
+  <title>カート - SATONOMI</title>
 </head>
 <body>
-    <?php include('header.php'); ?>
-<div class="cart-container">
 
-    <!-- ② カートタイトル -->
-    <h2 class="cart-title">
-        <span style="float: left;">
-            <button type="button" onclick="history.back();" style="border: none; background: none; font-size: 18px;">←</button>
-        </span>
-        カート
-    </h2>
-    <!-- ③ 商品一覧 -->
-    <?php foreach ($cart as $item): ?>
-    <div class="cart-item" data-name="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>">
-        <a href="product-detail.php?name=<?= urlencode($item['name']) ?>" class="item-link">
-            <img src="<?= htmlspecialchars($item['image'], ENT_QUOTES) ?>" 
-                alt="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>" 
-                class="item-image">
-            <div class="item-info">
-                <p class="item-name"><?= htmlspecialchars($item['name'], ENT_QUOTES) ?></p>
-                <p class="item-price">¥<?= number_format($item['price']) ?></p>
-            </div>
-        </a>
-        <div class="item-quantity">
-            <button class="quantity-btn" data-action="minus">-</button>
-            <span class="quantity"><?= $item['quantity'] ?></span>
-            <button class="quantity-btn" data-action="plus">+</button>
-        </div>
+<?php require 'header.php'; ?>
+
+  <!-- 商品リスト -->
+  <main id="cart">
+    <div>
+      <img src="https://example.com/sample.jpg" alt="長州地サイダー" width="80">
+      <div>
+        <p>長州地サイダー</p>
+        <p id="price">￥10,580</p>
+      </div>
+      <div>
+        <button id="minus">－</button>
+        <span id="count">2</span>
+        <button id="plus">＋</button>
+      </div>
     </div>
-<?php endforeach; ?>
+  </main>
 
-<!-- 合計 -->
-<div class="total">
-    <p>合計</p>
-    <p class="total-price" id="total-price">
-        ¥<?= number_format(array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $cart))) ?>
-    </p>
-</div>
+  <!-- 合計金額とボタン -->
+  <footer>
+    <p>合計 ￥<span id="total">10,580</span></p>
+    <button id="confirm">購入確認へ進む</button>
+  </footer>
 
-    <!-- ⑤ 購入ボタン -->
-    <form action="checkout.php" method="post">
-        <button type="submit" class="purchase-button">購入手続きへ</button>
-    </form>
-</div>
-<script>
-document.querySelectorAll('.quantity-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-        const action = e.target.dataset.action;
-        const item = e.target.closest('.cart-item');
-        const name = item.dataset.name;
+  <script>
+    const pricePerItem = 5290; // 1本あたりの価格
+    let count = 2;
 
-        // PHPに送信
-        const res = await fetch('update-cart.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `name=${encodeURIComponent(name)}&action=${encodeURIComponent(action)}`
-        });
+    const countEl = document.getElementById("count");
+    const totalEl = document.getElementById("total");
 
-        // PHPから返ってきたJSONを受け取る
-        const data = await res.json();
-
-        // 数量と合計を更新
-        item.querySelector('.quantity').textContent = data.quantity;
-        document.getElementById('total-price').textContent = `¥${data.total.toLocaleString()}`;
+    document.getElementById("plus").addEventListener("click", () => {
+      count++;
+      updateTotal();
     });
-});
-</script>
+
+    document.getElementById("minus").addEventListener("click", () => {
+      if (count > 1) count--;
+      updateTotal();
+    });
+
+    function updateTotal() {
+      countEl.textContent = count;
+      totalEl.textContent = (pricePerItem * count).toLocaleString();
+    }
+
+    document.getElementById("confirm").addEventListener("click", () => {
+      alert("購入確認画面へ進みます。");
+    });
+  </script>
 
 </body>
 </html>
