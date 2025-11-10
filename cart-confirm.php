@@ -1,13 +1,10 @@
 <?php
 session_start();
 
-// product_detail から商品が送られてきたときの処理
+// 商品追加処理（product_detailから）
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
   $id = $_POST['id'];
-
-  if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-  }
+  if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
   if (isset($_SESSION['cart'][$id])) {
     $_SESSION['cart'][$id]['quantity'] += 1;
@@ -20,6 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
       'quantity' => 1
     ];
   }
+}
+
+// 数量変更や削除処理
+if (isset($_GET['action']) && isset($_GET['id'])) {
+  $id = $_GET['id'];
+  if ($_GET['action'] === 'plus') {
+    $_SESSION['cart'][$id]['quantity']++;
+  } elseif ($_GET['action'] === 'minus') {
+    if ($_SESSION['cart'][$id]['quantity'] > 1) {
+      $_SESSION['cart'][$id]['quantity']--;
+    } else {
+      unset($_SESSION['cart'][$id]);
+    }
+  } elseif ($_GET['action'] === 'delete') {
+    unset($_SESSION['cart'][$id]);
+  }
+  header('Location: cart-confirm.php');
+  exit;
 }
 
 $cart = $_SESSION['cart'] ?? [];
@@ -50,7 +65,11 @@ foreach ($cart as $item) {
           <p>￥<?= number_format($item['price'] * $item['quantity']) ?></p>
         </div>
         <div>
-          <span>数量：<?= $item['quantity'] ?></span>
+          <!-- ここだけ追加 -->
+          <a href="?action=minus&id=<?= $item['id'] ?>">－</a>
+          <span><?= $item['quantity'] ?></span>
+          <a href="?action=plus&id=<?= $item['id'] ?>">＋</a>
+          <a href="?action=delete&id=<?= $item['id'] ?>" style="color:red; margin-left:10px;">削除</a>
         </div>
       </div>
       <hr>
