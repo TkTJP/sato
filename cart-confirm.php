@@ -1,3 +1,33 @@
+<?php
+session_start();
+
+// product_detail から商品が送られてきたときの処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+  $id = $_POST['id'];
+
+  if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+  }
+
+  if (isset($_SESSION['cart'][$id])) {
+    $_SESSION['cart'][$id]['quantity'] += 1;
+  } else {
+    $_SESSION['cart'][$id] = [
+      'id' => $id,
+      'name' => $_POST['name'],
+      'price' => (int)$_POST['price'],
+      'image' => $_POST['image'],
+      'quantity' => 1
+    ];
+  }
+}
+
+$cart = $_SESSION['cart'] ?? [];
+$total = 0;
+foreach ($cart as $item) {
+  $total += $item['price'] * $item['quantity'];
+}
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,54 +38,36 @@
 
 <?php require 'header.php'; ?>
 
-  <!-- 商品リスト -->
-  <main id="cart">
-    <div>
-      <img src="https://example.com/sample.jpg" alt="長州地サイダー" width="80">
+<main id="cart">
+  <?php if (empty($cart)): ?>
+    <p>カートに商品はありません。</p>
+  <?php else: ?>
+    <?php foreach ($cart as $item): ?>
       <div>
-        <p>長州地サイダー</p>
-        <p id="price">￥10,580</p>
+        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" width="80">
+        <div>
+          <p><?= htmlspecialchars($item['name']) ?></p>
+          <p>￥<?= number_format($item['price'] * $item['quantity']) ?></p>
+        </div>
+        <div>
+          <span>数量：<?= $item['quantity'] ?></span>
+        </div>
       </div>
-      <div>
-        <button id="minus">－</button>
-        <span id="count">2</span>
-        <button id="plus">＋</button>
-      </div>
-    </div>
-  </main>
+      <hr>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</main>
 
-  <!-- 合計金額とボタン -->
-  <footer>
-    <p>合計 ￥<span id="total">10,580</span></p>
-    <button id="confirm">購入確認へ進む</button>
-  </footer>
+<footer>
+  <p>合計 ￥<span id="total"><?= number_format($total) ?></span></p>
+  <button id="confirm">購入確認へ進む</button>
+</footer>
 
-  <script>
-    const pricePerItem = 5290; // 1本あたりの価格
-    let count = 2;
-
-    const countEl = document.getElementById("count");
-    const totalEl = document.getElementById("total");
-
-    document.getElementById("plus").addEventListener("click", () => {
-      count++;
-      updateTotal();
-    });
-
-    document.getElementById("minus").addEventListener("click", () => {
-      if (count > 1) count--;
-      updateTotal();
-    });
-
-    function updateTotal() {
-      countEl.textContent = count;
-      totalEl.textContent = (pricePerItem * count).toLocaleString();
-    }
-
-    document.getElementById("confirm").addEventListener("click", () => {
-      alert("購入確認画面へ進みます。");
-    });
-  </script>
+<script>
+  document.getElementById("confirm").addEventListener("click", () => {
+    alert("購入確認画面へ進みます。");
+  });
+</script>
 
 </body>
 </html>
