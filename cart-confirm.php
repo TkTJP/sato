@@ -16,16 +16,8 @@ $cart = $_SESSION['cart'];
     <title>カート確認画面</title>
 </head>
 <body>
+    <?php include('header.php'); ?>
 <div class="cart-container">
-
-    <!-- ① ロゴ -->
-    <header class="header">
-        <div class="logo">SATONOMI</div>
-        <a href="/mypage" class="is-rounded has-background-light has-text-dark" style="display:inline-flex; justify-content:center; align-items:center; width:40px; height:40px; text-decoration:none; font-size:24px;">
-        👤
-        </a>
-
-    </header>
 
     <!-- ② カートタイトル -->
     <h2 class="cart-title">
