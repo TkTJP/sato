@@ -49,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } catch (PDOException $e) {
             // データベース接続/クエリ実行エラー
             $error = "データベースエラーが発生しました。時間を置いてお試しください。";
-            // 開発中は次の行を有効にするとデバッグに役立ちます
             // error_log("PDO Error: " . $e->getMessage()); 
         }
     }
@@ -59,30 +58,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン</title>
 </head>
 <body>
 
-<div style="background-color: #aed581; padding: 10px; text-align: center; color: black; font-weight: bold;">
-    ← ログイン
-</div>
+<?php include('header.php'); ?>
 
-<div style="padding: 20px;">
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">ログイン</span>
+</nav>
+
+<div class="login-form-container">
 
     <?php if ($error): ?>
-        <p style="color: red;"><?php echo $error; ?></p>
+        <p class="error-message"><?php echo $error; ?></p>
     <?php endif; ?>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
         
-        <label for="email">メールアドレス</label><br>
-        <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required><br><br>
+        <label for="email">メールアドレス</label>
+        <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required class="input-field">
 
-        <label for="password">パスワード</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        <label for="password">パスワード</label>
+        <input type="password" id="password" name="password" required class="input-field">
 
-        <input type="submit" value="ログイン" 
-               style="background-color: #81c784; color: white; border: none; padding: 10px 20px; border-radius: 5px;">
+        <input type="submit" value="ログイン" class="green-button login-button-custom">
     </form>
     
 </div>
