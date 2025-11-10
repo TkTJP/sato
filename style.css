@@ -1,21 +1,33 @@
 /* =============================
-   SATONOMI マイページ共通CSS
-   header + profile 全体統合版
+   SATONOMI 全画面共通統合CSS
+   (header.php, login.php、および全画面スクリーンショットに対応)
 ============================= */
 
-/* ===== 全体設定 ===== */
+/* ===== 1. 全体設定 ===== */
 body {
+    /* 日本語フォントと標準フォント */
     font-family: "Noto Sans JP", sans-serif;
     background-color: #f5f5f5;
+    /* 背景の薄いグレー */
     margin: 0;
     padding: 0;
 }
 
+/* モバイル表示のシミュレーションと中央寄せ */
+.app-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    min-height: 100vh;
+}
+
 /* =============================
-   ヘッダー部分
+   2. ヘッダー部分 (.site-header)
+   - header.phpに記述された共通ヘッダー
 ============================= */
 .site-header {
     background-color: #f8eedf;
+    /* 薄いベージュ */
     padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -33,7 +45,9 @@ body {
 
 .header-logo {
     height: 65px;
+    /* 画像から推定されるロゴのサイズ */
     margin-right: 10px;
+    /* ロゴ画像のカスタムスタイルがある場合に追加 */
 }
 
 .header-title {
@@ -61,16 +75,24 @@ body {
 }
 
 /* =============================
-   マイページ本体
+   3. ナビゲーションバー (全画面共通の緑色のバー)
+   - .nav-bar / .mypage-header
 ============================= */
-.mypage-container {
-    text-align: center;
-    padding-bottom: 50px;
+.nav-bar {
+    background-color: #a2e8a2;
+    /* 画面をまたがる薄い緑色 */
+    padding: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #333;
 }
 
-/* ===== タイトルバー ===== */
+/* マイページからの流用スタイル（ナビゲーションバーとして統一） */
 .mypage-header {
-    background-color: #b2f2d1;
+    background-color: #a2e8a2;
     padding: 15px;
     font-weight: bold;
     font-size: 18px;
@@ -79,7 +101,9 @@ body {
     position: relative;
 }
 
-.mypage-header button.back-button {
+/* 戻るボタンのスタイル (共通化) */
+.nav-bar .back-button,
+.mypage-header .back-button {
     position: absolute;
     left: 15px;
     background: none;
@@ -87,14 +111,198 @@ body {
     padding: 0;
     font-size: 18px;
     cursor: pointer;
+    color: #333;
+    z-index: 10;
 }
 
-.mypage-header::after {
-    content: "マイページ";
-    width: 100%;
+/* タイトルの中央寄せ */
+.nav-title {
+    flex-grow: 1;
     text-align: center;
+    /* 戻るボタンのスペースを考慮し、微調整 */
+    transform: translateX(-10px);
+}
+
+/* mypage-header の後擬似要素によるタイトル表示を、nav-barの要素タイトル表示に統一 */
+.mypage-header::after {
+    /* 既存のマイページ用スタイルを削除または上書きし、要素内テキストを使用 */
+    content: none;
+}
+
+
+/* =============================
+   4. 汎用的な緑のボタン (.green-button)
+   - ログイン、カートに入れる、購入確定などに使用
+============================= */
+.green-button {
+    display: block;
+    width: 90%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    /* 画像に合わせたグラデーション */
+    background: linear-gradient(to bottom, #b3f0b3, #85e085);
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.green-button:hover {
+    background: linear-gradient(to bottom, #c0f5c0, #95e595);
+}
+
+
+/* =============================
+   5. ログインフォーム専用スタイル (.login.php)
+============================= */
+.login-form-container {
+    padding: 40px 20px 20px;
+    background-color: #f5f5f5;
+}
+
+.login-form-container label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* 入力フィールドのスタイル (角丸) */
+.input-field {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-size: 16px;
+    appearance: none;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ログインボタン (緑ボタンの幅を調整) */
+.login-button-custom {
+    max-width: 300px;
+    margin: 30px auto 0;
+}
+
+/* =============================
+   6. 汎用的なカードデザイン (.content-card)
+   - カート、商品一覧、注文履歴に使用
+============================= */
+.content-card {
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 10px 15px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 商品画像と情報の共通レイアウト */
+.item-detail {
+    display: flex;
+    align-items: center;
+}
+
+.item-image {
+    width: 60px;
+    height: 80px;
+    object-fit: contain;
+    margin-right: 15px;
+}
+
+.item-info {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+
+/* =============================
+   7. カート/購入確認 画面関連
+============================= */
+/* 数量コントロール */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.quantity-control span {
+    font-size: 18px;
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+.quantity-control button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    color: #333;
+}
+
+/* 画面下部の合計とボタン */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
     left: 0;
-    pointer-events: none;
+    right: 0;
+    background-color: #a2e8a2;
+    /* 下部の薄い緑色 */
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    /* モバイル表示幅に制限 */
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.total-summary {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 460px;
+    /* 適切な幅に調整 */
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* =============================
+   8. マイページ本体 (旧 mypage-header/profile/menu スタイル)
+============================= */
+.mypage-container {
+    text-align: center;
+    padding-bottom: 50px;
 }
 
 /* ===== プロフィール情報 ===== */
@@ -122,15 +330,6 @@ body {
     margin-top: 5px;
 }
 
-.back-button {
-    margin-left: 15px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #000;
-}
-
 /* ===== メニュー部分 ===== */
 .menu {
     display: flex;
@@ -153,10 +352,8 @@ body {
     justify-content: space-between;
     transition: background-color 0.3s;
     cursor: pointer;
-    /* モバイルのデフォルトボタンスタイル（青文字など）を上書き */
     appearance: none;
     -webkit-appearance: none;
-    -webkit-text-fill-color: #000;
     color: #000;
 }
 
@@ -167,10 +364,9 @@ body {
 .menu button i {
     margin-right: 10px;
     color: #000;
-    /* アイコン色を黒に固定 */
 }
 
-/* ボタン内の文字色を黒に固定（ブラウザ既定の色や継承による青表示を防ぐ） */
+/* ボタン内の文字色を黒に固定 */
 .menu button,
 .menu button * {
     color: #000 !important;
@@ -183,4 +379,105 @@ body {
     margin-top: 30px;
     font-size: 14px;
     color: #333;
+}
+
+/* =============================
+   9. 注文履歴画面 (.order-history-container)
+============================= */
+.order-history-container {
+    padding-top: 20px;
+}
+
+.date-range-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 15px 20px;
+}
+
+.date-input {
+    width: 100px;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.date-range-filter span {
+    margin: 0 10px;
+}
+
+.order-item-card {
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 10px 15px 20px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.order-item-card .item-detail {
+    margin-bottom: 10px;
+}
+
+.order-summary {
+    text-align: right;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.order-summary div {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.order-summary .label {
+    margin-right: 15px;
+    color: #555;
+}
+
+.order-summary .value {
+    font-weight: bold;
+}
+
+/* =============================
+   10. 商品一覧・検索画面
+============================= */
+.search-bar {
+    padding: 10px 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.ranking-section {
+    padding: 15px 0;
+    text-align: center;
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.product-card {
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 10px 15px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.product-card .price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f00;
+    /* 赤色価格を再現 */
 }
