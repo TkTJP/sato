@@ -15,15 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($_FILES['image']['name'])) {
             $image_name = basename($_FILES['image']['name']);
             $target = __DIR__ . "/img/" . $image_name;
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-                // OK
-            }
+            move_uploaded_file($_FILES['image']['tmp_name'], $target);
         }
 
         if ($command === 'update') {
             $sql = $pdo->prepare("
                 UPDATE products 
-                SET name = ?, price = ?, description = ?, stock = ?, image = COALESCE(?, image)
+                SET name = ?, price = ?, description = ?, stock = ?, 
+                    image = COALESCE(?, image), region = ?, prefecture = ?
                 WHERE product_id = ?
             ");
             $sql->execute([
@@ -32,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_POST['description'],
                 $_POST['stock'],
                 $image_name,
+                $_POST['region'] ?? null,
+                $_POST['prefecture'] ?? null,
                 $product_id
             ]);
 
@@ -53,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 処理後にリロード（F5での再送信防止）
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -74,115 +74,21 @@ $products = $sql->fetchAll(PDO::FETCH_ASSOC);
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>商品管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 900px;
-      white-space: nowrap;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    th {
-      background: #f0f0f0;
-    }
-
-    img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 6px;
-      display: block;
-      margin: 0 auto 5px;
-    }
-
-    input[type="file"] {
-      width: 100%;
-      max-width: 120px;
-      font-size: 0.8rem;
-      white-space: normal;
-    }
-
-    textarea, input[type="text"], input[type="number"], select {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 0.9rem;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 6px 10px;
-      margin: 2px 0;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      color: white;
-    }
-
-    .btn-update {
-      background-color: #4CAF50;
-    }
-
-    .btn-delete {
-      background-color: #E74C3C;
-    }
-
-    .btn-insert {
-      background-color: #3498DB;
-      display: block;
-      margin: 20px auto;
-      text-align: center;
-      text-decoration: none;
-      padding: 10px 20px;
-      width: 200px;
-      border-radius: 6px;
-    }
-
-    .btn-insert:hover {
-      opacity: 0.9;
-    }
-
-    @media (max-width: 600px) {
-      table {
-        font-size: 0.85rem;
-      }
-      img {
-        width: 60px;
-        height: 60px;
-      }
-      input[type="file"] {
-        max-width: 100px;
-      }
-    }
+    body {font-family: sans-serif; margin: 0; padding: 20px; background-color: #f9f9f9;}
+    h1 {text-align: center; margin-bottom: 20px;}
+    .table-container {overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+    table {border-collapse: collapse; width: 100%; min-width: 1100px;}
+    th, td {border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle;}
+    th {background: #f0f0f0;}
+    img {width: 80px; height: 80px; object-fit: cover; border-radius: 6px; display: block; margin: 0 auto 5px;}
+    textarea, input[type="text"], input[type="number"], select {width: 100%; box-sizing: border-box; font-size: 0.9rem;}
+    .btn {display: inline-block; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem; color: white;}
+    .btn-update {background-color: #4CAF50;}
+    .btn-delete {background-color: #E74C3C;}
+    .btn-insert {background-color: #3498DB; display: block; margin: 20px auto; text-align: center; text-decoration: none; padding: 10px 20px; width: 200px; border-radius: 6px;}
   </style>
 </head>
 <body>
@@ -198,6 +104,8 @@ $products = $sql->fetchAll(PDO::FETCH_ASSOC);
         <th>商品説明</th>
         <th>在庫</th>
         <th>販売タイプ</th>
+        <th>地方</th>
+        <th>都道府県</th>
         <th>商品詳細説明</th>
         <th>操作</th>
       </tr>
@@ -224,6 +132,29 @@ $products = $sql->fetchAll(PDO::FETCH_ASSOC);
               <option value="1" <?= $row['is_subscribe'] == 1 ? 'selected' : '' ?>>サブスク</option>
             </select>
           </td>
+
+          <!-- 地方選択 -->
+          <td>
+            <select name="region" class="region-select">
+              <option value="">選択してください</option>
+              <option value="北海道" <?= $row['region']=='北海道'?'selected':'' ?>>北海道</option>
+              <option value="東北" <?= $row['region']=='東北'?'selected':'' ?>>東北</option>
+              <option value="関東" <?= $row['region']=='関東'?'selected':'' ?>>関東</option>
+              <option value="中部" <?= $row['region']=='中部'?'selected':'' ?>>中部</option>
+              <option value="近畿" <?= $row['region']=='近畿'?'selected':'' ?>>近畿</option>
+              <option value="中国" <?= $row['region']=='中国'?'selected':'' ?>>中国</option>
+              <option value="四国" <?= $row['region']=='四国'?'selected':'' ?>>四国</option>
+              <option value="九州" <?= $row['region']=='九州'?'selected':'' ?>>九州</option>
+            </select>
+          </td>
+
+          <!-- 都道府県選択 -->
+          <td>
+            <select name="prefecture" class="prefecture-select">
+              <option value="<?= htmlspecialchars($row['prefecture']) ?>"><?= htmlspecialchars($row['prefecture'] ?: '選択してください') ?></option>
+            </select>
+          </td>
+
           <td><textarea name="product_explain"><?= htmlspecialchars($row['product_explain']) ?></textarea></td>
           <td>
             <button type="submit" name="command" value="update" class="btn btn-update">更新</button><br>
@@ -236,5 +167,35 @@ $products = $sql->fetchAll(PDO::FETCH_ASSOC);
   </div>
 
   <a href="product-insert.php" class="btn btn-insert">＋ 商品を追加する</a>
+
+  <script>
+  // 地方 → 都道府県 連動用
+  const prefectures = {
+    "北海道": ["北海道"],
+    "東北": ["青森県","岩手県","宮城県","秋田県","山形県","福島県"],
+    "関東": ["茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県"],
+    "中部": ["新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県"],
+    "近畿": ["三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県"],
+    "中国": ["鳥取県","島根県","岡山県","広島県","山口県"],
+    "四国": ["徳島県","香川県","愛媛県","高知県"],
+    "九州": ["福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"]
+  };
+
+  document.querySelectorAll(".region-select").forEach((regionSelect, i) => {
+    const prefSelect = document.querySelectorAll(".prefecture-select")[i];
+    regionSelect.addEventListener("change", () => {
+      const region = regionSelect.value;
+      prefSelect.innerHTML = '<option value="">選択してください</option>';
+      if (prefectures[region]) {
+        prefectures[region].forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p;
+          opt.textContent = p;
+          prefSelect.appendChild(opt);
+        });
+      }
+    });
+  });
+  </script>
 </body>
 </html>
