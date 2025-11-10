@@ -89,9 +89,11 @@ if (!$product) {
 
 <!-- カートに追加フォーム -->
 <form action="cart-confirm.php" method="post">
-  <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
-  <input type="number" name="count" value="1" min="1" max="<?php echo $product['stock']; ?>">
-  <input type="submit" value="カートに入れる">
+  <input type="hidden" name="id" value="<?= $product['id'] ?>">
+  <input type="hidden" name="name" value="<?= htmlspecialchars($product['name']) ?>">
+  <input type="hidden" name="price" value="<?= $product['price'] ?>">
+  <input type="hidden" name="image" value="<?= $product['image'] ?>">
+  <button type="submit">カートに入れる</button>
 </form>
 
 <hr>

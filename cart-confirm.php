@@ -1,86 +1,72 @@
-<?php 
+<?php
 session_start();
 
-// セッションにカートがない場合の初期データ
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [
-        ['name' => '長州地サイダー', 'price' => 1080, 'quantity' => 1, 'image' => 'images/cider.jpg']
+// product_detail から商品が送られてきたときの処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+  $id = $_POST['id'];
+
+  if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+  }
+
+  if (isset($_SESSION['cart'][$id])) {
+    $_SESSION['cart'][$id]['quantity'] += 1;
+  } else {
+    $_SESSION['cart'][$id] = [
+      'id' => $id,
+      'name' => $_POST['name'],
+      'price' => (int)$_POST['price'],
+      'image' => $_POST['image'],
+      'quantity' => 1
     ];
+  }
 }
-$cart = $_SESSION['cart'];
+
+$cart = $_SESSION['cart'] ?? [];
+$total = 0;
+foreach ($cart as $item) {
+  $total += $item['price'] * $item['quantity'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>カート確認画面</title>
+  <meta charset="UTF-8">
+  <title>カート - SATONOMI</title>
 </head>
 <body>
-    <?php include('header.php'); ?>
-<div class="cart-container">
 
-    <!-- ② カートタイトル -->
-    <h2 class="cart-title">
-        <span style="float: left;">
-            <button type="button" onclick="history.back();" style="border: none; background: none; font-size: 18px;">←</button>
-        </span>
-        カート
-    </h2>
-    <!-- ③ 商品一覧 -->
+<?php require 'header.php'; ?>
+
+<main id="cart">
+  <?php if (empty($cart)): ?>
+    <p>カートに商品はありません。</p>
+  <?php else: ?>
     <?php foreach ($cart as $item): ?>
-    <div class="cart-item" data-name="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>">
-        <a href="product-detail.php?name=<?= urlencode($item['name']) ?>" class="item-link">
-            <img src="<?= htmlspecialchars($item['image'], ENT_QUOTES) ?>" 
-                alt="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>" 
-                class="item-image">
-            <div class="item-info">
-                <p class="item-name"><?= htmlspecialchars($item['name'], ENT_QUOTES) ?></p>
-                <p class="item-price">¥<?= number_format($item['price']) ?></p>
-            </div>
-        </a>
-        <div class="item-quantity">
-            <button class="quantity-btn" data-action="minus">-</button>
-            <span class="quantity"><?= $item['quantity'] ?></span>
-            <button class="quantity-btn" data-action="plus">+</button>
+      <div>
+        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" width="80">
+        <div>
+          <p><?= htmlspecialchars($item['name']) ?></p>
+          <p>￥<?= number_format($item['price'] * $item['quantity']) ?></p>
         </div>
-    </div>
-<?php endforeach; ?>
+        <div>
+          <span>数量：<?= $item['quantity'] ?></span>
+        </div>
+      </div>
+      <hr>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</main>
 
-<!-- 合計 -->
-<div class="total">
-    <p>合計</p>
-    <p class="total-price" id="total-price">
-        ¥<?= number_format(array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $cart))) ?>
-    </p>
-</div>
+<footer>
+  <p>合計 ￥<span id="total"><?= number_format($total) ?></span></p>
+  <button id="confirm">購入確認へ進む</button>
+</footer>
 
-    <!-- ⑤ 購入ボタン -->
-    <form action="checkout.php" method="post">
-        <button type="submit" class="purchase-button">購入手続きへ</button>
-    </form>
-</div>
 <script>
-document.querySelectorAll('.quantity-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-        const action = e.target.dataset.action;
-        const item = e.target.closest('.cart-item');
-        const name = item.dataset.name;
-
-        // PHPに送信
-        const res = await fetch('update-cart.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `name=${encodeURIComponent(name)}&action=${encodeURIComponent(action)}`
-        });
-
-        // PHPから返ってきたJSONを受け取る
-        const data = await res.json();
-
-        // 数量と合計を更新
-        item.querySelector('.quantity').textContent = data.quantity;
-        document.getElementById('total-price').textContent = `¥${data.total.toLocaleString()}`;
-    });
-});
+  document.getElementById("confirm").addEventListener("click", () => {
+    alert("購入確認画面へ進みます。");
+  });
 </script>
 
 </body>
