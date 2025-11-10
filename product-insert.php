@@ -27,10 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['command']) && $_POST[
 
         $imageName = saveImage($_FILES['image']);
 
-        // products 登録
-        $sql = $pdo->prepare('INSERT INTO products (name, description, price, stock, image) VALUES (?, ?, ?, ?, ?)');
+        // products 登録（region, prefecture 追加）
+        $sql = $pdo->prepare('INSERT INTO products (name, description, price, stock, image, region, prefecture) VALUES (?, ?, ?, ?, ?, ?, ?)');
         $sql->execute([
-            $_POST['name'], $_POST['description'], $_POST['price'], $_POST['stock'], $imageName
+            $_POST['name'],
+            $_POST['description'],
+            $_POST['price'],
+            $_POST['stock'],
+            $imageName,
+            $_POST['region'] ?? null,
+            $_POST['prefecture'] ?? null
         ]);
 
         $product_id = $pdo->lastInsertId();
@@ -65,12 +71,10 @@ body {
     margin: 0;
     padding: 20px;
 }
-
 h1 {
     text-align: center;
     color: #333;
 }
-
 form {
     display: flex;
     flex-direction: column;
@@ -81,13 +85,11 @@ form {
     border-radius: 10px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
-
 label {
     margin-top: 15px;
     font-weight: bold;
     color: #444;
 }
-
 input[type="text"],
 textarea,
 select {
@@ -99,11 +101,9 @@ select {
     box-sizing: border-box;
     font-size: 1rem;
 }
-
 input[type="file"] {
     margin-top: 8px;
 }
-
 button {
     margin-top: 20px;
     padding: 12px;
@@ -115,18 +115,15 @@ button {
     cursor: pointer;
     transition: background 0.2s ease;
 }
-
 button:hover {
     background-color: #005fa3;
 }
-
 .message {
     text-align: center;
     color: green;
     font-weight: bold;
     margin-top: 10px;
 }
-
 .link-btn {
     display: block;
     text-align: center;
@@ -137,11 +134,9 @@ button:hover {
     padding: 12px;
     border-radius: 6px;
 }
-
 .link-btn:hover {
     background-color: #333;
 }
-
 /* スマホ対応 */
 @media (max-width: 600px) {
     form {
@@ -185,6 +180,54 @@ button:hover {
         <option value="0">通常販売</option>
         <option value="1">サブスク</option>
     </select>
+
+    <!-- ▼ 地方・都道府県選択（追加部分）▼ -->
+    <label>地方</label>
+    <select id="region" name="region">
+        <option value="">選択してください</option>
+        <option value="北海道">北海道</option>
+        <option value="東北">東北</option>
+        <option value="関東">関東</option>
+        <option value="中部">中部</option>
+        <option value="近畿">近畿</option>
+        <option value="中国">中国</option>
+        <option value="四国">四国</option>
+        <option value="九州・沖縄">九州・沖縄</option>
+    </select>
+
+    <label>都道府県</label>
+    <select id="prefecture" name="prefecture">
+        <option value="">地方を選んでください</option>
+    </select>
+
+    <script>
+    const prefectures = {
+        "北海道": ["北海道"],
+        "東北": ["青森県","岩手県","宮城県","秋田県","山形県","福島県"],
+        "関東": ["茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県"],
+        "中部": ["新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県"],
+        "近畿": ["三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県"],
+        "中国": ["鳥取県","島根県","岡山県","広島県","山口県"],
+        "四国": ["徳島県","香川県","愛媛県","高知県"],
+        "九州・沖縄": ["福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"]
+    };
+
+    document.getElementById('region').addEventListener('change', function() {
+        const region = this.value;
+        const prefectureSelect = document.getElementById('prefecture');
+        prefectureSelect.innerHTML = '<option value="">選択してください</option>';
+
+        if (region && prefectures[region]) {
+            prefectures[region].forEach(pref => {
+                const opt = document.createElement('option');
+                opt.value = pref;
+                opt.textContent = pref;
+                prefectureSelect.appendChild(opt);
+            });
+        }
+    });
+    </script>
+    <!-- ▲ ここまで追加部分 ▲ -->
 
     <label>商品詳細説明</label>
     <textarea name="product_explain" rows="4"></textarea>
