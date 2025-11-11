@@ -1,3 +1,23 @@
+<?php
+session_start();
+require 'db-connect.php';
+
+// DB接続
+try {
+    $pdo = new PDO($connect, USER, PASS);
+} catch (PDOException $e) {
+    exit('DB接続エラー: ' . $e->getMessage());
+}
+
+// ログイン中のユーザーIDを取得
+$customer_id = $_SESSION['customer']['customer_id'];
+
+// customersテーブルから名前を取得
+$sql = $pdo->prepare('SELECT name FROM customers WHERE customer_id = ?');
+$sql->execute([$customer_id]);
+$customer = $sql->fetch(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -20,7 +40,7 @@
       </nav>
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
-      <div class="name">里野　美里</div>
+      <div class="name"><?= htmlspecialchars($customer['name'] ?? $_SESSION['customer']['name']); ?></div>
       <div class="points">所持ポイント：1500</div>
     </div>
 
@@ -31,7 +51,9 @@
       <button onclick="location.href=''"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
     </div>
 
-    <div class="logout">ログアウト</div>
+    <form action="logout.php" method="post">
+      <button type="submit" class="logout">ログアウト</button>
+    </form>
   </div>
 
 </body>

@@ -1,7 +1,3 @@
-<?php
-    require 'header.php';
-?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -11,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <?php include('header.php'); ?>
+
     <div class="app-container">
         <div class="button-area">
             <!-- 会員登録画面に遷移にする -->
