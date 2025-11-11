@@ -12,8 +12,12 @@
   <?php include('header.php'); ?>
 
   <div class="mypage-container">
-    <div class="mypage-header"><button class="back-button" onclick="location.href='member.php'">←</button>マイページ</div>
-
+      <nav class="nav-bar">
+          <button class="back-button" onclick="history.back()">
+              <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <span class="nav-title">マイページ</span>
+      </nav>
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
       <div class="name">里野　美里</div>
