@@ -83,7 +83,7 @@ if ($customer_id) {
   <p>価格：¥<?php echo number_format($product['price']); ?></p>
 </div>
 
-<form action="cart_add.php" method="post">
+<form action="cart_confirm.php" method="post">
   <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
 
   <!-- ＋−ボタン付き数量調整 -->
