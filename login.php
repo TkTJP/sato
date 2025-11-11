@@ -1,9 +1,7 @@
 <?php
-// --- 1. データベース接続設定の読み込み ---
-// db-connect.php が定数 (SERVER, DBNAME, USER, PASS) や接続文字列 ($connect) を定義している前提
+
 require_once('db-connect.php');
 
-// 認証成功時にセッションを使うため
 session_start();
 
 $error = '';
