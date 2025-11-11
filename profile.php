@@ -37,13 +37,16 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
       <div class="name"><?= htmlspecialchars($customer['name'] ?? $_SESSION['customer']['name']); ?></div>
+      <div class="subscribe">
+      <!-- データベースのsubscr_joinの値で表示内容を変える -->
+      </div>
       <div class="points">所持ポイント：1500</div>
     </div>
 
     <div class="menu">
       <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i>My情報 <i class="fa-solid fa-angle-right"></i></button>
       <button onclick="location.href=''"><i class="fa-solid fa-clock"></i>購入履歴 <i class="fa-solid fa-angle-right"></i></button>
-      <button onclick="location.href=''"><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href='subscribe.php'"><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
       <button onclick="location.href=''"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
     </div>
 
