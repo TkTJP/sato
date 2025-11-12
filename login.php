@@ -1,38 +1,31 @@
 <?php
 require_once('db-connect.php');
+
+// セッションの有効期限を延長（例：2時間）
+session_set_cookie_params([
+    'lifetime' => 7200, // 秒（2時間）
+    'path' => '/',
+    'secure' => false, // HTTPSなら true に変更
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
 session_start();
 
 $error = '';
 $email = '';
 
-// --- Cookieによる自動ログインチェック ---
-if (!isset($_SESSION['customer_id']) && isset($_COOKIE['remember_token'])) {
-    try {
-        $pdo = new PDO($connect, USER, PASS);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $token = $_COOKIE['remember_token'];
-        $sql = "SELECT customer_id, name FROM customers WHERE remember_token = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$token]);
-        $customer = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($customer) {
-            $_SESSION['customer_id'] = $customer['customer_id'];
-            $_SESSION['customer_name'] = $customer['name'];
-            header("Location: profile.php");
-            exit;
-        }
-    } catch (PDOException $e) {
-        // DBエラー時はCookie削除
-        setcookie('remember_token', '', time() - 3600, '/');
-    }
+// --- すでにログイン中ならリダイレクト ---
+if (isset($_SESSION['customer_id'])) {
+    header("Location: profile.php");
+    exit;
 }
 
-// --- 通常のログイン処理 ---
+// --- フォーム送信後の処理 ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $email = htmlspecialchars(trim($_POST['email'] ?? ''));
-    $password = $_POST['password'] ?? '';
+    $password = $_POST['password'] ?? ''; 
 
     if (empty($email) || empty($password)) {
         $error = "メールアドレスとパスワードを入力してください。";
@@ -40,31 +33,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $pdo = new PDO($connect, USER, PASS);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+            
             $sql = "SELECT customer_id, password, name FROM customers WHERE email = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$email]);
             $customer = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($customer && password_verify($password, $customer['password'])) {
-                // 認証成功
+                
+                // 認証成功 → セッションに保存
                 $_SESSION['customer_id'] = $customer['customer_id'];
                 $_SESSION['customer_name'] = $customer['name'];
 
-                // --- ログイン保持トークンを生成 ---
-                $token = bin2hex(random_bytes(32));
-                $sql = "UPDATE customers SET remember_token = ? WHERE customer_id = ?";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$token, $customer['customer_id']]);
+                // セッションの延長（アクセスごとに更新）
+                session_regenerate_id(true);
 
-                // Cookieに保存（30日間有効）
-                setcookie('remember_token', $token, time() + (86400 * 30), "/", "", false, true);
-
-                header("Location: profile.php");
+                header("Location: profile.php"); 
                 exit;
+
             } else {
                 $error = "メールアドレスまたはパスワードが正しくありません。";
             }
+            
         } catch (PDOException $e) {
             $error = "データベースエラーが発生しました。";
         }
