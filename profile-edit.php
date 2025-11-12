@@ -66,6 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql_address->execute(array_merge([$customer_id], $address_data));
     }
 
+    // ✅ セッション情報を更新（←ここを追加）
+    $_SESSION['customer']['name'] = $name;
+    $_SESSION['customer']['email'] = $email;
+
     // 更新完了後に完了画面へリダイレクト
     header('Location: profile-edit-complete.php');
     exit;
@@ -116,8 +120,9 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     </script>
 </head>
 <body>
-    <?php include('header.php'); ?> <div class="app-container">
-    <h2>プロフィール編集</h2>
+    <?php include('header.php'); ?> 
+    <div class="app-container">
+    <h2>My情報編集画面</h2>
 
     <form action="" method="post">
         <div class="form-group">
