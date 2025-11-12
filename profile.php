@@ -1,25 +1,13 @@
 <?php
 session_start();
-require 'db-connect.php';
-
-// DB接続
-try {
-    $pdo = new PDO($connect, USER, PASS);
-} catch (PDOException $e) {
-    exit('DB接続エラー: ' . $e->getMessage());
-}
 
 // ログイン確認
 if (empty($_SESSION['customer']['customer_id'])) {
-    exit('ログイン情報がありません。');
+    header("Location: login.php");
+    exit;
 }
 
-$customer_id = $_SESSION['customer']['customer_id'];
-
-// customersテーブルから名前とサブスク状態を取得
-$sql = $pdo->prepare('SELECT name, subscr_join FROM customers WHERE customer_id = ?');
-$sql->execute([$customer_id]);
-$customer = $sql->fetch(PDO::FETCH_ASSOC);
+$customer = $_SESSION['customer'];
 ?>
 
 <!DOCTYPE html>
