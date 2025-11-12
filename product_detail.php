@@ -66,7 +66,7 @@ if ($customer_id) {
 
 <?php require 'header.php'; ?>
 <p><a href="top.php">←</a></p>
-<h2>商品詳細ページ</h2>
+
 
 <div>
   <img src="img/<?php echo htmlspecialchars($product['image'] ?: 'noimage.png'); ?>" width="250">
@@ -84,21 +84,24 @@ if ($customer_id) {
 </div>
 
 <form action="cart-confirm.php" method="post">
-  <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+  <input type="hidden" name="id" value="<?php echo $product['product_id']; ?>">
+  <input type="hidden" name="name" value="<?php echo htmlspecialchars($product['name']); ?>">
+  <input type="hidden" name="price" value="<?php echo (int)$product['price']; ?>">
+  <input type="hidden" name="image" value="<?php echo htmlspecialchars($product['image']); ?>">
+  <input type="hidden" name="quantity" value="1">
 
-  <!-- ＋−ボタン付き数量調整 -->
-  <button type="button" id="decrease">−</button>
-  <span id="quantityDisplay">1</span>
-  <button type="button" id="increase">＋</button>
-  <input type="hidden" name="count" id="quantityInput" value="1">
-
-  <br>
-  <input type="submit" value="カートに入れる">
+  <button type="submit">カートに入れる</button>
 </form>
 
 
-<script>
+<hr>
+<button id="descToggle">商品説明 ▼</button>
+<div id="descContent" style="display:none;">
+  <p><?php echo nl2br(htmlspecialchars($product['description'] ?? '説明が登録されていません。')); ?></p>
+</div>
 
+
+<script>
 
 const increaseBtn = document.getElementById('increase');
 const decreaseBtn = document.getElementById('decrease');
@@ -149,6 +152,21 @@ document.getElementById('likeBtn').addEventListener('click', async function() {
     alert(data.message);
   }
 });
+
+const descToggle = document.getElementById('descToggle');
+const descContent = document.getElementById('descContent');
+
+descToggle.addEventListener('click', () => {
+  if (descContent.style.display === 'none') {
+    descContent.style.display = 'block';
+    descToggle.textContent = '商品説明 ▲';
+  } else {
+    descContent.style.display = 'none';
+    descToggle.textContent = '商品説明 ▼';
+  }
+});
+</script>
+
 </script>
 
 </body>
