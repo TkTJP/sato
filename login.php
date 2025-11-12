@@ -1,18 +1,29 @@
 <?php
-// --- 1. データベース接続設定の読み込み ---
-// db-connect.php が定数 (SERVER, DBNAME, USER, PASS) や接続文字列 ($connect) を定義している前提
 require_once('db-connect.php');
 
-// 認証成功時にセッションを使うため
+// セッションの有効期限を延長（例：2時間）
+session_set_cookie_params([
+    'lifetime' => 7200, // 秒（2時間）
+    'path' => '/',
+    'secure' => false, // HTTPSなら true に変更
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
 session_start();
 
 $error = '';
 $email = '';
 
-// --- 2. フォーム送信後の処理 ---
+// --- すでにログイン中ならリダイレクト ---
+if (isset($_SESSION['customer_id'])) {
+    header("Location: profile.php");
+    exit;
+}
+
+// --- フォーム送信後の処理 ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // ユーザー入力を取得
+
     $email = htmlspecialchars(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? ''; 
 
@@ -20,12 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "メールアドレスとパスワードを入力してください。";
     } else {
         try {
-            // --- 3. PDOによるデータベース接続 ---
-            // $connect は db-connect.php で定義されていることを想定
             $pdo = new PDO($connect, USER, PASS);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // --- 4. ユーザー情報の取得と認証 ---
             $sql = "SELECT customer_id, password, name FROM customers WHERE email = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$email]);
@@ -33,23 +41,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($customer && password_verify($password, $customer['password'])) {
                 
-                // 認証成功！セッションに情報を保存
+                // 認証成功 → セッションに保存
                 $_SESSION['customer_id'] = $customer['customer_id'];
                 $_SESSION['customer_name'] = $customer['name'];
-                
-                // ログイン後のページにリダイレクト
-                header("Location: index.php"); 
+
+                // セッションの延長（アクセスごとに更新）
+                session_regenerate_id(true);
+
+                header("Location: profile.php"); 
                 exit;
-                
+
             } else {
-                // 認証失敗
                 $error = "メールアドレスまたはパスワードが正しくありません。";
             }
             
         } catch (PDOException $e) {
-            // データベース接続/クエリ実行エラー
-            $error = "データベースエラーが発生しました。時間を置いてお試しください。";
-            // error_log("PDO Error: " . $e->getMessage()); 
+            $error = "データベースエラーが発生しました。";
         }
     }
 }
@@ -81,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-        
         <label for="email">メールアドレス</label>
         <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required class="input-field">
 
@@ -90,8 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <input type="submit" value="ログイン" class="green-button login-button-custom">
     </form>
-    
 </div>
-
 </body>
 </html>
