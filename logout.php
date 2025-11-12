@@ -1,21 +1,22 @@
 <?php
-// --- Cookieを完全に削除する処理 ---
+// --- 先頭で処理開始（HTML出力前に必ず） ---
 
-// 削除したいCookie名（複数ある場合は配列でもOK）
+// セッション開始
+session_start();
+
+// --- 削除したいCookieを完全削除 ---
 $cookies_to_delete = ['remember_token', 'PHPSESSID'];
 
-// 1つずつ削除
 foreach ($cookies_to_delete as $cookie_name) {
     if (isset($_COOKIE[$cookie_name])) {
-        // Cookieの削除（ブラウザ側）
+        // ブラウザ側Cookie削除
         setcookie($cookie_name, '', time() - 3600, '/');
         // PHPの$_COOKIE配列からも削除
         unset($_COOKIE[$cookie_name]);
     }
 }
 
-// --- セッションも完全に削除（任意） ---
-session_start();
+// --- セッションを完全破棄 ---
 $_SESSION = [];
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
@@ -26,6 +27,6 @@ if (ini_get("session.use_cookies")) {
 }
 session_destroy();
 
-// --- 結果を表示 ---
-echo "Cookieとセッションを完全に削除しました。";
-?>
+// --- ログアウト後はログインページへリダイレクト ---
+header("Location: top.php");
+exit;
