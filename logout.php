@@ -30,3 +30,4 @@ session_destroy();
 // --- ログアウト後はログインページへリダイレクト ---
 header("Location: top.php");
 exit;
+?>
