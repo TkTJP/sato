@@ -3,20 +3,19 @@ require_once('db-connect.php');
 
 // セッションの有効期限を延長（例：2時間）
 session_set_cookie_params([
-    'lifetime' => 7200, // 秒（2時間）
+    'lifetime' => 7200,
     'path' => '/',
-    'secure' => false, // HTTPSなら true に変更
+    'secure' => false, // HTTPSなら true
     'httponly' => true,
     'samesite' => 'Lax'
 ]);
-
 session_start();
 
 $error = '';
 $email = '';
 
 // --- すでにログイン中ならリダイレクト ---
-if (isset($_SESSION['customer_id'])) {
+if (isset($_SESSION['customer']['customer_id'])) {
     header("Location: profile.php");
     exit;
 }
@@ -34,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $pdo = new PDO($connect, USER, PASS);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            $sql = "SELECT customer_id, password, name FROM customers WHERE email = ?";
+            $sql = "SELECT customer_id, password, name, subscr_join FROM customers WHERE email = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$email]);
             $customer = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -42,12 +41,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($customer && password_verify($password, $customer['password'])) {
                 
                 // 認証成功 → セッションに保存
-                $_SESSION['customer_id'] = $customer['customer_id'];
-                $_SESSION['name'] = $customer['name'];
+                $_SESSION['customer'] = [
+                    'customer_id' => $customer['customer_id'],
+                    'name' => $customer['name'],
+                    'subscr_join' => $customer['subscr_join']
+                ];
 
-                // セッションの延長（アクセスごとに更新）
-                session_regenerate_id(true);
-
+                session_regenerate_id(true); // セッションID更新で安全性向上
                 header("Location: profile.php"); 
                 exit;
 
@@ -82,20 +82,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </nav>
 
 <div class="login-form-container">
-
     <?php if ($error): ?>
-        <p class="error-message"><?php echo $error; ?></p>
+        <p class="error-message"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+    <form action="" method="POST">
         <label for="email">メールアドレス</label>
-        <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required class="input-field">
+        <input type="text" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
 
         <label for="password">パスワード</label>
-        <input type="password" id="password" name="password" required class="input-field">
+        <input type="password" id="password" name="password" required>
 
-        <input type="submit" value="ログイン" class="green-button login-button-custom">
+        <input type="submit" value="ログイン">
     </form>
 </div>
+
 </body>
 </html>
