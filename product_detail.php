@@ -99,6 +99,7 @@ if ($customer_id) {
 
 <script>
 
+
 const increaseBtn = document.getElementById('increase');
 const decreaseBtn = document.getElementById('decrease');
 const quantityDisplay = document.getElementById('quantityDisplay');
