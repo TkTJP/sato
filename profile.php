@@ -9,11 +9,15 @@ try {
     exit('DB接続エラー: ' . $e->getMessage());
 }
 
-// ログイン中のユーザーIDを取得
+// ログイン確認
+if (empty($_SESSION['customer']['customer_id'])) {
+    exit('ログイン情報がありません。');
+}
+
 $customer_id = $_SESSION['customer']['customer_id'];
 
-// customersテーブルから名前を取得
-$sql = $pdo->prepare('SELECT name FROM customers WHERE customer_id = ?');
+// customersテーブルから名前とサブスク状態を取得
+$sql = $pdo->prepare('SELECT name, subscr_join FROM customers WHERE customer_id = ?');
 $sql->execute([$customer_id]);
 $customer = $sql->fetch(PDO::FETCH_ASSOC);
 ?>
@@ -37,14 +41,15 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
       <div class="name"><?= htmlspecialchars($customer['name'] ?? $_SESSION['customer']['name']); ?></div>
-      <!-- ✅ subscr_join の値で表示内容を切り替え -->
+
       <div class="subscribe">
-        <?php if ($customer['subscr_join'] == 1): ?>
-          <p>✅ サブスク登録中です</p>
+        <?php if (!empty($customer['subscr_join']) && $customer['subscr_join'] == 1): ?>
+          <p>サブスク登録中です</p>
         <?php else: ?>
-          <p>💡 サブスク未登録です</p>
+          <p>サブスク未登録です</p>
         <?php endif; ?>
       </div>
+
       <div class="points">所持ポイント：1500</div>
     </div>
 
