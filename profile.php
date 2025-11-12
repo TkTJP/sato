@@ -37,8 +37,13 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     <div class="profile">
       <img src="https://via.placeholder.com/100" alt="プロフィール画像">
       <div class="name"><?= htmlspecialchars($customer['name'] ?? $_SESSION['customer']['name']); ?></div>
+      <!-- ✅ subscr_join の値で表示内容を切り替え -->
       <div class="subscribe">
-      <!-- データベースのsubscr_joinの値で表示内容を変える -->
+        <?php if ($customer['subscr_join'] == 1): ?>
+          <p>✅ サブスク登録中です</p>
+        <?php else: ?>
+          <p>💡 サブスク未登録です</p>
+        <?php endif; ?>
       </div>
       <div class="points">所持ポイント：1500</div>
     </div>
