@@ -20,12 +20,6 @@ $regions = [
   <title>日本地図 - 九州地方</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      background: #f8f9fa;
-    }
-
     h1 {
       margin-top: 20px;
     }
