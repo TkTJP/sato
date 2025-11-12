@@ -6,7 +6,6 @@ try {
     $pdo = new PDO($connect, USER, PASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // ▼ ログイン確認
     if (empty($_SESSION['customer']['customer_id'])) {
         exit('ログイン情報がありません。');
     }
@@ -16,23 +15,22 @@ try {
     // ====== POST（登録 or 解除）処理 ======
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['join'])) {
-            // サブスク登録
             $sql = "UPDATE customers SET subscr_join = 1 WHERE customer_id = :customer_id";
             $message = "🎉 サブスク登録が完了しました！";
             $_SESSION['customer']['subscr_join'] = 1;
         } elseif (isset($_POST['cancel'])) {
-            // サブスク解除
             $sql = "UPDATE customers SET subscr_join = 0 WHERE customer_id = :customer_id";
             $message = "❎ サブスク登録を解除しました。";
             $_SESSION['customer']['subscr_join'] = 0;
         }
 
-        // SQL実行
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':customer_id', $customer_id, PDO::PARAM_INT);
         $stmt->execute();
 
         echo "<p>{$message}</p>";
+        echo '<p><a href="profile.php">➡ プロフィールページに戻る</a></p>';
+        exit; // 処理をここで終了
     }
 
     // ====== 現在のサブスク状態を取得 ======
