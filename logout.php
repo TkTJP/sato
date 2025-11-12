@@ -1,30 +1,31 @@
 <?php
-session_start();
-require_once('db-connect.php');
+// --- Cookieを完全に削除する処理 ---
 
-// DBのトークン削除
-if (isset($_SESSION['customer_id'])) {
-    try {
-        $pdo = new PDO($connect, USER, PASS);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// 削除したいCookie名（複数ある場合は配列でもOK）
+$cookies_to_delete = ['remember_token', 'PHPSESSID'];
 
-        $sql = "UPDATE customers SET remember_token = NULL WHERE customer_id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_SESSION['customer_id']]);
-    } catch (PDOException $e) {
-        // エラー時は無視
+// 1つずつ削除
+foreach ($cookies_to_delete as $cookie_name) {
+    if (isset($_COOKIE[$cookie_name])) {
+        // Cookieの削除（ブラウザ側）
+        setcookie($cookie_name, '', time() - 3600, '/');
+        // PHPの$_COOKIE配列からも削除
+        unset($_COOKIE[$cookie_name]);
     }
 }
 
-// Cookie完全削除
-setcookie('remember_token', '', time() - 3600, '/');
-unset($_COOKIE['remember_token']);
-
-// セッション破棄
+// --- セッションも完全に削除（任意） ---
+session_start();
 $_SESSION = [];
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
 session_destroy();
 
-// ログインページへ戻る
-header("Location: login.php");
-exit;
+// --- 結果を表示 ---
+echo "Cookieとセッションを完全に削除しました。";
 ?>
