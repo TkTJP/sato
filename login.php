@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 // 認証成功 → セッションに保存
                 $_SESSION['customer_id'] = $customer['customer_id'];
-                $_SESSION['customer_name'] = $customer['name'];
+                $_SESSION['name'] = $customer['name'];
 
                 // セッションの延長（アクセスごとに更新）
                 session_regenerate_id(true);
