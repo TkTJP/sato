@@ -88,12 +88,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <form action="" method="POST">
         <label for="email">メールアドレス</label>
-        <input type="text" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+        <input type="text" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required class="input-field">
 
         <label for="password">パスワード</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" required class="input-filed">
 
-        <input type="submit" value="ログイン">
+        <input type="submit" value="ログイン" class="green-button login-button-custom">
     </form>
 </div>
 
