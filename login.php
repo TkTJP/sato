@@ -74,6 +74,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php include('header.php'); ?>
 
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">ログイン</span>
+</nav>
+
 <div class="login-form-container">
     <?php if ($error): ?>
         <p class="error-message"><?= htmlspecialchars($error) ?></p>
