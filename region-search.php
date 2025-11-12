@@ -5,17 +5,15 @@ $pdo = new PDO($connect, USER, PASS, [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-$prefecture = $_GET['prefecture'] ?? '';
+$prefecture = $_GET['region'] ?? ''; // ← regionパラメータを受け取る
 if ($prefecture === '') {
     exit('都道府県が指定されていません。');
 }
 
-if ($prefecture === '北海道以外') {
-    $stmt = $pdo->query("SELECT * FROM products WHERE prefecture != '北海道' ORDER BY product_id DESC");
-} else {
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE prefecture = ? ORDER BY product_id DESC");
-    $stmt->execute([$prefecture]);
-}
+// データベースでは prefecture カラムに都道府県名が入っている
+$stmt = $pdo->prepare("SELECT * FROM products WHERE prefecture = ? ORDER BY product_id DESC");
+$stmt->execute([$prefecture]);
+
 $products = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -35,7 +33,7 @@ $products = $stmt->fetchAll();
 <body>
     <?php require 'header.php'; ?>
 <div class="header-bar">
-    <a href="map.php" class="back-arrow">← 戻る</a>
+    <a href="kyuusyuu.php" class="back-arrow">← 戻る</a>
     <h1><?= htmlspecialchars($prefecture) ?>エリア</h1>
 </div>
 
