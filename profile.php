@@ -10,9 +10,9 @@ try {
 }
 
 // ログイン確認
-if (empty($_SESSION['customer']['customer_id'])) {
-    exit('ログイン情報がありません。');
-}
+// if (empty($_SESSION['customer']['customer_id'])) {
+//    exit('ログイン情報がありません。');
+//}
 
 $customer_id = $_SESSION['customer']['customer_id'];
 
