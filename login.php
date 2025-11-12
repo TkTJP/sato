@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['customer_name'] = $customer['name'];
                 
                 // ログイン後のページにリダイレクト
-                header("Location: index.php"); 
+                header("Location: login-output.php"); 
                 exit;
                 
             } else {
