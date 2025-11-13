@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label for="password">パスワード</label>
     <input type="password" id="password" name="password" class="input-field" required>
 
-    <input type="submit" value="ログイン">
+    <input class="login-form-container" type="submit" value="ログイン">
 </form>
 </div>
 
