@@ -86,15 +86,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p class="error-message"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <form action="" method="POST">
-        <label for="email">メールアドレス</label>
-        <input type="text" id="email" name="email" value="<?= htmlspecialchars($email) ?>" class="input-field" required>
+<form action="" method="POST">
+    <label for="email">メールアドレス</label>
+    <input type="text" id="email" name="email" value="<?= htmlspecialchars($email) ?>" class="input-field" required> 
 
-        <label for="password">パスワード</label>
-        <input type="password" id="password" name="password" class="input-field" required>
+    <label for="password">パスワード</label>
+    <input type="password" id="password" name="password" class="input-field" required>
 
-        <input type="submit" value="ログイン">
-    </form>
+    <input type="submit" value="ログイン">
+</form>
 </div>
 
 </body>
