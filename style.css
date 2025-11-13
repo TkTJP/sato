@@ -176,6 +176,7 @@ body {
 }
 
 /* 入力フィールドのスタイル (角丸) */
+/* login.phpに class="input-field" を追加したため、この既存スタイルが適用されます */
 .input-field {
     width: 100%;
     padding: 10px 15px;
@@ -184,6 +185,8 @@ body {
     box-sizing: border-box;
     font-size: 16px;
     appearance: none;
+    margin-bottom: 25px;
+    /* ボタンとの間にスペースを追加 */
 }
 
 .error-message {
@@ -192,10 +195,32 @@ body {
     margin-bottom: 20px;
 }
 
-/* ログインボタン (緑ボタンの幅を調整) */
-.login-button-custom {
-    max-width: 300px;
-    margin: 30px auto 0;
+/* ログインボタン (input[type="submit"]) に緑ボタンのスタイルを直接適用 */
+.login-form-container input[type="submit"] {
+    /* ... センタリングやサイズの設定 ... */
+
+    /* 必須: 緑色のグラデーション */
+    background: linear-gradient(to bottom, #baffba, #85e085);
+
+    /* 必須: 角丸 */
+    border-radius: 25px;
+
+    /* 必須: 枠線をなくす */
+    border: none;
+
+    /* 文字の色 (黒っぽい色) */
+    color: #333;
+    font-weight: bold;
+
+    /* 薄い影 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    /* ... その他の設定 ... */
+}
+
+/* ホバー時の色変更（少し明るい緑） */
+.login-form-container input[type="submit"]:hover {
+    background: linear-gradient(to bottom, #c0f5c0, #95e595);
 }
 
 /* =============================
