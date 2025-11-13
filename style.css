@@ -197,29 +197,28 @@ body {
 
 /* ログインボタン (input[type="submit"]) に緑ボタンのスタイルを直接適用 */
 .login-form-container input[type="submit"] {
-    display: block;
-    width: 100%;
-    /* ボタンの最大幅を300pxに設定し、中央に配置 */
-    max-width: 300px;
-    margin: 30px auto 0;
+    /* ... センタリングやサイズの設定 ... */
 
-    padding: 12px 20px;
-    border: none;
-    border-radius: 25px;
-
-    /* 画像に合わせた緑のグラデーション */
+    /* 必須: 緑色のグラデーション */
     background: linear-gradient(to bottom, #baffba, #85e085);
 
+    /* 必須: 角丸 */
+    border-radius: 25px;
+
+    /* 必須: 枠線をなくす */
+    border: none;
+
+    /* 文字の色 (黒っぽい色) */
     color: #333;
-    font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
+
+    /* 薄い影 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    text-decoration: none;
+
+    /* ... その他の設定 ... */
 }
 
-/* ホバー時の色変更 */
+/* ホバー時の色変更（少し明るい緑） */
 .login-form-container input[type="submit"]:hover {
     background: linear-gradient(to bottom, #c0f5c0, #95e595);
 }
