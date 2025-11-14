@@ -11,6 +11,7 @@
     <?php include('header.php'); ?>
 
     <?php
+    
     session_start();
 
     if (isset($_SESSION['user_id'])) {
@@ -19,7 +20,7 @@
     }
 
     ?>
-    
+
     <div class="app-container">
         <div class="button-area">
             <!-- 会員登録画面に遷移にする -->
