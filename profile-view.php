@@ -40,8 +40,14 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     
 <?php include('header.php'); ?>
 
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">My情報閲覧</span>
+</nav>
+
 <div class="app-container">
-    <h2>My情報閲覧画面</h2>
 
     <?php if ($customer): ?>
         <div class="form-group">

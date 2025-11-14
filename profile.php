@@ -61,7 +61,7 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
       <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i>My情報 <i class="fa-solid fa-angle-right"></i></button>
       <button onclick="location.href=''"><i class="fa-solid fa-clock"></i>購入履歴 <i class="fa-solid fa-angle-right"></i></button>
       <button onclick="location.href='subscribe.php'"><i class="fa-solid fa-star"></i>サブスクに登録する <i class="fa-solid fa-angle-right"></i></button>
-      <button onclick="location.href=''"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
+      <button onclick="location.href='stamp.php'"><i class="fa-solid fa-face-smile"></i>スタンプカード <i class="fa-solid fa-angle-right"></i></button>
     </div>
 
     <form action="logout.php" method="post">

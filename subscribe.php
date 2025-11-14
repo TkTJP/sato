@@ -52,7 +52,13 @@ try {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>サブスク登録ページ</h2>
+
+    <nav class="nav-bar">
+          <button class="back-button" onclick="history.back()">
+              <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <span class="nav-title">サブスクライブ</span>
+    </nav>
 
     <?php if ($subscr && $subscr['subscr_join'] == 0): ?>
         <form method="post">
