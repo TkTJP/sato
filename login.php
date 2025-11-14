@@ -48,6 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ];
 
                 session_regenerate_id(true); // セッションID更新で安全性向上
+
+                    if (!empty($_GET['redirect']) && $_GET['redirect'] === 'order-confirm') {
+                        header("Location: order-confirm.php");
+                        exit;
+                    }
+
                 header("Location: profile.php"); 
                 exit;
 
