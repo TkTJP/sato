@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+// ログイン済みなら member.php を飛ばして profile.php に移動
+if (!empty($_SESSION['customer']['customer_id'])) {
+    header("Location: profile.php");
+    exit;
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,17 +20,6 @@
 <body>
 
     <?php include('header.php'); ?>
-
-    <?php
-    
-    session_start();
-
-    if (isset($_SESSION['user_id'])) {
-    header('Location: profile.php');
-    exit;
-    }
-
-    ?>
 
     <div class="app-container">
         <div class="button-area">
