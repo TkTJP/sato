@@ -124,6 +124,7 @@ try {
                 <?php echo htmlspecialchars($p['name']); ?>
             </a><br>
             ¥<?php echo number_format($p['price']); ?><br>
+
         </div>
         <hr>
     <?php endforeach; ?>
