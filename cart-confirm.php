@@ -7,7 +7,7 @@ $pdo = new PDO($connect, USER, PASS);
 $logged_in = isset($_SESSION['customer']);
 $customer_id = $logged_in ? $_SESSION['customer']['customer_id'] : null;
 
-// --- 商品追加処理（共通） ---
+// --- 商品追加処理 ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
   $product_id = (int)$_POST['id'];
   $name = $_POST['name'] ?? '';
@@ -107,9 +107,7 @@ if ($logged_in) {
 // --- 合計計算 ---
 $total = 0;
 foreach ($cart as $item) {
-  $price = $logged_in ? $item['price'] : $item['price'];
-  $qty = $logged_in ? $item['quantity'] : $item['quantity'];
-  $total += $price * $qty;
+  $total += $item['price'] * $item['quantity'];
 }
 ?>
 <!DOCTYPE html>
@@ -147,15 +145,15 @@ foreach ($cart as $item) {
     </div>
   <?php endforeach; ?>
 
-  <p>合計 ¥<?= number_format($total) ?></p>
+  <p><strong>合計 ¥<?= number_format($total) ?></strong></p>
 
   <?php if ($logged_in): ?>
-    <form action="order-confirm.php" method="post">
-      <input type="hidden" name="total" value="<?= $total ?>">
+    <form action="order-confirm.php" method="get">
       <button type="submit">購入確認へ進む</button>
     </form>
   <?php else: ?>
-    <p><a href="login.php">ログインして購入に進む</a></p>
+    <!-- ⭐ 最小修正：redirect を付けるだけ！ -->
+    <p><a href="login.php?redirect=order-confirm">ログインして購入に進む</a></p>
   <?php endif; ?>
 <?php endif; ?>
 

@@ -67,7 +67,6 @@ if ($customer_id) {
 <?php require 'header.php'; ?>
 <p><a href="top.php">←</a></p>
 
-
 <div>
   <img src="img/<?php echo htmlspecialchars($product['image'] ?: 'noimage.png'); ?>" width="250">
 </div>
@@ -80,7 +79,15 @@ if ($customer_id) {
       <span class="like-count" id="likeCount"><?php echo $totalLikes; ?></span>
     </div>
   </h3>
+
   <p>価格：¥<?php echo number_format($product['price']); ?></p>
+
+  <!-- ▼ 個数変更（＋ / −） -->
+  <div style="display:flex;align-items:center;gap:15px;margin:15px 0;">
+      <button type="button" id="decrease">－</button>
+      <span id="quantityDisplay">1</span>
+      <button type="button" id="increase">＋</button>
+  </div>
 </div>
 
 <form action="cart-confirm.php" method="post">
@@ -88,11 +95,12 @@ if ($customer_id) {
   <input type="hidden" name="name" value="<?php echo htmlspecialchars($product['name']); ?>">
   <input type="hidden" name="price" value="<?php echo (int)$product['price']; ?>">
   <input type="hidden" name="image" value="<?php echo htmlspecialchars($product['image']); ?>">
-  <input type="hidden" name="quantity" value="1">
+
+  <!-- ここを quantityInput に変更 -->
+  <input type="hidden" id="quantityInput" name="quantity" value="1">
 
   <button type="submit">カートに入れる</button>
 </form>
-
 
 <hr>
 <button id="descToggle">商品説明 ▼</button>
@@ -100,14 +108,15 @@ if ($customer_id) {
   <p><?php echo nl2br(htmlspecialchars($product['description'] ?? '説明が登録されていません。')); ?></p>
 </div>
 
-
 <script>
-
+// ======= 個数変更スクリプト =======
 const increaseBtn = document.getElementById('increase');
 const decreaseBtn = document.getElementById('decrease');
 const quantityDisplay = document.getElementById('quantityDisplay');
 const quantityInput = document.getElementById('quantityInput');
-const maxStock = <?php echo (int)$product['stock']; ?>;
+
+// 商品の在庫最大数（なければ 999 にしてもOK）
+const maxStock = <?php echo isset($product['stock']) ? (int)$product['stock'] : 999; ?>;
 
 let quantity = 1;
 
@@ -119,7 +128,7 @@ increaseBtn.addEventListener('click', () => {
   }
 });
 
-// −ボタン
+// －ボタン
 decreaseBtn.addEventListener('click', () => {
   if (quantity > 1) {
     quantity--;
@@ -132,7 +141,7 @@ function updateDisplay() {
   quantityInput.value = quantity;
 }
 
-
+// ======= いいね機能 =======
 document.getElementById('likeBtn').addEventListener('click', async function() {
   const likeBtn = this;
   const countElem = document.getElementById('likeCount');
@@ -153,6 +162,7 @@ document.getElementById('likeBtn').addEventListener('click', async function() {
   }
 });
 
+// ======= 商品説明の開閉 =======
 const descToggle = document.getElementById('descToggle');
 const descContent = document.getElementById('descContent');
 
@@ -165,8 +175,6 @@ descToggle.addEventListener('click', () => {
     descToggle.textContent = '商品説明 ▼';
   }
 });
-</script>
-
 </script>
 
 </body>
