@@ -120,9 +120,16 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     </script>
 </head>
 <body>
-    <?php include('header.php'); ?> 
+    <?php include('header.php'); ?>
+
+    <nav class="nav-bar">
+          <button class="back-button" onclick="history.back()">
+              <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <span class="nav-title">My情報編集</span>
+    </nav>
+
     <div class="app-container">
-    <h2>My情報編集画面</h2>
 
     <form action="" method="post">
         <div class="form-group">
@@ -167,7 +174,6 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
         </div>
 
         <button type="submit" class="save-button">保存</button>
-        <button type="button" class="back-button" onclick="location.href='profile-view.php'">戻る</button>
     </form>
 </div>
 
