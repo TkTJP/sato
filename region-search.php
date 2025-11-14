@@ -33,7 +33,7 @@ $products = $stmt->fetchAll();
 <body>
     <?php require 'header.php'; ?>
 <div class="header-bar">
-    <a href="kyuusyuu.php" class="back-arrow">← 戻る</a>
+ <a href="javascript:history.back()" class="back-arrow">← 戻る</a>
     <h1><?= htmlspecialchars($prefecture) ?>エリア</h1>
 </div>
 
