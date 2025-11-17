@@ -218,8 +218,9 @@ body {
     /* ... その他の設定 ... */
     margin-left: auto;
     margin-right: auto;
-    width: 10%;
+    width: 120px;
     padding: 12px;
+
 }
 
 /* ホバー時の色変更（少し明るい緑） */
