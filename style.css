@@ -510,3 +510,52 @@ body {
     color: #f00;
     /* 赤色価格を再現 */
 }
+
+.ranking-scroll {
+    display: flex;
+    overflow-x: scroll;
+    /* 横スクロールを可能にする */
+    gap: 10px;
+    padding: 0 15px 15px;
+    /* 左右のパディングと下部のスペース */
+}
+
+.ranking-item {
+    flex-shrink: 0;
+    /* 幅を固定し、縮小しないようにする */
+    width: 100px;
+    /* 各アイテムの固定幅 */
+    text-align: center;
+}
+
+.ranking-badge {
+    background-color: #f7e09e;
+    color: #a37b12;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 2px 5px;
+    width: fit-content;
+    margin: 0 auto;
+    border-radius: 3px;
+}
+
+/* 検索バーのインラインスタイルを、既存の.nav-barを使いつつ調整 */
+.search-form-flex {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    background-color: #fff;
+    /* 検索フィールドの背景を白に */
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin-right: 15px;
+}
+
+.search-input-clear {
+    border: none;
+    background-color: transparent;
+    flex-grow: 1;
+    font-size: 14px;
+    outline: none;
+    padding: 0;
+}
