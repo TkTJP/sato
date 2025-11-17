@@ -21,6 +21,13 @@ if (!empty($_SESSION['customer']['customer_id'])) {
 
     <?php include('header.php'); ?>
 
+    <nav class="nav-bar">
+          <button class="back-button" onclick="history.back()">
+              <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <span class="nav-title">会員画面</span>
+    </nav>
+
     <div class="app-container">
         <div class="button-area">
             <!-- 会員登録画面に遷移にする -->
