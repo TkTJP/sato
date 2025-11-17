@@ -62,79 +62,75 @@ try {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>トップページ</title>
-    <link rel="stylesheet" href="style.css">
+    <title>商品一覧 | SATONOMI</title>
 </head>
-
 <body>
 
-<?php include 'header.php'; ?>
+<?php require 'header.php'; ?>
 
-<div id="app" class="page-container">
+<!-- 🔍 検索フォーム -->
+<div>
+  <form action="" method="get">
+    <input type="text" name="keyword" placeholder="商品名または説明で検索" 
+           value="<?php echo htmlspecialchars($keyword); ?>">
+    <button type="submit">検索</button>
+  </form>
+</div>
 
-    <main>
-        <section class="ranking-section">
-            <div class="ranking-container">
-                <h2 class="section-title">人気ランキング</h2>
-                <ul class="ranking-list">
-                    <?php foreach ($ranking_products as $rank => $product): ?>
-                        <li class="ranking-item">
-                            <a href="product_detail.php?id=<?= htmlspecialchars($product['id']) ?>" class="product-link">
-                                <div class="ranking-number">No.<?= $rank + 1 ?></div>
-                                <img src="img/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
-                                <div class="product-info">
-                                    <h3><?= htmlspecialchars($product['name']) ?></h3>
-                                    <p class="price">¥<?= number_format($product['price']) ?></p>
-                                </div>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </section>
+<hr>
 
-        <!-- 🔍 検索フォーム -->
-        <section class="search-section">
-            <h2 class="section-title">商品検索</h2>
+<!-- ⭐ 人気ランキング -->
+<h3>人気ランキング</h3>
+<div>
+<?php if (!empty($favorites)): ?>
+    <?php $rank = 1; foreach ($favorites as $f): ?>
+        <div>
+            <strong><?php echo $rank; ?>位</strong><br>
+            <a href="product_detail.php?id=<?php echo urlencode($f['product_id']); ?>">
+                <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>" 
+                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="150"><br>
+                <?php echo htmlspecialchars($f['name']); ?>
+            </a><br>
+            ¥<?php echo number_format($f['price']); ?><br>
+            <small><?php echo htmlspecialchars($f['product_explain']); ?></small>
+        </div>
+        <hr>
+    <?php $rank++; endforeach; ?>
+<?php else: ?>
+    <p>人気商品はありません。</p>
+<?php endif; ?>
+</div>
 
-            <form action="" method="get" class="search-form">
-                <input type="text" name="keyword" placeholder="商品名で検索" class="search-input"
-                       value="<?= htmlspecialchars($search_keyword ?? '') ?>">
-                <button type="submit" class="search-button">検索</button>
-            </form>
+<hr>
 
-            <!-- 検索結果表示 -->
-            <?php if (!empty($search_keyword)): ?>
-                <p class="search-result">
-                    「<?= htmlspecialchars($search_keyword) ?>」の検索結果：<?= count($products) ?>件
-                </p>
-            <?php endif; ?>
-        </section>
+<!-- 🗺️ 名産マップ -->
+<div>
+    <a href="nihonntizu.php">名産マップを見てみよう！</a>
+</div>
 
-        <!-- 🛍 商品一覧 -->
-        <section class="product-section">
-            <h2 class="section-title">商品一覧</h2>
+<hr>
 
-            <div class="products-container">
-                <?php foreach ($products as $product): ?>
-                    <div class="product-card">
-                        <a href="product_detail.php?id=<?= htmlspecialchars($product['id']) ?>" class="product-link">
-                            <img src="img/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
-                            <div class="product-info">
-                                <h3><?= htmlspecialchars($product['name']) ?></h3>
-                                <p class="kubun">区分：<?= htmlspecialchars($product['kubun']) ?></p>
-                                <p class="price">¥<?= number_format($product['price']) ?></p>
-                            </div>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+<!-- 🛒 商品一覧 -->
+<h2>商品一覧</h2>
 
-        </section>
+<!-- 商品一覧 -->
+<div>
+<?php if (!empty($products)): ?>
+    <?php foreach ($products as $p): ?>
+        <div>
+            <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
+                <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" 
+                     alt="<?php echo htmlspecialchars($p['name']); ?>" width="150"><br>
+                <?php echo htmlspecialchars($p['name']); ?>
+            </a><br>
+            ¥<?php echo number_format($p['price']); ?><br>
 
-    </main>
-
+        </div>
+        <hr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>該当する商品がありません。</p>
+<?php endif; ?>
 </div>
 
 </body>
