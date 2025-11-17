@@ -55,6 +55,7 @@ body {
     font-weight: 600;
     color: #333;
     letter-spacing: 1px;
+    text-decoration: none;
 }
 
 .header-icons {
