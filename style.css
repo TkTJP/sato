@@ -472,90 +472,204 @@ body {
 /* =============================
    10. 商品一覧・検索画面
 ============================= */
-.search-bar {
-    padding: 10px 15px;
+.main-container {
+    max-width: 600px;
+    margin: 0 auto;
     background-color: #fff;
-    border-bottom: 1px solid #eee;
 }
 
-.search-input {
+/* 検索フォームの背景と配置 */
+.search-bg {
+    background-color: #92d1a3;
+    /* 画像の薄緑色の背景 */
+    padding: 10px 0;
+    position: relative;
+}
+
+/* 🔍 検索フォーム */
+.search-area {
+    display: flex;
+    justify-content: center;
+}
+
+.search-area form {
+    width: 95%;
+    position: relative;
+}
+
+.search-area input[type="text"] {
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
+    padding: 10px 10px 10px 45px;
+    /* 左側に検索アイコンのスペース */
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    background-color: #fff;
     box-sizing: border-box;
 }
 
-.ranking-section {
-    padding: 15px 0;
-    text-align: center;
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
+.search-area button[type="submit"] {
+    display: none;
+    /* 検索ボタンは非表示 */
 }
 
-.product-card {
+/* 検索アイコンの代替 */
+.search-area::before {
+    content: "🔍";
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    font-size: 18px;
+    z-index: 10;
+}
+
+/* 💡 人気ランキングエリア */
+.ranking-container {
+    padding: 15px 10px;
     background-color: #fff;
-    border-radius: 10px;
-    margin: 10px 15px;
-    padding: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
+    margin: 0 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.product-card .price {
-    font-size: 24px;
+.ranking-title {
+    font-size: 14px;
     font-weight: bold;
-    color: #f00;
-    /* 赤色価格を再現 */
+    margin-bottom: 10px;
+    padding: 0 5px;
 }
 
-.ranking-scroll {
+.ranking-list {
     display: flex;
-    overflow-x: scroll;
-    /* 横スクロールを可能にする */
-    gap: 10px;
-    padding: 0 15px 15px;
-    /* 左右のパディングと下部のスペース */
+    justify-content: space-between;
+    text-align: center;
+    padding: 5px 0 10px;
 }
 
 .ranking-item {
-    flex-shrink: 0;
-    /* 幅を固定し、縮小しないようにする */
-    width: 100px;
-    /* 各アイテムの固定幅 */
-    text-align: center;
+    width: 30%;
+    position: relative;
 }
 
-.ranking-badge {
-    background-color: #f7e09e;
-    color: #a37b12;
+/* ランクバッジのスタイル */
+.rank-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: gold;
+    color: #333;
     font-weight: bold;
+    padding: 2px 8px;
     font-size: 12px;
-    padding: 2px 5px;
-    width: fit-content;
-    margin: 0 auto;
-    border-radius: 3px;
+    z-index: 1;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+    /* 旗のような形状を簡易再現 */
+    border-top-left-radius: 3px;
 }
 
-/* 検索バーのインラインスタイルを、既存の.nav-barを使いつつ調整 */
-.search-form-flex {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-    background-color: #fff;
-    /* 検索フィールドの背景を白に */
-    border-radius: 20px;
-    padding: 5px 10px;
-    margin-right: 15px;
+.ranking-item:nth-child(2) .rank-badge {
+    background-color: silver;
 }
 
-.search-input-clear {
-    border: none;
-    background-color: transparent;
-    flex-grow: 1;
+.ranking-item:nth-child(3) .rank-badge {
+    background-color: #cd7f32;
+}
+
+.ranking-item a {
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    display: block;
+}
+
+.ranking-item img {
+    width: 100%;
+    max-width: 90px;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto 5px;
+    display: block;
+}
+
+.ranking-name {
+    font-size: 12px;
+    line-height: 1.2;
+    height: 30px;
+    /* 2行分のスペースを確保 */
+    overflow: hidden;
+    margin-bottom: 3px;
+}
+
+.ranking-price {
     font-size: 14px;
-    outline: none;
-    padding: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 💡 名産マップボタン */
+.map-button-container {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.map-button {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #fff;
+    color: #ff8c00;
+    border: 1px solid #ff8c00;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* 💡 商品一覧アイテム（画像の下の大型表示） */
+.product-list-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    background-color: #fff;
+    margin-bottom: 5px;
+}
+
+.product-list-item img {
+    width: 100px;
+    height: auto;
+    margin-right: 15px;
+    object-fit: contain;
+}
+
+.product-info {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+    text-align: left;
+}
+
+.product-large-price {
+    font-size: 32px;
+    font-weight: 900;
+    color: #cc3333;
+    line-height: 1;
+}
+
+.price-unit {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+/* 商品一覧の区切り線 */
+.product-list-hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 0;
 }
