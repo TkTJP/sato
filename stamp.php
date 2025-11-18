@@ -1,189 +1,276 @@
 <?php
+// stamp.php（PRG完全対応版）
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require 'db-connect.php';
 
-// ----------------------------------
-// DB接続
-// ----------------------------------
 try {
-    $pdo = new PDO($connect, USER, PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO($connect, USER, PASS, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
 } catch (PDOException $e) {
     exit('DB接続エラー: ' . $e->getMessage());
 }
 
-// ----------------------------------
-// ログインチェック
-// ----------------------------------
 if (empty($_SESSION['customer']['customer_id'])) {
-    exit('ログイン情報がありません。');
+    exit('ログイン情報がありません。ログインしてください。');
 }
 
 $customer_id = (int)$_SESSION['customer']['customer_id'];
-$message = '';
 $MAX_STAMPS = 8;
 
-// ----------------------------------
-// 景品マスタ（固定）
-// ----------------------------------
+/* -------------------------------------------
+    景品リスト
+------------------------------------------- */
 $prize_list = [
-    1 => ['name' => '30%offクーポン', 'required' => 3],
-    2 => ['name' => '500ポイント',    'required' => 5],
-    3 => ['name' => '10%offクーポン', 'required' => 5],
-    4 => ['name' => '300ポイント',    'required' => 3],
+    1 => ['name' => '30%offクーポン', 'required' => 3, 'is_coupon' => true],
+    2 => ['name' => '500ポイント',    'required' => 5, 'is_coupon' => false],
+    3 => ['name' => '10%offクーポン', 'required' => 5, 'is_coupon' => true],
+    4 => ['name' => '300ポイント',    'required' => 3, 'is_coupon' => false],
 ];
 
-// ----------------------------------
-// stamp_cards にレコードが存在するかチェック
-// ----------------------------------
-$sql = $pdo->prepare("SELECT stamp_count FROM stamp_cards WHERE customer_id = ?");
-$sql->execute([$customer_id]);
-$row = $sql->fetch(PDO::FETCH_ASSOC);
-
-if (!$row) {
-    $pdo->prepare("INSERT INTO stamp_cards (customer_id, stamp_count) VALUES (?, 0)")
-        ->execute([$customer_id]);
-    $current_stamps = 0;
-} else {
-    $current_stamps = (int)$row["stamp_count"];
+/* -------------------------------------------
+    テーブル存在チェック＆作成（開発用）
+------------------------------------------- */
+try {
+    if (!$pdo->query("SHOW TABLES LIKE 'stamp_cards'")->fetchColumn()) {
+        $pdo->exec("
+            CREATE TABLE stamp_cards (
+                customer_id INT PRIMARY KEY,
+                stamp_count INT NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+    }
+    if (!$pdo->query("SHOW TABLES LIKE 'exchange_history'")->fetchColumn()) {
+        $pdo->exec("
+            CREATE TABLE exchange_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                customer_id INT NOT NULL,
+                prize_id INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX (customer_id),
+                INDEX (prize_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+    }
+} catch (Exception $e) {
+    error_log('テーブル作成エラー: ' . $e->getMessage());
 }
 
-// ----------------------------------
-// 景品交換処理
-// ----------------------------------
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["exchange_prize_id"])) {
+/* -------------------------------------------
+    stamp_cards取得＆なければ作成
+------------------------------------------- */
+$stmt = $pdo->prepare("SELECT stamp_count FROM stamp_cards WHERE customer_id = ?");
+$stmt->execute([$customer_id]);
+$row = $stmt->fetch();
+$current_stamps = $row ? (int)$row["stamp_count"] : 0;
 
-    $prize_id = (int)$_POST["exchange_prize_id"];
+if (!$row) {
+    $stmtIns = $pdo->prepare("INSERT INTO stamp_cards (customer_id, stamp_count, created_at) VALUES (?, 0, CURRENT_TIMESTAMP)");
+    $stmtIns->execute([$customer_id]);
+}
 
-    // マスタチェック
-    if (!array_key_exists($prize_id, $prize_list)) {
-        $message = "不正な景品IDです。";
-    } else {
+/* -------------------------------------------
+    POST処理（PRG対応）
+------------------------------------------- */
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-        $prize_name = $prize_list[$prize_id]['name'];
-        $required   = $prize_list[$prize_id]['required'];
+    $message = "";
 
-        // 交換済みか確認
-        $sql = $pdo->prepare("SELECT 1 FROM exchange_history WHERE customer_id = ? AND prize_id = ?");
-        $sql->execute([$customer_id, $prize_id]);
-        $already = $sql->fetchColumn();
+    /* ------ 景品交換 ------ */
+    if (isset($_POST["exchange_prize_id"])) {
+        $prize_id = (int)$_POST["exchange_prize_id"];
 
-        if ($already) {
-            $message = "この景品は既に交換済みです。";
-        } elseif ($current_stamps < $required) {
-            $message = "スタンプが不足しています。（必要: {$required}）";
-        } else {
+        if (isset($prize_list[$prize_id])) {
+            $prize = $prize_list[$prize_id];
 
-            // ----------------------------------
-            // トランザクション開始
-            // ----------------------------------
-            try {
-                $pdo->beginTransaction();
+            // 交換済みチェック
+            $stmt = $pdo->prepare("SELECT 1 FROM exchange_history WHERE customer_id = ? AND prize_id = ?");
+            $stmt->execute([$customer_id, $prize_id]);
+            $already = $stmt->fetchColumn();
 
-                $new_stamps = max(0, $current_stamps - $required);
+            if ($already) {
+                $message = "この景品は既に交換済みです。";
+            } elseif ($current_stamps < $prize['required']) {
+                $message = "スタンプが不足しています。（必要: {$prize['required']}）";
+            } else {
+                try {
+                    $pdo->beginTransaction();
 
-                // スタンプの更新
-                $pdo->prepare("UPDATE stamp_cards SET stamp_count = ? WHERE customer_id = ?")
-                    ->execute([$new_stamps, $customer_id]);
+                    $new_stamps = max(0, $current_stamps - $prize['required']);
 
-                // 交換履歴追加
-                $pdo->prepare("INSERT INTO exchange_history (customer_id, prize_id) VALUES (?, ?)")
-                    ->execute([$customer_id, $prize_id]);
+                    $stmtUpdate = $pdo->prepare("UPDATE stamp_cards SET stamp_count = ?, updated_at = CURRENT_TIMESTAMP WHERE customer_id = ?");
+                    $stmtUpdate->execute([$new_stamps, $customer_id]);
 
-                $pdo->commit();
+                    $stmtIns = $pdo->prepare("INSERT INTO exchange_history (customer_id, prize_id, created_at)
+                                              VALUES (?, ?, CURRENT_TIMESTAMP)");
+                    $stmtIns->execute([$customer_id, $prize_id]);
 
-                $message = "景品『{$prize_name}』を交換しました！ （スタンプ {$required} 個消費）";
-                $current_stamps = $new_stamps;
+                    $pdo->commit();
 
-            } catch (Exception $e) {
-                $pdo->rollBack();
-                $message = "交換処理中にエラーが発生しました。";
+                    $current_stamps = $new_stamps;
+                    $message = "景品『{$prize['name']}』を交換しました！（スタンプ {$prize['required']} 個消費）";
+
+                } catch (Exception $e) {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                    $message = "交換中にエラーが発生しました。";
+                }
             }
         }
     }
+
+    /* ------ テスト用ボタン ------ */
+    if (isset($_POST["stamp_action"])) {
+        switch ($_POST["stamp_action"]) {
+            case 'add':
+                $stmt = $pdo->prepare("UPDATE stamp_cards SET stamp_count = LEAST(?, stamp_count + 1) WHERE customer_id = ?");
+                $stmt->execute([$MAX_STAMPS, $customer_id]);
+                $message = "スタンプを1つ追加しました";
+                break;
+
+            case 'remove':
+                $stmt = $pdo->prepare("UPDATE stamp_cards SET stamp_count = GREATEST(0, stamp_count - 1) WHERE customer_id = ?");
+                $stmt->execute([$customer_id]);
+                $message = "スタンプを1つ削除しました";
+                break;
+
+            case 'reset':
+                $stmt = $pdo->prepare("UPDATE stamp_cards SET stamp_count = 0 WHERE customer_id = ?");
+                $stmt->execute([$customer_id]);
+                $message = "スタンプをリセットしました";
+                break;
+
+            case 'reset_buttons':
+                $stmt = $pdo->prepare("DELETE FROM exchange_history WHERE customer_id = ?");
+                $stmt->execute([$customer_id]);
+                $message = "交換済みボタンをリセットしました";
+                break;
+        }
+
+        // 新しいスタンプ数を再取得
+        $stmt = $pdo->prepare("SELECT stamp_count FROM stamp_cards WHERE customer_id = ?");
+        $stmt->execute([$customer_id]);
+        $current_stamps = (int)$stmt->fetchColumn();
+    }
+
+    /* -------------------------------------
+        ★ PRG：POST → Redirect → GET
+    ------------------------------------- */
+    $_SESSION['stamp_message'] = $message; // 1回だけ表示するメッセージ
+    header("Location: stamp.php");
+    exit;
 }
 
-// ----------------------------------
-// 交換済み景品一覧
-// ----------------------------------
-$sql = $pdo->prepare("SELECT prize_id FROM exchange_history WHERE customer_id = ?");
-$sql->execute([$customer_id]);
-$exchanged_list = $sql->fetchAll(PDO::FETCH_COLUMN);
+/* -------------------------------------------
+    メッセージ表示（PRGで受け取り）
+------------------------------------------- */
+$message = "";
+if (!empty($_SESSION['stamp_message'])) {
+    $message = $_SESSION['stamp_message'];
+    unset($_SESSION['stamp_message']);
+}
+
+/* -------------------------------------------
+    交換済み景品取得
+------------------------------------------- */
+$stmt = $pdo->prepare("SELECT prize_id FROM exchange_history WHERE customer_id = ?");
+$stmt->execute([$customer_id]);
+$exchanged_list = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <title>スタンプカード</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-.stamp-card-container { max-width: 600px; margin: 20px auto; padding: 20px; }
-.stamp-card-area { background: #f7f7e8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.stamp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; padding: 5px; background:#fff; border:2px solid #ccc; }
-.stamp-cell { aspect-ratio:1/1; display:flex; justify-content:center; align-items:center; border:1px solid #eee; }
-.stamp-cell img { width:80%; height:80%; filter: invert(10%) sepia(90%) saturate(700%) hue-rotate(330deg) brightness(1.2); }
+body { font-family: Arial, sans-serif; background:#fafafa; color:#333; }
+.stamp-card-container { max-width: 700px; margin: 20px auto; padding: 20px; }
+.stamp-card-area { background: #f7f7e8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.06); }
+.stamp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; padding: 5px; background:#fff; border:2px solid #ccc; border-radius:6px; }
+.stamp-cell { aspect-ratio:1/1; display:flex; justify-content:center; align-items:center; border:1px solid #eee; border-radius:4px; }
+.stamp-cell img { width:100%; height:100%; object-fit:contain; }
 .exchange-button { padding:8px 15px; border-radius:5px; border:none; font-weight:bold; min-width:100px; }
 .exchange-available { background:#69f0ae; cursor:pointer; }
 .exchange-disabled { background:#eee; color:#888; cursor:not-allowed; }
 .exchange-exchanged { background:#b0e0c9; cursor:not-allowed; color:#555; }
-.prize-item { display:flex; justify-content:space-between; background:#e8f5e9; padding:10px; margin-bottom:5px; border-radius:8px; }
+.prize-item { display:flex; justify-content:space-between; background:#e8f5e9; padding:10px; margin-bottom:8px; border-radius:8px; align-items:center; }
+.alert-message { background:#fff3cd; padding:10px; margin-bottom:12px; border-radius:6px; border:1px solid #ffeeba; }
+.test-buttons { margin-top:15px; }
+.test-buttons form { display:inline-block; margin-right:6px; }
+.test-buttons button { padding:6px 12px; border-radius:4px; border:none; cursor:pointer; background:#90caf9; color:#fff; }
 </style>
 </head>
 <body>
 
 <?php include('header.php'); ?>
 
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">スタンプカード</span>
+</nav>
+
 <div class="stamp-card-container">
 
-<h2>スタンプカード</h2>
+    <?php if ($message): ?>
+        <div class="alert-message"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
 
-<?php if ($message): ?>
-    <div class="alert-message"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
-<?php endif; ?>
-
-<div class="stamp-card-area">
-    <div class="stamp-grid">
-        <?php for ($i = 0; $i < $MAX_STAMPS; $i++): ?>
-            <div class="stamp-cell">
-                <?php if ($i < $current_stamps): ?>
-                    <img src="sato/img/stamp.png" alt="stamp">
-                <?php endif; ?>
-            </div>
-        <?php endfor; ?>
-    </div>
-    <p style="text-align:right; margin-top:10px;">現在のスタンプ数: <?= $current_stamps ?> / <?= $MAX_STAMPS ?></p>
-</div>
-
-<h3>景品一覧</h3>
-
-<?php foreach ($prize_list as $id => $info): ?>
-<?php
-    $is_exchanged = in_array($id, $exchanged_list);
-    $can_exchange = !$is_exchanged && $current_stamps >= $info['required'];
-
-    $button_class = $is_exchanged
-        ? "exchange-exchanged"
-        : ($can_exchange ? "exchange-available" : "exchange-disabled");
-
-    $button_text = $is_exchanged ? "交換済" : "交換する";
-?>
-<div class="prize-item">
-    <div>
-        <?= htmlspecialchars($info['name']) ?>（<?= $info['required'] ?>個）
+    <div class="stamp-card-area">
+        <div class="stamp-grid">
+            <?php for ($i = 0; $i < $MAX_STAMPS; $i++): ?>
+                <div class="stamp-cell">
+                    <?php if ($i < $current_stamps): ?>
+                        <?php if (file_exists('img/stamp.png')): ?>
+                            <img src="img/stamp.png" alt="stamp">
+                        <?php else: ?>
+                            <i class="fa fa-circle" style="font-size:24px; color:#f57c00;"></i>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            <?php endfor; ?>
+        </div>
+        <p style="text-align:right; margin-top:10px;">現在のスタンプ数: <?= $current_stamps ?> / <?= $MAX_STAMPS ?></p>
     </div>
 
-    <form method="POST">
-        <input type="hidden" name="exchange_prize_id" value="<?= $id ?>">
-        <button class="exchange-button <?= $button_class ?>" <?= $can_exchange ? "" : "disabled" ?>>
-            <?= $button_text ?>
-        </button>
-    </form>
-</div>
-<?php endforeach; ?>
+    <h3 style="margin-top:18px;">景品一覧</h3>
+
+    <?php foreach ($prize_list as $id => $info): ?>
+        <?php
+            $is_exchanged = in_array($id, $exchanged_list, true);
+            $can_exchange = !$is_exchanged && $current_stamps >= $info['required'];
+            $button_class = $is_exchanged ? "exchange-exchanged" : ($can_exchange ? "exchange-available" : "exchange-disabled");
+            $button_text = $is_exchanged ? "交換済" : "交換する";
+        ?>
+        <div class="prize-item">
+            <div><?= htmlspecialchars($info['name']) ?>（<?= $info['required'] ?>個）</div>
+            <form method="POST" style="margin:0;">
+                <input type="hidden" name="exchange_prize_id" value="<?= $id ?>">
+                <button class="exchange-button <?= $button_class ?>" <?= $can_exchange ? "" : "disabled" ?>>
+                    <?= $button_text ?>
+                </button>
+            </form>
+        </div>
+    <?php endforeach; ?>
+
+    <div class="test-buttons">
+        <form method="POST"><input type="hidden" name="stamp_action" value="add"><button>スタンプ追加</button></form>
+        <form method="POST"><input type="hidden" name="stamp_action" value="remove"><button>スタンプ削除</button></form>
+        <form method="POST"><input type="hidden" name="stamp_action" value="reset"><button>スタンプリセット</button></form>
+        <form method="POST"><input type="hidden" name="stamp_action" value="reset_buttons"><button>ボタンリセット</button></form>
+    </div>
 
 </div>
-
 </body>
 </html>
