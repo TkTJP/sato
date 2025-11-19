@@ -62,7 +62,8 @@ try {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>商品一覧 | SATONOMI</title>
+    <title>TOP | SATONOMI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="product_list.css">
 </head>
 <body>
