@@ -62,72 +62,100 @@ try {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-     <title>商品一覧 | SATONOMI</title>
+    <title>商品一覧 | SATONOMI</title>
+    <link rel="stylesheet" href="product_list.css">
 </head>
 <body>
 
 <?php require 'header.php'; ?>
 
 <!-- 🔍 検索フォーム -->
-<div>
+<div class="search-box">
   <form action="" method="get">
-    <input type="text" name="keyword" placeholder="商品名または説明で検索" 
+    <input type="text" name="keyword" placeholder="SATONOMIで探す"
            value="<?php echo htmlspecialchars($keyword); ?>">
     <button type="submit">検索</button>
   </form>
 </div>
 
-<hr>
 
 <!-- ⭐ 人気ランキング -->
-<h3>人気ランキング</h3>
-<div>
-<?php if (!empty($favorites)): ?>
-    <?php $rank = 1; foreach ($favorites as $f): ?>
-        <div>
-            <strong><?php echo $rank; ?>位</strong><br>
+<div class="ranking-area">
+    <h3 class="ranking-title">人気ランキング</h3>
+
+    <div class="ranking-list">
+
+    <?php if (!empty($favorites)): ?>
+        <?php $rank = 1; foreach ($favorites as $f): ?>
+        <div class="ranking-card">
+            <div class="rank-badge"><?php echo $rank; ?></div>
+
             <a href="product_detail.php?id=<?php echo urlencode($f['product_id']); ?>">
-                <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>" 
-                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="150"><br>
+                <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>"
+                     alt="<?php echo htmlspecialchars($f['name']); ?>">
+            </a>
+
+            <div class="ranking-name">
                 <?php echo htmlspecialchars($f['name']); ?>
-            </a><br>
-            ¥<?php echo number_format($f['price']); ?><br>
-            <small><?php echo htmlspecialchars($f['product_explain']); ?></small>
+            </div>
+
+            <div class="ranking-price">
+                ¥<?php echo number_format($f['price']); ?>
+            </div>
+
+            <div class="ranking-explain">
+                <?php echo htmlspecialchars($f['product_explain']); ?>
+            </div>
         </div>
-        <hr>
-    <?php $rank++; endforeach; ?>
-<?php else: ?>
-    <p>人気商品はありません。</p>
-<?php endif; ?>
+
+        <?php $rank++; endforeach; ?>
+
+    <?php else: ?>
+        <p>人気商品はありません。</p>
+    <?php endif; ?>
+
+    </div>
 </div>
 
-<hr>
+
 <!-- 🗺️ 名産マップ -->
-<div>
-    <a href="nihonntizu.php">名産マップを見てみよう！</a>
+<div class="map-area">
+    <a href="nihonntizu.php" class="map-btn">名産マップを見てみよう！</a>
 </div>
-<hr>
-<!-- 🛒 商品一覧 -->
-<h2>商品一覧</h2>
 
-<!-- 商品一覧 -->
-<div>
+
+<!-- 🛒 商品一覧 -->
+<h2 class="section-title">商品一覧</h2>
+
+<div class="product-list">
+
 <?php if (!empty($products)): ?>
     <?php foreach ($products as $p): ?>
-        <div>
-            <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
-                <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>" 
-                     alt="<?php echo htmlspecialchars($p['name']); ?>" width="150"><br>
-                <?php echo htmlspecialchars($p['name']); ?>
-            </a><br>
-            ¥<?php echo number_format($p['price']); ?><br>
 
+    <div class="product-card">
+
+        <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
+            <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>"
+                 alt="<?php echo htmlspecialchars($p['name']); ?>">
+        </a>
+
+        <div class="product-name">
+            <?php echo htmlspecialchars($p['name']); ?>
         </div>
-        <hr>
+
+        <div class="product-price">
+            ¥<?php echo number_format($p['price']); ?>
+        </div>
+
+    </div>
+
     <?php endforeach; ?>
+
 <?php else: ?>
-    <p>該当する商品がありません。</p>
+    <p class="no-result">該当する商品がありません。</p>
 <?php endif; ?>
+
 </div>
+
 </body>
 </html>
