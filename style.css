@@ -522,13 +522,13 @@ body {
     background: #f5f5f5;
     border-radius: 12px;
     padding: 16px;
+    display: flex;
 }
 
 .ranking-card {
     text-align: center;
     margin: 20px 0;
     position: relative;
-    display: flex;
 }
 
 .rank-badge {
