@@ -136,7 +136,7 @@ try {
 
         <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
             <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>"
-                 alt="<?php echo htmlspecialchars($p['name']); ?>">
+                 alt="<?php echo htmlspecialchars($p['name']); ?>" width="150">
         </a>
 
         <div class="product-name">
