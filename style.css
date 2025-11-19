@@ -545,7 +545,6 @@ body {
 }
 
 .ranking-card img {
-    width: 100px;
     margin-bottom: 8px;
 }
 
@@ -598,10 +597,10 @@ body {
     padding: 16px;
     border-radius: 12px;
     text-align: center;
+    display: flex;
 }
 
 .product-card img {
-    width: 140px;
     margin-bottom: 10px;
 }
 
