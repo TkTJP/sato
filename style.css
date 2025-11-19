@@ -30,6 +30,8 @@ body {
     /* 薄いベージュ */
     padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    top: 5%;
 }
 
 .header-inner {
@@ -69,10 +71,6 @@ body {
     font-size: 22px;
     margin-left: 15px;
     transition: color 0.3s;
-}
-
-.icon-link:hover {
-    color: #666;
 }
 
 /* =============================
@@ -480,6 +478,7 @@ body {
     justify-content: center;
     background: #a2e8a2;
     border-bottom: 1px solid #ddd;
+
 }
 
 .search-box form {
@@ -598,6 +597,7 @@ body {
     padding: 16px;
     border-radius: 12px;
     text-align: center;
+    border: 2px solid #414141;
 }
 
 .product-card img {
