@@ -478,7 +478,7 @@ body {
     padding: 12px;
     display: flex;
     justify-content: center;
-    background: #fff;
+    background: #a2e8a2;
     border-bottom: 1px solid #ddd;
 }
 
@@ -487,6 +487,7 @@ body {
     max-width: 500px;
     display: flex;
     gap: 8px;
+    background: #f5f5f5;
 }
 
 .search-box input {
@@ -519,7 +520,7 @@ body {
 .ranking-list {
     width: 90%;
     margin: 10px auto;
-    background: #fff;
+    background: #f5f5f5;
     border-radius: 12px;
     padding: 16px;
 }
@@ -532,7 +533,7 @@ body {
 
 .rank-badge {
     background: #f7b500;
-    color: #fff;
+    color: #f5f5f5;
     font-weight: bold;
     border-radius: 50%;
     width: 28px;
@@ -573,7 +574,7 @@ body {
 .map-btn {
     padding: 10px 18px;
     background: #ffa64d;
-    color: #fff;
+    color: #f5f5f5;
     border-radius: 20px;
     text-decoration: none;
 }
@@ -591,7 +592,7 @@ body {
 }
 
 .product-card {
-    background: #fff;
+    background: #f5f5f5;
     width: 90%;
     margin: 20px auto;
     padding: 16px;
