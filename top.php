@@ -92,7 +92,7 @@ try {
 
             <a href="product_detail.php?id=<?php echo urlencode($f['product_id']); ?>">
                 <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>"
-                     alt="<?php echo htmlspecialchars($f['name']); ?>">
+                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="150">
             </a>
 
             <div class="ranking-name">
