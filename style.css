@@ -30,8 +30,7 @@ body {
     /* 薄いベージュ */
     padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: absolute;
-    top: 5%;
+    position: fixed;
 }
 
 .header-inner {
