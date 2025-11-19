@@ -10,7 +10,7 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
-} catch (PDOException $e) {
+    } catch (PDOException $e) {
     exit('DB接続エラー: ' . htmlspecialchars($e->getMessage()));
 }
 
@@ -62,7 +62,7 @@ try {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>商品一覧 | SATONOMI</title>
+     <title>商品一覧 | SATONOMI</title>
 </head>
 <body>
 
@@ -102,14 +102,11 @@ try {
 </div>
 
 <hr>
-
 <!-- 🗺️ 名産マップ -->
 <div>
     <a href="nihonntizu.php">名産マップを見てみよう！</a>
 </div>
-
 <hr>
-
 <!-- 🛒 商品一覧 -->
 <h2>商品一覧</h2>
 
@@ -132,6 +129,5 @@ try {
     <p>該当する商品がありません。</p>
 <?php endif; ?>
 </div>
-
 </body>
 </html>
