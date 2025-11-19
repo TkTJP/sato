@@ -93,7 +93,7 @@ try {
 
             <a href="product_detail.php?id=<?php echo urlencode($f['product_id']); ?>">
                 <img src="img/<?php echo htmlspecialchars($f['image'] ?: 'noimage.png'); ?>"
-                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="150">
+                     alt="<?php echo htmlspecialchars($f['name']); ?>" width="200">
             </a>
 
             <div class="ranking-name">
@@ -137,7 +137,7 @@ try {
 
         <a href="product_detail.php?id=<?php echo urlencode($p['product_id']); ?>">
             <img src="img/<?php echo htmlspecialchars($p['image'] ?: 'noimage.png'); ?>"
-                 alt="<?php echo htmlspecialchars($p['name']); ?>" width="150">
+                 alt="<?php echo htmlspecialchars($p['name']); ?>" width="200">
         </a>
 
         <div class="product-name">
