@@ -529,6 +529,7 @@ body {
     text-align: center;
     margin: 20px 0;
     position: relative;
+    display: flex;
 }
 
 .rank-badge {
@@ -597,7 +598,6 @@ body {
     padding: 16px;
     border-radius: 12px;
     text-align: center;
-    display: flex;
 }
 
 .product-card img {
