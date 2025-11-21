@@ -17,7 +17,7 @@ if (empty($_SESSION['customer']['customer_id'])) {
 
 $customer_id = $_SESSION['customer']['customer_id'];
 
-$sql = $pdo->prepare('SELECT name, subscr_join, point FROM customers WHERE customer_id = ?');
+$sql = $pdo->prepare('SELECT name, subscr_join, points FROM customers WHERE customer_id = ?');
 $sql->execute([$customer_id]);
 $customer = $sql->fetch(PDO::FETCH_ASSOC);
 ?>
@@ -51,12 +51,12 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
         <div class="subscribe">
             <?= $customer['subscr_join'] == 1 ? "サブスク登録中" : "サブスク未登録"; ?>
         </div>
-        <div class="points">所持ポイント：<?= number_format($customer['point']) ?>P</div>
+        <div class="points">所持ポイント：<?= number_format($customer['points']) ?>P</div>
     </div>
 
     <div class="menu">
         <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i> My情報</button>
-        <button onclick="location.href='purchase-history.php'"><i class="fa-solid fa-clock"></i> 購入履歴</button>
+        <button onclick="location.href=''"><i class="fa-solid fa-clock"></i> 購入履歴</button>
         <button onclick="location.href='subscribe.php'"><i class="fa-solid fa-star"></i> サブスク登録</button>
         <button onclick="location.href='stamp.php'"><i class="fa-solid fa-face-smile"></i> スタンプカード</button>
     </div>
