@@ -17,7 +17,7 @@ if (empty($_SESSION['customer']['customer_id'])) {
 
 $customer_id = $_SESSION['customer']['customer_id'];
 
-$sql = $pdo->prepare('SELECT name, subscr_join, point FROM customers WHERE customer_id = ?');
+$sql = $pdo->prepare('SELECT name, subscr_join, points FROM customers WHERE customer_id = ?');
 $sql->execute([$customer_id]);
 $customer = $sql->fetch(PDO::FETCH_ASSOC);
 ?>
