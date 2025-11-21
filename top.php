@@ -66,7 +66,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="product_list.css">
 </head>
-<body>
+<body class="page-with-nav">
 
 <?php require 'header.php'; ?>
 

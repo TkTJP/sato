@@ -476,15 +476,16 @@ body {
 ============================= */
 
 /* 🔍 検索 */
-.search-box {
+.page-with-nav .search-box {
     padding: 12px;
     display: flex;
     justify-content: center;
     background: #a2e8a2;
     border-bottom: 1px solid #ddd;
     position: fixed;
-    top: 0;
+    top: 60px;
     height: 40px;
+    z-index: 900;
 }
 
 .search-box form {
@@ -509,6 +510,10 @@ body {
     border-radius: 20px;
     color: #f5f5f5;
     cursor: pointer;
+}
+
+.page-with-nav {
+    padding-top: 120px;
 }
 
 
