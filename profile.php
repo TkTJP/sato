@@ -42,7 +42,7 @@ $customer = $stmt->fetch();
 .logout { display:block; width:100%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
 </style>
 </head>
-<body class="bodys">
+<body>
 
 <?php include('header.php'); ?>
 
