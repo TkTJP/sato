@@ -28,7 +28,7 @@ try {
         $stmt->bindValue(':customer_id', $customer_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        echo "<?php require 'header.php'; ?> <p>{$message}</p>";
+        echo "<p>{$message}</p>";
         echo '<p><a href="profile.php">➡ プロフィールページに戻る</a></p>';
         exit; // 処理をここで終了
     }
