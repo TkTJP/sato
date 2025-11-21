@@ -10,7 +10,8 @@ body {
     background-color: #f5f5f5;
     /* 背景の薄いグレー */
     margin: 0;
-    padding: auto;
+    padding-top: 80px;
+
 }
 
 /* モバイル表示のシミュレーションと中央寄せ */
