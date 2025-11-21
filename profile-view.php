@@ -2,14 +2,15 @@
 session_start();
 require 'db-connect.php';
 
-// ✅ DB接続
+// DB接続
 try {
     $pdo = new PDO($connect, USER, PASS);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     exit('DB接続エラー: ' . $e->getMessage());
 }
 
-// ✅ セッション確認
+// ログイン確認
 if (!isset($_SESSION['customer']['customer_id'])) {
     echo '<p>ログイン情報がありません。<a href="login.php">ログイン画面へ</a></p>';
     exit;
@@ -17,9 +18,10 @@ if (!isset($_SESSION['customer']['customer_id'])) {
 
 $customer_id = $_SESSION['customer']['customer_id'];
 
-// ✅ ユーザー情報を取得（customers と addresses を結合）
+// ユーザー情報取得（画像含む）
 $sql = $pdo->prepare('
-    SELECT c.name, c.email, a.postal_code, a.prefecture, a.city, a.street, a.phone_number
+    SELECT c.name, c.email, c.customer_image,
+           a.postal_code, a.prefecture, a.city, a.street, a.phone_number
     FROM customers c
     LEFT JOIN addresses a ON c.customer_id = a.customer_id
     WHERE c.customer_id = ?
@@ -31,18 +33,18 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My情報閲覧画面</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My情報閲覧画面</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
 <?php include('header.php'); ?>
 
 <nav class="nav-bar">
     <button class="back-button" onclick="history.back()">
-    <i class="fa-solid fa-arrow-left"></i>
+        <i class="fa-solid fa-arrow-left"></i>
     </button>
     <span class="nav-title">My情報閲覧</span>
 </nav>
@@ -50,6 +52,13 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 <div class="app-container">
 
     <?php if ($customer): ?>
+        <div class="form-group profile-image">
+            <label>プロフィール画像</label>
+            <p>
+                <img src="img/icon<?= (int)$customer['customer_image'] ?>.png" alt="プロフィール画像" style="width:100px; height:100px; border-radius:50%;">
+            </p>
+        </div>
+
         <div class="form-group">
             <label>名前</label>
             <p><?= htmlspecialchars($customer['name'], ENT_QUOTES) ?></p>
@@ -67,12 +76,7 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 
         <div class="form-group">
             <label>住所</label>
-            <p><?= htmlspecialchars(
-                ($customer['prefecture'] ?? '') . 
-                ($customer['city'] ?? '') . 
-                ($customer['street'] ?? ''),
-                ENT_QUOTES
-            ) ?></p>
+            <p><?= htmlspecialchars(($customer['prefecture'] ?? '') . ($customer['city'] ?? '') . ($customer['street'] ?? ''), ENT_QUOTES) ?></p>
         </div>
 
         <div class="form-group">
@@ -89,6 +93,5 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
 </div>
-
 </body>
 </html>
