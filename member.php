@@ -17,7 +17,7 @@ if (!empty($_SESSION['customer']['customer_id'])) {
     <title>会員画面</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bodys">
 
     <?php include('header.php'); ?>
 

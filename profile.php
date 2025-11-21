@@ -40,7 +40,7 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 .logout { display:block; width:100%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
 </style>
 </head>
-<body>
+<body class="bodys">
 
 <?php include('header.php'); ?>
 
