@@ -479,7 +479,7 @@ body {
     background: #a2e8a2;
     border-bottom: 1px solid #ddd;
     position: fixed;
-    top: auto;
+    top: 0;
 }
 
 .search-box form {
