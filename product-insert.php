@@ -1,8 +1,18 @@
 <?php
+session_start();
 require 'db-connect.php';
 
-$message = '';
+/* ▼ 必ず最初にログインチェックを実行する（何も出力する前） ▼ */
+if (!isset($_SESSION["admin_id"])) {
+     echo "<script>
+            alert('ログインしてください');
+            window.location.href = 'admin-login.php';
+          </script>";
+    exit;
+}
+/* ▲ ログインチェックここまで ▲ */
 
+$message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['command']) && $_POST['command'] === 'insert') {
     try {
         $pdo = new PDO($connect, USER, PASS);
@@ -81,7 +91,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:10p
 main{max-width:500px;margin:40px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,0.1);position:relative;z-index:1;}
 label{display:block;margin-top:15px;font-weight:bold;color:#444;}
 input,select,textarea{width:100%;padding:10px;margin-top:5px;font-size:1rem;border-radius:5px;border:1px solid #ccc;box-sizing:border-box;}
-button{margin-top:20px;padding:12px;font-size:1.1rem;background-color:#0078D7;color:white;border:none;border-radius:6px;cursor:pointer;}
+button{width:80%;display:block;margin:20px auto 0;padding:12px;font-size:1.1rem;background-color:lightgreen;color:black;border:none;border-radius:6px;cursor:pointer;}
 button:hover{background-color:#005fa3;}
 #image-preview{display:block;margin:10px 0;max-width:100%;max-height:200px;border:1px solid #ccc;border-radius:5px;object-fit:contain;}
 .message{margin-top:10px;color:green;font-weight:bold;text-align:center;}
