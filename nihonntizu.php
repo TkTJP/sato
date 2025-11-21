@@ -22,11 +22,7 @@ $regions = [
 <title>日本地図 - 地方選択</title>
 <link rel="stylesheet" href="style.css">
 <style>
-body {
-    text-align: center;
-    font-family: sans-serif;
-    background: #f8f9fa;
-}
+
 h1, h2 {
     margin-top: 20px;
 }
