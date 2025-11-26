@@ -38,8 +38,8 @@ $customer = $stmt->fetch();
 .profile .name { font-size:1.5em; font-weight:bold; margin-top:10px; }
 .profile .subscribe, .profile .points { margin-top:5px; }
 .menu { margin-top:20px; }
-.menu button { display:block; width:100%; padding:10px; margin-bottom:10px; border:none; border-radius:5px; text-align:left; background:#90caf9; color:#fff; font-weight:bold; cursor:pointer; }
-.logout { display:block; width:100%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
+.menu button { display:block; width:100%; padding:10px; margin-bottom:10px; border:none; border-radius:5px; text-align:left; background:#dcdcdc; color:#fff; font-weight:bold; cursor:pointer; }
+.logout { display:block; width:80%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
