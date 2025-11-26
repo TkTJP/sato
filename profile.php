@@ -61,8 +61,6 @@ $customer = $stmt->fetch();
             <?= $customer['subscr_join'] == 1 ? "サブスク登録中" : "サブスク未登録"; ?>
         </div>
         <div class="points">所持ポイント：<?= number_format($customer['points']) ?>P</div>
-    </div>
-
     <div class="menu">
         <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i> My情報</button>
         <button onclick="location.href=''"><i class="fa-solid fa-clock"></i> 購入履歴</button>
@@ -73,6 +71,7 @@ $customer = $stmt->fetch();
     <form action="logout.php" method="post">
         <button type="submit" class="logout">ログアウト</button>
     </form>
+    </div>
 </div>
 
 </body>
