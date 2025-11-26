@@ -25,8 +25,6 @@ $customer_id = (int)$_SESSION['customer']['customer_id'];
 /* =========================
    POSTデータ取得
 ========================= */
-$base_total  = (int)($_POST['base_total'] ?? 0);
-$shipping    = (int)($_POST['shipping'] ?? 0);
 $use_points  = (int)($_POST['points'] ?? 0);
 $coupon_rate = (int)($_POST['coupon_rate'] ?? 0);
 $final_total = (int)($_POST['final_total'] ?? 0);
@@ -48,15 +46,12 @@ if (!$cart_items) {
     exit('カートが空です。');
 }
 
-/* =========================
-   トランザクション開始
-========================= */
 try {
     $pdo->beginTransaction();
 
-    /* -------------------------
+    /* =========================
        ① purchases に登録
-    ------------------------- */
+    ========================= */
     $stmt = $pdo->prepare("
         INSERT INTO purchases (customer_id, total, purchase_date)
         VALUES (?, ?, CURRENT_TIMESTAMP)
@@ -65,11 +60,11 @@ try {
 
     $purchase_id = $pdo->lastInsertId();
 
-    /* -------------------------
-       ② purchase_detail に登録
-    ------------------------- */
+    /* =========================
+       ② ✅ purchase_details に登録
+    ========================= */
     $stmtDetail = $pdo->prepare("
-        INSERT INTO purchase_detail
+        INSERT INTO purchase_details
         (purchase_id, product_id, quantity, price)
         VALUES (?, ?, ?, ?)
     ");
@@ -83,9 +78,9 @@ try {
         ]);
     }
 
-    /* -------------------------
+    /* =========================
        ③ ポイント使用分減算
-    ------------------------- */
+    ========================= */
     if ($use_points > 0) {
         $stmt = $pdo->prepare("
             UPDATE customers
@@ -95,9 +90,9 @@ try {
         $stmt->execute([$use_points, $customer_id, $use_points]);
     }
 
-    /* -------------------------
-       ④ クーポン使用済み更新
-    ------------------------- */
+    /* =========================
+       ④ クーポン使用済みに変更
+    ========================= */
     if ($coupon_rate > 0) {
         $stmt = $pdo->prepare("
             UPDATE customer_coupons
@@ -109,9 +104,9 @@ try {
         $stmt->execute([$customer_id]);
     }
 
-    /* -------------------------
+    /* =========================
        ⑤ カート削除
-    ------------------------- */
+    ========================= */
     $stmt = $pdo->prepare("DELETE FROM carts WHERE customer_id = ?");
     $stmt->execute([$customer_id]);
 
