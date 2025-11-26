@@ -33,7 +33,7 @@ $customer = $stmt->fetch();
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.mypage-container { max-width: 600px; margin: 20px auto; padding: 20px; background:#f7f7f7; border-radius:8px; }
+.mypage-container { max-width: 600px; margin: auto; padding: 20px; background:#f7f7f7; border-radius:8px; }
 .profile img { width:100px; height:100px; border-radius:50%; }
 .profile .name { font-size:1.5em; font-weight:bold; margin-top:10px; }
 .profile .subscribe, .profile .points { margin-top:5px; }
