@@ -11,15 +11,17 @@ try {
     exit('DB接続エラー: ' . $e->getMessage());
 }
 
+// ログイン確認
 if (empty($_SESSION['customer']['customer_id'])) {
     exit('ログイン情報がありません。');
 }
 
-$customer_id = $_SESSION['customer']['customer_id'];
+$customer_id = (int)$_SESSION['customer']['customer_id'];
 
-$sql = $pdo->prepare('SELECT name, subscr_join, points FROM customers WHERE customer_id = ?');
-$sql->execute([$customer_id]);
-$customer = $sql->fetch(PDO::FETCH_ASSOC);
+// 顧客情報取得
+$stmt = $pdo->prepare('SELECT name, subscr_join, points, customer_image FROM customers WHERE customer_id = ?');
+$stmt->execute([$customer_id]);
+$customer = $stmt->fetch();
 ?>
 
 <!DOCTYPE html>
@@ -44,9 +46,16 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 
 <?php include('header.php'); ?>
 
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">マイページ</span>
+</nav>
+
 <div class="mypage-container">
     <div class="profile">
-        <img src="https://via.placeholder.com/100" alt="プロフィール画像">
+        <img src="img/icon<?= (int)$customer['customer_image'] ?>.png" alt="プロフィール画像">
         <div class="name"><?= htmlspecialchars($customer['name']); ?></div>
         <div class="subscribe">
             <?= $customer['subscr_join'] == 1 ? "サブスク登録中" : "サブスク未登録"; ?>
