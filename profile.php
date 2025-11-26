@@ -39,7 +39,7 @@ $customer = $stmt->fetch();
 .profile .subscribe, .profile .points { margin-top:5px; }
 .menu { margin-top:20px; }
 .menu button { display:block; width:100%; padding:10px; margin-bottom:10px; border:none; border-radius:5px; text-align:left; background:#dcdcdc; color:#fff; font-weight:bold; cursor:pointer; }
-.logout { display:block; width:80%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
+.logout { display:block; width:30%;padding-right:auto;padding-left:auto; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
