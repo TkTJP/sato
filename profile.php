@@ -63,7 +63,7 @@ $customer = $stmt->fetch();
         <div class="points">所持ポイント：<?= number_format($customer['points']) ?>P</div>
     <div class="menu">
         <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i> My情報</button>
-        <button onclick="location.href=''"><i class="fa-solid fa-clock"></i> 購入履歴</button>
+        <button onclick="location.href='purchase-history.php'"><i class="fa-solid fa-clock"></i> 購入履歴</button>
         <button onclick="location.href='subscribe.php'"><i class="fa-solid fa-star"></i> サブスク登録</button>
         <button onclick="location.href='stamp.php'"><i class="fa-solid fa-face-smile"></i> スタンプカード</button>
     </div>
