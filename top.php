@@ -19,7 +19,6 @@ try {
 // 🔹 検索キーワードの取得
 $keyword = $_GET['keyword'] ?? '';
 
-// 🔹 人気商品（product_details の product_explain に「人気」が含まれる商品）
 try {
     $stmt = $pdo->query("
         SELECT p.*, d.product_explain, 
@@ -31,7 +30,7 @@ try {
             ON p.product_id = l.product_id
         GROUP BY p.product_id
         ORDER BY like_count DESC
-        LIMIT 5
+        LIMIT 3
     ");
     $favorites = $stmt->fetchAll();
 } catch (PDOException $e) {
