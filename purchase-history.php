@@ -29,7 +29,7 @@ $end   = $_GET['end'] ?? '';
 $sql = "
 SELECT 
     p.purchase_id,
-    p.purchase_date,
+    DATE(p.purchase_date) AS purchase_date,
     p.total,
     d.product_id,
     d.quantity,
@@ -198,7 +198,8 @@ foreach ($rows as $row) {
             <?php foreach ($history['items'] as $item): ?>
                 <a href="product-detail.php?product_id=<?= (int)$item['product_id'] ?>" class="item-row">
 
-                    <img src="images/<?= htmlspecialchars($item['image']) ?>" class="item-img" alt="商品画像">
+                    <img src="img/<?= htmlspecialchars($item['image'] ?: 'noimage.png') ?>" class="item-img" alt="商品画像">
+
 
                     <div class="item-info">
                         <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
