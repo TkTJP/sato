@@ -24,7 +24,7 @@ $countStmt->execute([$product_id]);
 $totalLikes = $countStmt->fetchColumn();
 
 // いいね済
-$customer_id = $_SESSION['customer']['id'] ?? null;
+$customer_id = $_SESSION['customer']['customer_id'] ?? null;
 $isLiked = false;
 if ($customer_id) {
     $checkStmt = $pdo->prepare('SELECT 1 FROM likes WHERE product_id = ? AND customer_id = ?');
@@ -57,7 +57,7 @@ if ($customer_id) {
 <p>価格：¥<?= number_format($product['price']); ?></p>
 
 <!-- 単品 -->
-<p>単品 数量</p>
+<p>1本/¥<?= number_format($product['price']); ?></p>
 <div class="count-box">
     <button type="button" id="dec">－</button>
     <span id="qty">0</span>
@@ -65,7 +65,7 @@ if ($customer_id) {
 </div>
 
 <!-- セット -->
-<p>12本セット（-10%） ¥<?= number_format($set_price) ?></p>
+<p>12本セット（-10%） /¥<?= number_format($set_price) ?></p>
 <div class="set-box">
     <button type="button" id="boxDec">－</button>
     <span id="boxQty">0</span>
@@ -81,7 +81,7 @@ if ($customer_id) {
 </form>
 
 <!-- 商品説明 -->
-<button id="descBtn">説明 ▼</button>
+<button id="descBtn">商品説明 ▼</button>
 <p id="desc" style="display:none;">
 <?= nl2br(htmlspecialchars($product['description'] ?? '説明なし')); ?>
 </p>
