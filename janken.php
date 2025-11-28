@@ -5,6 +5,15 @@ error_reporting(E_ALL);
 session_start();
 require 'db-connect.php';
 
+try {
+    $pdo = new PDO($connect, USER, PASS, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    exit('DB接続エラー: ' . $e->getMessage());
+}
+
 if (empty($_SESSION['customer']['customer_id'])) {
     exit('ログインしてください');
 }
@@ -25,13 +34,11 @@ $token = $_SESSION['janken_token'];
 ----------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // ✅ 戻るボタンによる再実行防止
     if (!isset($_POST['token']) || $_POST['token'] !== $_SESSION['janken_token']) {
         header("Location: stamp.php");
         exit;
     }
 
-    // 使用済みにする（ここが超重要）
     unset($_SESSION['janken_token']);
 
     $user_hand = $_POST['hand'] ?? '';
@@ -44,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $cpu_hand = $hands[array_rand($hands)];
 
-    // ✅ 勝敗判定
     if ($user_hand === $cpu_hand) {
         $result = 'draw';
     } elseif (
@@ -57,9 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = 'lose';
     }
 
-    /* -----------------------------------
-       ✅ 勝ち・あいこはスタンプ +1
-    ----------------------------------- */
+    /* ✅ 勝ち・あいこはスタンプ +1 */
     if ($result === 'win' || $result === 'draw') {
         $stmt = $pdo->prepare("
             UPDATE stamp_cards
@@ -70,9 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$customer_id]);
     }
 
-    /* -----------------------------------
-       ✅ 結果メッセージ保存
-    ----------------------------------- */
     if ($result === 'win') {
         $_SESSION['stamp_message'] = "🎉 勝ちました！スタンプを1個獲得！";
     } elseif ($result === 'draw') {
@@ -81,9 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['stamp_message'] = "😭 負けました…スタンプは増えません。";
     }
 
-    /* -----------------------------------
-       ✅ 勝敗に関係なく stamp.php へ
-    ----------------------------------- */
     header("Location: stamp.php");
     exit;
 }
@@ -94,16 +92,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>じゃんけん</title>
+
+<style>
+body {
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.janken-form {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.janken-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.janken-btn img {
+    width: 140px;   /* ✅ 画像サイズ統一 */
+    height: auto;
+    transition: transform 0.2s;
+}
+
+.janken-btn img:hover {
+    transform: scale(1.1);
+}
+</style>
+
 </head>
 <body>
 
 <h2>じゃんけん</h2>
 
-<form method="POST">
+<form method="POST" class="janken-form">
     <input type="hidden" name="token" value="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>">
-    <button type="submit" name="hand" value="gu">✊ グー</button>
-    <button type="submit" name="hand" value="choki">✌ チョキ</button>
-    <button type="submit" name="hand" value="pa">✋ パー</button>
+
+    <button type="submit" name="hand" value="gu" class="janken-btn">
+        <img src="img/jankenGu.png" alt="グー">
+    </button>
+
+    <button type="submit" name="hand" value="choki" class="janken-btn">
+        <img src="img/jankenChoki.png" alt="チョキ">
+    </button>
+
+    <button type="submit" name="hand" value="pa" class="janken-btn">
+        <img src="img/jankenPa.png" alt="パー">
+    </button>
 </form>
 
 </body>
