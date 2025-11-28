@@ -633,3 +633,43 @@ body {
     text-align: center;
     color: #777;
 }
+
+/*いいねボタン*/
+
+.like-btn {
+    font-size: 32px;
+    /* スマホで見やすい大きさ */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: #c0c0c0;
+    /* 未いいね時の薄いグレー */
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 押した瞬間にポンッと大きくなる */
+.like-btn:active {
+    transform: scale(1.3);
+}
+
+/* いいね済（ピンク色） */
+.like-btn.liked {
+    color: #ff648a;
+}
+
+/* カウントも少しポップに */
+#likeCount {
+    font-size: 20px;
+    margin-left: 6px;
+    color: #555;
+}
+
+/* スマホでのタップ範囲を広げる（押しやすい） */
+.like-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 12px;
+}

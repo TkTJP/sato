@@ -36,18 +36,8 @@ if ($customer_id) {
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
 <title><?= htmlspecialchars($product['name']); ?></title>
-
-<style>
-/* --- 最低限のCSSだけ --- */
-.like-btn { cursor: pointer; color:#aaa; font-size:20px; }
-.liked { color:#ff6b9f; }
-.count-box, .set-box {
-    display:flex; gap:10px; align-items:center; margin:10px 0;
-}
-button { padding:4px 10px; }
-</style>
-
 </head>
 <body>
 
@@ -59,8 +49,10 @@ button { padding:4px 10px; }
 <img src="img/<?= htmlspecialchars($product['image']); ?>" width="200"><br>
 
 <!-- いいね -->
-<span id="likeBtn" class="like-btn <?= $isLiked ? 'liked':'' ?>">❤</span>
-<span id="likeCount"><?= $totalLikes ?></span>
+<div class="like-wrap">
+    <span id="likeBtn" class="like-btn <?= $isLiked ? 'liked':'' ?>">❤</span>
+    <span id="likeCount"><?= $totalLikes ?></span>
+</div>
 
 <p>価格：¥<?= number_format($product['price']); ?></p>
 
