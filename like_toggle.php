@@ -6,13 +6,13 @@ header('Content-Type: application/json; charset=utf-8');
 
 $pdo = new PDO($connect, USER, PASS);
 
-// 未ログイン
-if (!isset($_SESSION['customer']['id'])) {
+// ★ 修正 → 正しいキー customer_id
+if (!isset($_SESSION['customer']['customer_id'])) {
     echo json_encode(['success' => false, 'message' => 'ログインしてください']);
     exit;
 }
 
-$customer_id = $_SESSION['customer']['id'];
+$customer_id = $_SESSION['customer']['customer_id'];
 $product_id = $_POST['id'] ?? null;
 
 if (!$product_id || !is_numeric($product_id)) {
