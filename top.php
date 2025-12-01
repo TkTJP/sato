@@ -19,15 +19,18 @@ try {
 // 🔹 検索キーワードの取得
 $keyword = $_GET['keyword'] ?? '';
 
-// 🔹 人気商品（product_details の product_explain に「人気」が含まれる商品）
 try {
     $stmt = $pdo->query("
-        SELECT p.*, d.product_explain 
+        SELECT p.*, d.product_explain, 
+            COUNT(l.product_id) AS like_count
         FROM products p
-        JOIN product_details d ON p.product_id = d.product_id
-        WHERE d.product_explain LIKE '%人気%'
-        ORDER BY p.created_at DESC
-        LIMIT 5
+        LEFT JOIN product_details d 
+            ON p.product_id = d.product_id
+        LEFT JOIN likes l
+            ON p.product_id = l.product_id
+        GROUP BY p.product_id
+        ORDER BY like_count DESC
+        LIMIT 3
     ");
     $favorites = $stmt->fetchAll();
 } catch (PDOException $e) {
