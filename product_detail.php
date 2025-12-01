@@ -108,9 +108,10 @@ function updateBox(){
 // --- 説明開閉 ---
 document.getElementById('descBtn').onclick = ()=>{
     const d = document.getElementById('desc');
+    const btn = document.getElementById('descBtn');
     const open = d.style.display === 'none';
     d.style.display = open ? 'block' : 'none';
-    descBtn.textContent = open ? '説明 ▲' : '説明 ▼';
+    btn.textContent = open ? '説明 ▲' : '説明 ▼';
 };
 
 // --- いいね ---
@@ -120,10 +121,13 @@ document.getElementById('likeBtn').onclick = async ()=>{
         headers:{'Content-Type':'application/x-www-form-urlencoded'},
         body:'id=<?= $product_id ?>'
     });
+
     const data = await res.json();
     if(data.success){
-        likeBtn.classList.toggle('liked', data.liked);
+        document.getElementById('likeBtn').classList.toggle('liked', data.liked);
         document.getElementById('likeCount').textContent = data.likes;
+    } else {
+        alert(data.message);
     }
 };
 </script>
