@@ -6,46 +6,44 @@ header('Content-Type: application/json; charset=utf-8');
 
 $pdo = new PDO($connect, USER, PASS);
 
-// ★ 修正 → 正しいキー customer_id
-if (!isset($_SESSION['customer']['customer_id'])) {
+// ★ ログイン確認（customer_id）
+if (empty($_SESSION['customer']['customer_id'])) {
     echo json_encode(['success' => false, 'message' => 'ログインしてください']);
     exit;
 }
 
-$customer_id = $_SESSION['customer']['customer_id'];
-$product_id = $_POST['id'] ?? null;
+$customer_id = (int)$_SESSION['customer']['customer_id'];
+$product_id  = (int)($_POST['id'] ?? 0);
 
-if (!$product_id || !is_numeric($product_id)) {
+if ($product_id <= 0) {
     echo json_encode(['success' => false, 'message' => '不正なIDです']);
     exit;
 }
 
-// すでにいいねしているか確認
+// すでにいいね済みか確認
 $check = $pdo->prepare("SELECT 1 FROM likes WHERE product_id = ? AND customer_id = ?");
 $check->execute([$product_id, $customer_id]);
 $already = $check->fetch();
 
-// --- トグル処理（ON/OFF切替） ---
+// トグル処理
 if ($already) {
-    // いいね取り消し
-    $del = $pdo->prepare("DELETE FROM likes WHERE product_id = ? AND customer_id = ?");
-    $del->execute([$product_id, $customer_id]);
+    $pdo->prepare("DELETE FROM likes WHERE product_id = ? AND customer_id = ?")
+        ->execute([$product_id, $customer_id]);
     $liked = false;
 } else {
-    // いいね追加
-    $add = $pdo->prepare("INSERT INTO likes(product_id, customer_id) VALUES(?, ?)");
-    $add->execute([$product_id, $customer_id]);
+    $pdo->prepare("INSERT INTO likes(product_id, customer_id) VALUES(?, ?)")
+        ->execute([$product_id, $customer_id]);
     $liked = true;
 }
 
-// --- 最新のいいね数を取得 ---
-$countStmt = $pdo->prepare("SELECT COUNT(*) FROM likes WHERE product_id = ?");
-$countStmt->execute([$product_id]);
-$totalLikes = $countStmt->fetchColumn();
+// 最新のいいね数
+$count = $pdo->prepare("SELECT COUNT(*) FROM likes WHERE product_id = ?");
+$count->execute([$product_id]);
+$total = $count->fetchColumn();
 
 echo json_encode([
     'success' => true,
     'liked'   => $liked,
-    'likes'   => $totalLikes
+    'likes'   => $total
 ]);
 exit;
