@@ -141,6 +141,17 @@ try {
             throw new Exception('クーポンの使用に失敗しました。');
         }
     }
+        /* =========================
+            購入ポイント付与（3%）
+        ========================= */
+    $add_point = floor($final_total * 0.03);
+
+        $stmt = $pdo->prepare("
+            UPDATE customers
+            SET points = points + ?
+            WHERE customer_id = ?
+        ");
+    $stmt->execute([$add_point, $customer_id]);
 
     /* =========================
        ⑤ カート削除
