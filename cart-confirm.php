@@ -159,7 +159,7 @@ $total += ($price_single * $qty) + ($price_set * $box);
 <p><b>合計：¥<?= number_format($total) ?></b></p>
 
 <form action="order-confirm.php" method="get">
-    <button type="submit">購入を確定する</button>
+    <button type="submit">購入する</button>
 </form>
 
 <?php endif; ?>
