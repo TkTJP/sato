@@ -239,9 +239,13 @@ button {
     <ul>
         <li><a href="product-manage.php">商品管理</a></li>
         <li><a href="customer-manage.php">顧客管理</a></li>
-        <li><a href="order-history.php">注文履歴</a></li>
+        <li><a href="adorder-history.php">注文履歴</a></li>
         <li><a href="admin-logout.php" style="color:red; font-weight:bold;">ログアウト</a></li>
     </ul>
+</div>
+<!-- 商品追加ボタン -->
+<div class="add-product">
+    <a href="product-insert.php"><button>商品追加</button></a>
 </div>
 <div class="table-wrapper">
 <table>
@@ -321,10 +325,7 @@ button {
 </table>
 </div>
 
-<!-- 商品追加ボタン -->
-<div class="add-product">
-    <a href="product-insert.php"><button>商品追加</button></a>
-</div>
+
 
 <script>
 function toggleMenu(){
