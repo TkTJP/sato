@@ -228,7 +228,6 @@ th { background: #f0f0f0; }
 <?php endforeach; ?>
 </table>
 </div>
-
 <script>
 function toggleMenu(){
     document.getElementById('menu').classList.toggle('open');
