@@ -2,6 +2,7 @@
 session_start();
 require 'db-connect.php';
 
+<<<<<<< Updated upstream
 /* ▼ 必ず最初にログインチェックを実行する（何も出力する前） ▼ */
 if (!isset($_SESSION["admin_id"])) {
     echo "<script>
@@ -12,13 +13,18 @@ if (!isset($_SESSION["admin_id"])) {
 }
 /* ▲ ログインチェックここまで ▲ */
 
+=======
+>>>>>>> Stashed changes
 try {
     $pdo = new PDO($connect, USER, PASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("DB接続失敗: " . $e->getMessage());
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 // -----------------------------
 // 更新・削除処理
@@ -69,6 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($command === 'delete') {
                 // 外部キー順に削除
+<<<<<<< Updated upstream
+=======
+                $pdo->prepare("DELETE FROM product_sets WHERE product_id = ?")->execute([$product_id]);
+>>>>>>> Stashed changes
                 $pdo->prepare("DELETE FROM product_details WHERE product_id = ?")->execute([$product_id]);
                 $pdo->prepare("DELETE FROM products WHERE product_id = ?")->execute([$product_id]);
             }
@@ -118,6 +128,7 @@ $regions = array_keys($prefectures);
 <title>商品管理</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+<<<<<<< Updated upstream
 /* 基本設定 */
 html, body {
     margin: 0;
@@ -221,6 +232,32 @@ button {
     .title-bar {font-size: 1rem;}
     .fullscreen-menu li {font-size: 1rem;}
 }
+=======
+body {font-family:sans-serif;margin:0;padding:0;background:#f9f9f9;}
+table {border-collapse:collapse;width:100%;}
+th, td {border:1px solid #ccc;padding:8px;text-align:left;}
+th {background:#f0f0f0;}
+img {width:80px;height:80px;object-fit:cover;}
+input, textarea, select {width:100%;}
+button {padding:5px 10px;margin:2px;cursor:pointer;}
+
+/* ハンバーガーメニュー */
+.menu-toggle {font-size:1.5rem; cursor:pointer;}
+.fullscreen-menu {
+    position:fixed; top:0; left:-100%; width:100%; height:100%;
+    background:#F1E9D6; z-index:5; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    transition:left 0.5s ease; padding:60px 20px; box-sizing:border-box;
+}
+.fullscreen-menu.open {left:0;}
+.fullscreen-menu ul {list-style:none; padding:0; margin:0; text-align:center;}
+.fullscreen-menu li {margin:20px 0; font-size:1.5rem;}
+.fullscreen-menu li a {color:black; text-decoration:none; font-weight:bold;}
+.menu-close {position:absolute; top:20px; right:20px; font-size:2rem; cursor:pointer;}
+.title-bar {display:flex; align-items:center; justify-content:center; position:relative; background:#f0f0f0; padding:10px 0;}
+.title-bar h1 {margin:0;}
+.title-bar .menu-toggle {position:absolute; left:20px; top:50%; transform:translateY(-50%);}
+textarea {resize:none;}
+>>>>>>> Stashed changes
 </style>
 </head>
 <body>
@@ -239,6 +276,7 @@ button {
     <ul>
         <li><a href="product-manage.php">商品管理</a></li>
         <li><a href="customer-manage.php">顧客管理</a></li>
+<<<<<<< Updated upstream
         <li><a href="adorder-history.php">注文履歴</a></li>
         <li><a href="admin-logout.php" style="color:red; font-weight:bold;">ログアウト</a></li>
     </ul>
@@ -248,6 +286,12 @@ button {
     <a href="product-insert.php"><button>商品追加</button></a>
 </div>
 <div class="table-wrapper">
+=======
+        <li><a href="order-history.php">注文履歴</a></li>
+    </ul>
+</div>
+
+>>>>>>> Stashed changes
 <table>
 <tr>
     <th>No</th>
@@ -279,7 +323,11 @@ button {
 
     <td><input type="text" name="name" value="<?= htmlspecialchars($row['name']) ?>"></td>
     <td><input type="number" name="price" value="<?= htmlspecialchars($row['price']) ?>"></td>
+<<<<<<< Updated upstream
     <td><textarea name="description"><?= htmlspecialchars($row['description']) ?></textarea></td>
+=======
+    <td><textarea name="description" style="height:80px;"><?= htmlspecialchars($row['description']) ?></textarea></td>
+>>>>>>> Stashed changes
     <td><input type="number" name="stock" value="<?= htmlspecialchars($row['stock']) ?>"></td>
 
     <td>
@@ -313,7 +361,11 @@ button {
         </select>
     </td>
 
+<<<<<<< Updated upstream
     <td><textarea name="product_explain"><?= htmlspecialchars($row['product_explain']) ?></textarea></td>
+=======
+    <td><textarea name="product_explain" style="height:80px;"><?= htmlspecialchars($row['product_explain']) ?></textarea></td>
+>>>>>>> Stashed changes
 
     <td>
         <button type="submit" name="command" value="update">更新</button>
@@ -323,9 +375,12 @@ button {
 </tr>
 <?php endforeach; ?>
 </table>
+<<<<<<< Updated upstream
 </div>
 
 
+=======
+>>>>>>> Stashed changes
 
 <script>
 function toggleMenu(){
