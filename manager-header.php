@@ -1,37 +1,36 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理者用ヘッダー</title>
-</head>
-<body>
-    <div class="manage-header">
-    <div class="manage-header-img">
-        <img src="img/logo.png"alt="ロゴ">
-        <p>SATONOMI</p>
-    </div>
-    </div>
-    <style>
-    body{
-        margin:0;
-        padding:0;
-    }
-    .manage-header{
-        background-color:#99EACA;        
-        width:100%;
-        box-sizing:border-box;
-    }
-    .manage-header-img{
-        display:flex;
-        justify-content:center;
-        padding:20px 0 20px 0;
-    }
-    .manage-header-img img{
-        width:50px;
-        padding-right:20px;
-    }
-    
-    </style>
-</body>
-</html>
+<!-- manager-header.php -->
+<div class="manager-header">
+    <a href="admin-dashboard.php" class="manager-header-content">
+        <img src="img/logo.png" alt="ロゴ" class="manager-header-logo">
+        <p class="manager-header-title">SATONOMI</p>
+    </a>
+</div>
+
+<style>
+.manager-header {
+    background-color: #99EACA;
+    width: 100%;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+.manager-header-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.manager-header-logo {
+    width: 50px;
+    height: auto;
+    margin-right: 15px;
+}
+
+.manager-header-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+</style>
