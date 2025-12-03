@@ -82,6 +82,28 @@ foreach ($rows as $row) {
 
     $histories[$date]['purchases'][$pid]['items'][] = $row;
 }
+
+// 画像取得関数（JPG・PNG 両方対応）
+function getProductImage($filename) {
+    $imgFolder = 'img/';
+    if (!$filename) {
+        return $imgFolder . 'noimage.png';
+    }
+
+    if (file_exists($imgFolder . $filename)) {
+        return $imgFolder . $filename;
+    }
+
+    $nameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
+    if (file_exists($imgFolder . $nameWithoutExt . '.jpg')) {
+        return $imgFolder . $nameWithoutExt . '.jpg';
+    }
+    if (file_exists($imgFolder . $nameWithoutExt . '.png')) {
+        return $imgFolder . $nameWithoutExt . '.png';
+    }
+
+    return $imgFolder . 'noimage.png';
+}
 ?>
 
 <!DOCTYPE html>
@@ -143,7 +165,7 @@ foreach ($rows as $row) {
                 <div class="purchase-card">
                     <?php foreach ($purchase['items'] as $item): ?>
                         <a href="product-detail.php?product_id=<?= (int)$item['product_id'] ?>" class="item-row">
-                            <img src="img/<?= htmlspecialchars($item['image'] ?: 'noimage.png') ?>" class="item-img" alt="商品画像">
+                            <img src="<?= htmlspecialchars(getProductImage($item['image'])) ?>" class="item-img" alt="商品画像">
                             <div class="item-info">
                                 <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
                                 <p class="item-price">
