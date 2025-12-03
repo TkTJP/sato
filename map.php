@@ -23,59 +23,49 @@ $regions = [
 <title>日本地図 - 地方選択</title>
 <link rel="stylesheet" href="style.css">
 <style>
-body {
-    font-family: sans-serif;
-    background: #f8f9fa;
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-}
+body { font-family: sans-serif; text-align:center; background:#f8f9fa; margin:0; padding:10px; }
 
 .map-container {
     position: relative;
     width: 100%;
-    max-width: 600px;  /* 最大幅 */
+    max-width: 600px;
     margin: 20px auto;
-    /* アスペクト比固定（縦横比が変わらないようにする） */
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1/1; /* 縦横比固定 */
 }
 
 .map-container img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    border-radius:10px;
 }
 
 .pin {
-    position: absolute;
-    width: 5%;
-    aspect-ratio: 1;
+    position:absolute;
+    width:5%;
+    aspect-ratio:1;
     background: radial-gradient(circle at 30% 30%, #555,#000);
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg) translate(-50%, -100%);
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg) translate(-50%, -100%);
+    cursor:pointer;
+    box-shadow:0 3px 6px rgba(0,0,0,0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .pin::after {
-    content: "";
-    position: absolute;
-    top: 25%;
-    left: 25%;
-    width: 50%;
-    height: 50%;
-    background: #fff;
-    border-radius: 50%;
+    content:"";
+    position:absolute;
+    top:25%; left:25%;
+    width:50%; height:50%;
+    background:#fff;
+    border-radius:50%;
     box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
 }
 
 .pin:hover {
     transform: rotate(-45deg) translate(-50%, -100%) scale(1.3);
-    box-shadow: 0 6px 10px rgba(0,0,0,0.5);
+    box-shadow:0 6px 10px rgba(0,0,0,0.5);
 }
 
 @media(max-width:768px){ .pin{width:7%;} }
