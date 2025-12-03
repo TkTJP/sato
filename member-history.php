@@ -2,58 +2,32 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start(); // 出力より先に必ず呼ぶ
+session_start(); // 一番上に必ず
 
 require 'db-connect.php';
 
-/* ----------------------------
-   到達確認
----------------------------- */
-echo "<h2>① purchase-history.php 到達OK</h2>";
+// ログイン確認
+if (empty($_SESSION['customer']['customer_id'])) {
+    exit('ログイン情報がありません。');
+}
 
-/* ----------------------------
-   セッション確認
----------------------------- */
-echo "<h2>② SESSION 中身</h2>";
-echo "<pre>";
-var_dump($_SESSION);
-echo "</pre>";
+$customer_id = (int)$_SESSION['customer']['customer_id'];
 
-/* ----------------------------
-   DB接続
----------------------------- */
+// DB接続
 try {
     $pdo = new PDO($connect, USER, PASS, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
-    echo "<h2>③ DB接続 OK</h2>";
 } catch (PDOException $e) {
-    echo "<h2 style='color:red;'>③ DB接続 失敗</h2>";
-    echo $e->getMessage();
-    exit;
+    exit('DB接続エラー: ' . $e->getMessage());
 }
 
-/* ----------------------------
-   ログイン確認
----------------------------- */
-if (empty($_SESSION['customer']['customer_id'])) {
-    echo "<h2 style='color:red;'>④ ログイン情報がありません</h2>";
-    exit;
-}
-
-$customer_id = (int)$_SESSION['customer']['customer_id'];
-echo "<h2>④ ログイン確認 OK（customer_id = {$customer_id}）</h2>";
-
-/* ----------------------------
-   期間指定
----------------------------- */
+// 期間指定
 $start = $_GET['start'] ?? '';
 $end   = $_GET['end'] ?? '';
 
-/* ----------------------------
-   購入履歴取得
----------------------------- */
+// 購入履歴取得
 $sql = "
 SELECT 
     p.purchase_id,
@@ -84,11 +58,6 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-echo "<h2>⑤ SQL実行OK / 取得件数：" . count($rows) . " 件</h2>";
-echo "<pre>";
-var_dump($rows);
-echo "</pre>";
-
 // 日付ごとにまとめる
 $histories = [];
 foreach ($rows as $row) {
@@ -104,7 +73,6 @@ foreach ($rows as $row) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>購入履歴</title>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
