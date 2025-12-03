@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start(); // 一番上に必ず
+session_start();
 
 require 'db-connect.php';
 
@@ -32,7 +32,7 @@ $sql = "
 SELECT 
     p.purchase_id,
     DATE(p.purchase_date) AS purchase_date,
-    p.total,
+    p.total AS purchase_total,
     d.product_id,
     d.quantity,
     d.price,
@@ -52,18 +52,35 @@ if (!empty($start) && !empty($end)) {
     $params['end']   = $end;
 }
 
-$sql .= " ORDER BY p.purchase_date DESC";
+$sql .= " ORDER BY p.purchase_date DESC, p.purchase_id DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// 日付ごとにまとめる
+// 日付ごとにまとめる（購入単位で小計、日付合計も計算）
 $histories = [];
 foreach ($rows as $row) {
     $date = $row['purchase_date'];
-    $histories[$date]['total'] = $row['total'];
-    $histories[$date]['items'][] = $row;
+    $pid  = $row['purchase_id'];
+
+    if (!isset($histories[$date])) {
+        $histories[$date] = [
+            'total_sum' => 0,   // 日付合計
+            'purchases' => []
+        ];
+    }
+
+    if (!isset($histories[$date]['purchases'][$pid])) {
+        $histories[$date]['purchases'][$pid] = [
+            'purchase_total' => $row['purchase_total'],
+            'items' => []
+        ];
+        // 日付合計に購入ごとの合計を加算
+        $histories[$date]['total_sum'] += $row['purchase_total'];
+    }
+
+    $histories[$date]['purchases'][$pid]['items'][] = $row;
 }
 ?>
 
@@ -82,13 +99,15 @@ foreach ($rows as $row) {
 .search-box button { padding: 6px 12px; border-radius: 5px; border: none; background: #90caf9; color: #fff; font-weight: bold; }
 .no-history { text-align: center; color: #666; }
 .history-card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-.history-date { font-weight: bold; margin-bottom: 10px; color: #666; }
-.item-row { display: flex; text-decoration: none; color: #000; margin-bottom: 12px; }
-.item-img { width: 70px; height: 70px; object-fit: contain; border-radius: 10px; border: 1px solid #ddd; margin-right: 10px; background: #fff; }
+.history-date { font-weight: bold; margin-bottom: 10px; color: #666; font-size: 1.1em; }
+.purchase-card { background: #f9f9f9; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+.item-row { display: flex; text-decoration: none; color: #000; margin-bottom: 8px; }
+.item-img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #ddd; margin-right: 10px; background: #fff; }
 .item-info { display: flex; flex-direction: column; justify-content: center; }
-.item-name { font-weight: bold; margin-bottom: 5px; }
-.item-price { color: #555; }
-.total-row { display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
+.item-name { font-weight: bold; margin-bottom: 3px; font-size: 0.95em; }
+.item-price { color: #555; font-size: 0.9em; }
+.total-row { display: flex; justify-content: space-between; font-weight: bold; margin-top: 8px; border-top: 1px solid #ddd; padding-top: 8px; font-size: 0.95em; }
+.date-total { display: flex; justify-content: flex-end; font-weight: bold; margin-top: 5px; font-size: 1em; color: #333; }
 </style>
 </head>
 <body>
@@ -118,24 +137,30 @@ foreach ($rows as $row) {
 
     <?php foreach ($histories as $date => $history): ?>
         <div class="history-card">
-
             <div class="history-date"><?= htmlspecialchars($date) ?></div>
 
-            <?php foreach ($history['items'] as $item): ?>
-                <a href="product-detail.php?product_id=<?= (int)$item['product_id'] ?>" class="item-row">
-                    <img src="img/<?= htmlspecialchars($item['image'] ?: 'noimage.png') ?>" class="item-img" alt="商品画像">
-                    <div class="item-info">
-                        <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
-                        <p class="item-price">
-                            ¥<?= number_format($item['price']) ?>（税込） × <?= (int)$item['quantity'] ?>
-                        </p>
+            <?php foreach ($history['purchases'] as $purchase): ?>
+                <div class="purchase-card">
+                    <?php foreach ($purchase['items'] as $item): ?>
+                        <a href="product-detail.php?product_id=<?= (int)$item['product_id'] ?>" class="item-row">
+                            <img src="img/<?= htmlspecialchars($item['image'] ?: 'noimage.png') ?>" class="item-img" alt="商品画像">
+                            <div class="item-info">
+                                <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
+                                <p class="item-price">
+                                    ¥<?= number_format($item['price']) ?> × <?= (int)$item['quantity'] ?>
+                                </p>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                    <div class="total-row">
+                        <span>購入小計：</span>
+                        <span>¥<?= number_format($purchase['purchase_total']) ?></span>
                     </div>
-                </a>
+                </div>
             <?php endforeach; ?>
 
-            <div class="total-row">
-                <span>お支払い金額：</span>
-                <span>¥<?= number_format($history['total']) ?></span>
+            <div class="date-total">
+                <span>日付合計：¥<?= number_format($history['total_sum']) ?></span>
             </div>
 
         </div>
