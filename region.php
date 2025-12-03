@@ -142,6 +142,6 @@ $regionData = $allRegions[$regionKey];
         </div>
     <?php endforeach; ?>
 </div>
-<a href="map.php">← 日本地図に戻る</a>
+<a href="nihonntizu.php">← 日本地図に戻る</a>
 </body>
 </html>
