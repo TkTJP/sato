@@ -2,40 +2,38 @@
 session_start();
 require 'db-connect.php';
 
-<<<<<<< Updated upstream
-/* ▼ 必ず最初にログインチェックを実行する（何も出力する前） ▼ */
+/* ▼ ログインチェック ▼ */
 if (!isset($_SESSION["admin_id"])) {
     echo "<script>
             alert('ログインしてください');
             window.location.href = 'admin-login.php';
           </script>";
-          exit;
+    exit;
 }
-/* ▲ ログインチェックここまで ▲ */
 
-=======
->>>>>>> Stashed changes
+/* ▼ DB接続 ▼ */
 try {
     $pdo = new PDO($connect, USER, PASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("DB接続失敗: " . $e->getMessage());
 }
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+/* -----------------------------
+   商品名リンクからの検索対応
+----------------------------- */
+$search_name = $_GET['name'] ?? '';
 
-// -----------------------------
-// 更新・削除処理
-// -----------------------------
+/* -----------------------------
+   更新・削除処理
+----------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_id = $_POST['product_id'] ?? null;
     $command = $_POST['command'] ?? '';
 
     if ($product_id) {
         try {
-            // 画像アップロード
+            // 画像アップロード処理
             $image_name = null;
             if (!empty($_FILES['image']['name'])) {
                 $image_name = basename($_FILES['image']['name']);
@@ -74,11 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($command === 'delete') {
-                // 外部キー順に削除
-<<<<<<< Updated upstream
-=======
-                $pdo->prepare("DELETE FROM product_sets WHERE product_id = ?")->execute([$product_id]);
->>>>>>> Stashed changes
                 $pdo->prepare("DELETE FROM product_details WHERE product_id = ?")->execute([$product_id]);
                 $pdo->prepare("DELETE FROM products WHERE product_id = ?")->execute([$product_id]);
             }
@@ -92,22 +85,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// -----------------------------
-// 商品一覧取得
-// -----------------------------
+/* -----------------------------
+   商品一覧取得（商品名検索対応）
+   ※TRIM対応で空白除去検索
+----------------------------- */
 try {
-    $sql = $pdo->query("
+    $sql = $pdo->prepare("
         SELECT p.*, d.is_subscribe, d.product_explain 
         FROM products p 
         LEFT JOIN product_details d ON p.product_id = d.product_id 
+        WHERE (:name = '' OR TRIM(p.name) LIKE :name_like)
         ORDER BY p.product_id DESC
     ");
+
+    $sql->execute([
+        ':name' => $search_name,
+        ':name_like' => "%" . trim($search_name) . "%"
+    ]);
+
     $products = $sql->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("商品取得エラー: " . $e->getMessage());
 }
 
-// 地方ごとの都道府県
+/* -----------------------------
+   地方ごとの都道府県
+----------------------------- */
 $prefectures = [
     "北海道" => ["北海道"],
     "東北" => ["青森","岩手","秋田","宮城","山形","福島"],
@@ -128,7 +131,6 @@ $regions = array_keys($prefectures);
 <title>商品管理</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-<<<<<<< Updated upstream
 /* 基本設定 */
 html, body {
     margin: 0;
@@ -185,7 +187,7 @@ a {text-decoration: none; color: inherit;}
 table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 900px; /* スクロール発生目安 */
+    min-width: 900px;
 }
 th, td {
     border: 1px solid #ccc;
@@ -214,51 +216,18 @@ button {
 .add-product button {
     padding: 12px 20px;
     font-size: 1.1rem;
-    background: #6a6a6a;
+    background-color: aquamarine;
     border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;
     width:90%;
-    color:white;
-}
-.add-product button:hover {
-    background: #eee;
     color:black;
 }
-
-/* レスポンシブ対応 */
-@media (max-width: 600px) {
-    th, td {font-size: 0.85rem; padding: 6px;}
-    .title-bar {font-size: 1rem;}
-    .fullscreen-menu li {font-size: 1rem;}
+.add-product button:hover {
+    background-color:lawngreen;
+    color:black;
 }
-=======
-body {font-family:sans-serif;margin:0;padding:0;background:#f9f9f9;}
-table {border-collapse:collapse;width:100%;}
-th, td {border:1px solid #ccc;padding:8px;text-align:left;}
-th {background:#f0f0f0;}
-img {width:80px;height:80px;object-fit:cover;}
-input, textarea, select {width:100%;}
-button {padding:5px 10px;margin:2px;cursor:pointer;}
-
-/* ハンバーガーメニュー */
-.menu-toggle {font-size:1.5rem; cursor:pointer;}
-.fullscreen-menu {
-    position:fixed; top:0; left:-100%; width:100%; height:100%;
-    background:#F1E9D6; z-index:5; display:flex; flex-direction:column; justify-content:center; align-items:center;
-    transition:left 0.5s ease; padding:60px 20px; box-sizing:border-box;
-}
-.fullscreen-menu.open {left:0;}
-.fullscreen-menu ul {list-style:none; padding:0; margin:0; text-align:center;}
-.fullscreen-menu li {margin:20px 0; font-size:1.5rem;}
-.fullscreen-menu li a {color:black; text-decoration:none; font-weight:bold;}
-.menu-close {position:absolute; top:20px; right:20px; font-size:2rem; cursor:pointer;}
-.title-bar {display:flex; align-items:center; justify-content:center; position:relative; background:#f0f0f0; padding:10px 0;}
-.title-bar h1 {margin:0;}
-.title-bar .menu-toggle {position:absolute; left:20px; top:50%; transform:translateY(-50%);}
-textarea {resize:none;}
->>>>>>> Stashed changes
-</style>
+</style
 </head>
 <body>
 
@@ -276,22 +245,27 @@ textarea {resize:none;}
     <ul>
         <li><a href="product-manage.php">商品管理</a></li>
         <li><a href="customer-manage.php">顧客管理</a></li>
-<<<<<<< Updated upstream
         <li><a href="adorder-history.php">注文履歴</a></li>
         <li><a href="admin-logout.php" style="color:red; font-weight:bold;">ログアウト</a></li>
     </ul>
 </div>
+
 <!-- 商品追加ボタン -->
 <div class="add-product">
     <a href="product-insert.php"><button>商品追加</button></a>
 </div>
-<div class="table-wrapper">
-=======
-        <li><a href="order-history.php">注文履歴</a></li>
-    </ul>
+
+<!-- 商品名検索フォーム -->
+<div style="padding: 10px; text-align:center;">
+    <form method="get" action="product-manage.php" style="display:flex; justify-content:center; gap:10px;">
+        <input type="text" name="name" placeholder="商品名で検索" 
+               value="<?= htmlspecialchars($search_name, ENT_QUOTES) ?>"
+               style="padding:6px; width:200px;">
+        <button type="submit" style="padding:6px 15px;">検索</button>
+    </form>
 </div>
 
->>>>>>> Stashed changes
+<div class="table-wrapper">
 <table>
 <tr>
     <th>No</th>
@@ -323,11 +297,7 @@ textarea {resize:none;}
 
     <td><input type="text" name="name" value="<?= htmlspecialchars($row['name']) ?>"></td>
     <td><input type="number" name="price" value="<?= htmlspecialchars($row['price']) ?>"></td>
-<<<<<<< Updated upstream
     <td><textarea name="description"><?= htmlspecialchars($row['description']) ?></textarea></td>
-=======
-    <td><textarea name="description" style="height:80px;"><?= htmlspecialchars($row['description']) ?></textarea></td>
->>>>>>> Stashed changes
     <td><input type="number" name="stock" value="<?= htmlspecialchars($row['stock']) ?>"></td>
 
     <td>
@@ -361,11 +331,7 @@ textarea {resize:none;}
         </select>
     </td>
 
-<<<<<<< Updated upstream
     <td><textarea name="product_explain"><?= htmlspecialchars($row['product_explain']) ?></textarea></td>
-=======
-    <td><textarea name="product_explain" style="height:80px;"><?= htmlspecialchars($row['product_explain']) ?></textarea></td>
->>>>>>> Stashed changes
 
     <td>
         <button type="submit" name="command" value="update">更新</button>
@@ -375,12 +341,7 @@ textarea {resize:none;}
 </tr>
 <?php endforeach; ?>
 </table>
-<<<<<<< Updated upstream
 </div>
-
-
-=======
->>>>>>> Stashed changes
 
 <script>
 function toggleMenu(){
