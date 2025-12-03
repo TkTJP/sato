@@ -105,7 +105,6 @@ $regionData = $allRegions[$regionKey];
 <title><?= htmlspecialchars($regionData['name']) ?></title>
 <link rel="stylesheet" href="style.css">
 <style>
-body { font-family:sans-serif; text-align:center; background:#f8f9fa; margin:0; padding:0 10px; }
 .map-container { position:relative; display:inline-block; max-width:100%; margin-top:20px; }
 .map-container img { width:100%; height:auto; border-radius:10px; }
 .pin {
