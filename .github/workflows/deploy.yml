@@ -21,10 +21,9 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /2025/SuenariCompany
-
-          exclude:
-            - .git*
-            - .github*
-            - node_modules*
-            - vendor/*
-            - .vscode*
+          exclude: |
+            .git*
+            .github*
+            node_modules*
+            vendor/*
+            .vscode*
