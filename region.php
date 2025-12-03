@@ -6,9 +6,7 @@ require 'header.php';
 $allRegions = [
     'hokkaido' => [
         'name'=>'北海道地方',
-        'prefectures'=>[
-            ['name'=>'北海道','top'=>'10%','left'=>'70%']
-        ]
+        'prefectures'=>[['name'=>'北海道','top'=>'10%','left'=>'70%']]
     ],
     'tohoku' => [
         'name'=>'東北地方',
@@ -91,16 +89,12 @@ $allRegions = [
     ],
     'okinawa' => [
         'name'=>'沖縄地方',
-        'prefectures'=>[
-            ['name'=>'沖縄県','top'=>'83%','left'=>'74%']
-        ]
+        'prefectures'=>[['name'=>'沖縄県','top'=>'83%','left'=>'74%']]
     ]
 ];
 
 $regionKey = $_GET['region'] ?? null;
-if(!$regionKey || !isset($allRegions[$regionKey])){
-    die('地方が指定されていません。');
-}
+if(!$regionKey || !isset($allRegions[$regionKey])) die('地方が指定されていません。');
 $regionData = $allRegions[$regionKey];
 ?>
 <!DOCTYPE html>
@@ -111,10 +105,11 @@ $regionData = $allRegions[$regionKey];
 <title><?= htmlspecialchars($regionData['name']) ?></title>
 <link rel="stylesheet" href="style.css">
 <style>
-.map-container { position:relative; display:inline-block; max-width:100%; margin-top:30px; }
-.map-container img { width:100%; max-width:600px; height:auto; border-radius:10px; }
+body { font-family:sans-serif; text-align:center; background:#f8f9fa; margin:0; padding:0 10px; }
+.map-container { position:relative; display:inline-block; max-width:100%; margin-top:20px; }
+.map-container img { width:100%; height:auto; border-radius:10px; }
 .pin {
-    position:absolute; width:4%; height:auto; aspect-ratio:1;
+    position:absolute; width:5%; aspect-ratio:1;
     background: radial-gradient(circle at 30% 30%, #555,#000);
     border-radius:50% 50% 50% 0;
     transform:rotate(-45deg) translate(-50%, -100%);
@@ -126,12 +121,12 @@ $regionData = $allRegions[$regionKey];
     background:#fff; border-radius:50%; box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
 }
 .pin:hover { transform:rotate(-45deg) translate(-50%, -100%) scale(1.3); box-shadow:0 6px 10px rgba(0,0,0,0.5); }
-@media(max-width:480px){ .pin{width:6%;} }
+@media(max-width:768px){ .pin{width:7%;} }
+@media(max-width:480px){ .pin{width:10%;} h2{font-size:18px;} }
 </style>
 </head>
 <body>
 <h2><?= htmlspecialchars($regionData['name']) ?></h2>
-
 <div class="map-container">
     <img src="img/<?= $regionKey ?>.png" alt="<?= htmlspecialchars($regionData['name']) ?>">
     <?php foreach($regionData['prefectures'] as $pref): ?>
@@ -142,6 +137,6 @@ $regionData = $allRegions[$regionKey];
         </div>
     <?php endforeach; ?>
 </div>
-<a href="nihonntizu.php">← 日本地図に戻る</a>
+<a href="map.php" style="display:block; margin-top:10px;">← 日本地図に戻る</a>
 </body>
 </html>
