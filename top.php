@@ -122,7 +122,7 @@ try {
 
 <!-- 🗺️ 名産マップ -->
 <div class="map-area">
-    <a href="nihonntizu.php" class="map-btn">名産マップを見てみよう！</a>
+    <a href="map.php" class="map-btn">名産マップを見てみよう！</a>
 </div>
 
 <!-- 🛒 商品一覧 -->
