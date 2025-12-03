@@ -78,7 +78,6 @@ $regionData = $allRegions[$regionKey];
 <title><?= htmlspecialchars($regionData['name']) ?></title>
 <link rel="stylesheet" href="style.css">
 <style>
-body { font-family:sans-serif; background:#f8f9fa; text-align:center; margin:0; padding:10px; }
 .map-container {
     position:relative; width:100%; max-width:600px; margin:20px auto;
     aspect-ratio:1/1; /* 縦横比固定 */
