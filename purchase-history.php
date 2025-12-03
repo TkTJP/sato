@@ -2,27 +2,26 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-/* ===========================
-   ① ファイル到達確認
-=========================== */
+session_start(); // 出力より先に必ず呼ぶ
+
+require 'db-connect.php';
+
+/* ----------------------------
+   到達確認
+---------------------------- */
 echo "<h2>① purchase-history.php 到達OK</h2>";
 
-session_start();
-
-/* ===========================
-   ② セッション確認
-=========================== */
-echo "<h2>② session_start() OK</h2>";
-echo "<h3>SESSION 中身</h3>";
+/* ----------------------------
+   セッション確認
+---------------------------- */
+echo "<h2>② SESSION 中身</h2>";
 echo "<pre>";
 var_dump($_SESSION);
 echo "</pre>";
 
-require 'db-connect.php';
-
-/* ===========================
-   ③ DB接続確認
-=========================== */
+/* ----------------------------
+   DB接続
+---------------------------- */
 try {
     $pdo = new PDO($connect, USER, PASS, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -35,9 +34,9 @@ try {
     exit;
 }
 
-/* ===========================
-   ④ ログイン確認
-=========================== */
+/* ----------------------------
+   ログイン確認
+---------------------------- */
 if (empty($_SESSION['customer']['customer_id'])) {
     echo "<h2 style='color:red;'>④ ログイン情報がありません</h2>";
     exit;
@@ -46,15 +45,15 @@ if (empty($_SESSION['customer']['customer_id'])) {
 $customer_id = (int)$_SESSION['customer']['customer_id'];
 echo "<h2>④ ログイン確認 OK（customer_id = {$customer_id}）</h2>";
 
-/* ===========================
-   ⑤ 期間指定
-=========================== */
+/* ----------------------------
+   期間指定
+---------------------------- */
 $start = $_GET['start'] ?? '';
 $end   = $_GET['end'] ?? '';
 
-/* ===========================
-   ⑥ 購入履歴取得
-=========================== */
+/* ----------------------------
+   購入履歴取得
+---------------------------- */
 $sql = "
 SELECT 
     p.purchase_id,
@@ -97,7 +96,6 @@ foreach ($rows as $row) {
     $histories[$date]['total'] = $row['total'];
     $histories[$date]['items'][] = $row;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -110,80 +108,19 @@ foreach ($rows as $row) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* ===== 購入履歴 本体CSS ===== */
-.history-wrapper {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 10px;
-}
-.search-box {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.search-box input {
-    padding: 6px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-.search-box button {
-    padding: 6px 12px;
-    border-radius: 5px;
-    border: none;
-    background: #90caf9;
-    color: #fff;
-    font-weight: bold;
-}
-.no-history {
-    text-align: center;
-    color: #666;
-}
-.history-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-.history-date {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #666;
-}
-.item-row {
-    display: flex;
-    text-decoration: none;
-    color: #000;
-    margin-bottom: 12px;
-}
-.item-img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    margin-right: 10px;
-    background: #fff;
-}
-.item-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.item-name {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-.item-price {
-    color: #555;
-}
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    margin-top: 10px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-}
+.history-wrapper { max-width: 600px; margin: 20px auto; padding: 10px; }
+.search-box { text-align: center; margin-bottom: 20px; }
+.search-box input { padding: 6px; border-radius: 5px; border: 1px solid #ccc; }
+.search-box button { padding: 6px 12px; border-radius: 5px; border: none; background: #90caf9; color: #fff; font-weight: bold; }
+.no-history { text-align: center; color: #666; }
+.history-card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.history-date { font-weight: bold; margin-bottom: 10px; color: #666; }
+.item-row { display: flex; text-decoration: none; color: #000; margin-bottom: 12px; }
+.item-img { width: 70px; height: 70px; object-fit: contain; border-radius: 10px; border: 1px solid #ddd; margin-right: 10px; background: #fff; }
+.item-info { display: flex; flex-direction: column; justify-content: center; }
+.item-name { font-weight: bold; margin-bottom: 5px; }
+.item-price { color: #555; }
+.total-row { display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
 </style>
 </head>
 <body>
@@ -214,22 +151,17 @@ foreach ($rows as $row) {
     <?php foreach ($histories as $date => $history): ?>
         <div class="history-card">
 
-            <div class="history-date">
-                <?= htmlspecialchars($date) ?>
-            </div>
+            <div class="history-date"><?= htmlspecialchars($date) ?></div>
 
             <?php foreach ($history['items'] as $item): ?>
                 <a href="product-detail.php?product_id=<?= (int)$item['product_id'] ?>" class="item-row">
-
                     <img src="img/<?= htmlspecialchars($item['image'] ?: 'noimage.png') ?>" class="item-img" alt="商品画像">
-
                     <div class="item-info">
                         <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
                         <p class="item-price">
                             ¥<?= number_format($item['price']) ?>（税込） × <?= (int)$item['quantity'] ?>
                         </p>
                     </div>
-
                 </a>
             <?php endforeach; ?>
 
