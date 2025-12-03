@@ -126,7 +126,7 @@ h2 {
 
     <a href="product-manage.php" class="menu-btn">商品管理</a>
     <a href="customer-manage.php" class="menu-btn">顧客管理</a>
-    <a href="adorder-history.php" class="menu-btn">購入管理</a>
+    <a href="order-history.php" class="menu-btn">購入管理</a>
 
     <a href="admin-logout.php" class="logout-btn">ログアウト</a>
 </div>
