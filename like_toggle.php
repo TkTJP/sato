@@ -1,4 +1,5 @@
 <?php
+exit;
 session_start();
 require 'db-connect.php';
 
@@ -55,3 +56,4 @@ echo json_encode([
     'likes'   => $total
 ]);
 exit;
+
