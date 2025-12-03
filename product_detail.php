@@ -40,7 +40,7 @@ if ($customer_id) {
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 <title><?= htmlspecialchars($product['name']); ?></title>
 <link rel="stylesheet" href="style.css">
 
