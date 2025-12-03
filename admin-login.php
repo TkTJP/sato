@@ -1,7 +1,10 @@
 <?php
 session_start();
 require_once 'db-connect.php';
-$pdo = new PDO($connect, USER, PASS);
+
+$pdo = new PDO($connect, USER, PASS, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
 
 $error = "";
 
@@ -15,33 +18,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // ユーザーが存在しない
     if (!$user) {
         $error = "メールアドレスかパスワードが違います。";
-    } 
-    // パスワードが一致しない
-    elseif (!password_verify($password, $user["password"])) {
+    } elseif (!password_verify($password, $user["password"])) {
         $error = "メールアドレスかパスワードが違います。";
-    }
-    // 管理者フラグが 1 ではない
-    elseif ($user["is_admin"] != 1) {
+    } elseif ($user["is_admin"] != 1) {
         $error = "管理者権限がありません。";
-    }
-    // ログイン成功
-    else {
+    } else {
+        // ログイン成功
         $_SESSION["admin_id"] = $user["customer_id"];
         $_SESSION["admin_name"] = $user["name"];
 
-        header("Location: admin-dashboard.php"); 
+        header("Location: admin-dashboard.php");
         exit;
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>管理者ログイン</title>
 <style>
 body {
@@ -50,43 +47,51 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
 }
 
+/* ログインボックス */
 .login-box {
     background: white;
-    padding: 25px 35px;
+    padding: 25px 20px;
     border-radius: 10px;
-    width: 320px;
+    width: 90%;
+    max-width: 400px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    margin-top: 40px;
+    margin: 10vh auto;
 }
 
 h2 {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 input[type="email"],
 input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    margin-bottom: 15px;
+    width: 95%;
+    max-width: 300px;
+    padding: 12px;
+    margin: 8px auto 15px auto;
     border-radius: 5px;
     border: 1px solid #aaa;
     font-size: 1rem;
+    display: block;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
+    width: 95%;
+    max-width: 300px;
+    padding: 12px;
     background: #0078D7;
     border: none;
     color: white;
     font-size: 1rem;
     border-radius: 5px;
     cursor: pointer;
+    display: block;
+    margin: 10px auto 0 auto;
+    transition: 0.2s;
 }
 
 button:hover {
@@ -98,11 +103,22 @@ button:hover {
     margin-bottom: 15px;
     text-align: center;
 }
+
+/* スマホ用調整 */
+@media screen and (max-width: 360px) {
+    .login-box {
+        padding: 20px 15px;
+    }
+    button, input[type="email"], input[type="password"] {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+}
 </style>
 </head>
 <body>
 
-<?php require 'manager-header.php'; ?>   <!-- ← 追加した部分 -->
+<?php require 'manager-header.php'; ?>
 
 <div class="login-box">
     <h2>管理者ログイン</h2>
