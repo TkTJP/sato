@@ -46,7 +46,7 @@ if ($customer_id) {
 
 <style>
 /* ==============================
-   iPhone対応・CSSハートボタン
+   スマホ対応・CSSハートボタン
 ================================= */
 .like-btn {
     width: 28px;
@@ -55,17 +55,18 @@ if ($customer_id) {
     cursor: pointer;
     position: relative;
     user-select: none;
+    padding: 6px;          /* ← iPhoneで必要：タップ領域を広げる */
 }
 
 .like-btn::before {
-    content: "\2661"; /* 白抜き ♡ */
+    content: "\2661"; /* ♡ 白ハート */
     font-size: 28px;
     color: #aaa;
     transition: .2s ease;
 }
 
 .like-btn.liked::before {
-    content: "\2665"; /* 黒ハート ♥ */
+    content: "\2665"; /* ♥ 塗りつぶし */
     color: red;
 }
 
@@ -103,19 +104,19 @@ if ($customer_id) {
 <p>価格：¥<?= number_format($product['price']); ?></p>
 
 <!-- ========== 単品 ========== -->
-<p>1本/¥<?= number_format($product['price']); ?></p>
+<p>1本 / ¥<?= number_format($product['price']); ?></p>
 <div class="count-box">
+    <button type="button" id="inc">＋</button>
     <button type="button" id="dec">－</button>
     <span id="qty">0</span>
-    <button type="button" id="inc">＋</button>
 </div>
 
 <!-- ========== セット ========== -->
 <p>12本セット（-10%） / ¥<?= number_format($set_price) ?></p>
 <div class="set-box">
+    <button type="button" id="boxInc">＋</button>
     <button type="button" id="boxDec">－</button>
     <span id="boxQty">0</span>
-    <button type="button" id="boxInc">＋</button>
 </div>
 
 <!-- ========== カート送信 ========== -->
@@ -126,7 +127,7 @@ if ($customer_id) {
     <button type="submit">カートに入れる</button>
 </form>
 
-<!-- ========== 商品説明 ========== -->
+<!-- ========== 説明 ========== -->
 <button id="descBtn">商品説明 ▼</button>
 <p id="desc" style="display:none;">
 <?= nl2br(htmlspecialchars($product['description'] ?? '説明なし')); ?>
@@ -160,8 +161,14 @@ document.getElementById('descBtn').onclick = ()=>{
     btn.textContent = open ? '説明 ▲' : '説明 ▼';
 };
 
-// -------------------- いいね処理 --------------------
-document.getElementById('likeBtn').onclick = async ()=>{
+// -------------------- いいね処理（スマホ対応） --------------------
+const likeBtn = document.getElementById('likeBtn');
+likeBtn.addEventListener('click', toggleLike);
+likeBtn.addEventListener('touchstart', toggleLike);
+
+async function toggleLike(e){
+    e.preventDefault(); // iPhoneのゴーストクリック対策
+
     const res = await fetch('like_toggle.php', {
         method:'POST',
         headers:{'Content-Type':'application/x-www-form-urlencoded'},
@@ -170,12 +177,12 @@ document.getElementById('likeBtn').onclick = async ()=>{
     const data = await res.json();
 
     if(data.success){
-        document.getElementById('likeBtn').classList.toggle('liked', data.liked);
+        likeBtn.classList.toggle('liked', data.liked);
         document.getElementById('likeCount').textContent = data.likes;
     } else {
         alert(data.message);
     }
-};
+}
 </script>
 
 </body>
