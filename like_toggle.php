@@ -1,11 +1,12 @@
 <?php
-exit;
 session_start();
 require 'db-connect.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$pdo = new PDO($connect, USER, PASS);
+$pdo = new PDO($connect, USER, PASS, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+]);
 
 // ---------------------
 // ログイン確認
@@ -25,7 +26,7 @@ if ($product_id <= 0) {
 
 // ---------------------
 // 既にいいねしているか？
-—---------------------
+// ---------------------
 $check = $pdo->prepare("SELECT 1 FROM likes WHERE product_id = ? AND customer_id = ?");
 $check->execute([$product_id, $customer_id]);
 $already = $check->fetch();
@@ -56,4 +57,3 @@ echo json_encode([
     'likes'   => $total
 ]);
 exit;
-
