@@ -102,22 +102,21 @@ if ($customer_id) {
     <span id="likeCount"><?= $totalLikes ?></span>
 </div>
 
-<p>価格：¥<?= number_format($product['price']); ?></p>
 
 <!-- ========== 単品 ========== -->
 <p>1本 / ¥<?= number_format($product['price']); ?></p>
 <div class="count-box">
     <button type="button" id="inc">＋</button>
+        <span id="qty">0</span>
     <button type="button" id="dec">－</button>
-    <span id="qty">0</span>
 </div>
 
 <!-- ========== セット ========== -->
 <p>12本セット（-10%） / ¥<?= number_format($set_price) ?></p>
 <div class="set-box">
     <button type="button" id="boxInc">＋</button>
+        <span id="boxQty">0</span>
     <button type="button" id="boxDec">－</button>
-    <span id="boxQty">0</span>
 </div>
 
 <!-- ========== カート送信 ========== -->
