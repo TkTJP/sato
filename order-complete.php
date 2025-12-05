@@ -14,29 +14,23 @@ try {
     exit('DB接続エラー: ' . $e->getMessage());
 }
 
-/* =========================
-   ログイン確認
-========================= */
 if (empty($_SESSION['customer']['customer_id'])) {
     exit('ログインしてください。');
 }
 $customer_id = (int)$_SESSION['customer']['customer_id'];
 
-/* =========================
-   POSTデータ
-========================= */
-$use_points  = (int)($_POST['points'] ?? 0);
-$coupon_id   = (int)($_POST['coupon_id'] ?? 0);
-$payment     = $_POST['payment'] ?? '';
+$use_points = (int)($_POST['points'] ?? 0);
+$customer_coupon_id = (int)($_POST['customer_coupon_id'] ?? 0);
+$payment = $_POST['payment'] ?? '';
 
 /* =========================
    カート取得
 ========================= */
 $stmt = $pdo->prepare("
-    SELECT c.product_id, c.quantity, p.price
-    FROM carts c
-    JOIN products p ON c.product_id = p.product_id
-    WHERE c.customer_id = ?
+SELECT c.product_id, c.quantity, p.price
+FROM carts c
+JOIN products p ON c.product_id = p.product_id
+WHERE c.customer_id = ?
 ");
 $stmt->execute([$customer_id]);
 $cart_items = $stmt->fetchAll();
@@ -46,7 +40,7 @@ if (!$cart_items) {
 }
 
 /* =========================
-   ✅ 合計金額をDBから再計算（改ざん防止）
+   合計再計算
 ========================= */
 $total = 0;
 foreach ($cart_items as $item) {
@@ -54,24 +48,23 @@ foreach ($cart_items as $item) {
 }
 
 /* =========================
-   ✅ クーポン割引取得
+   クーポン割引
 ========================= */
 $discount = 0;
-if ($coupon_id > 0) {
+if ($customer_coupon_id > 0) {
     $stmt = $pdo->prepare("
-        SELECT c.rate
-        FROM customer_coupons cc
-        JOIN coupons c ON cc.coupon_id = c.coupon_id
-        WHERE cc.customer_id = ?
-          AND cc.coupon_id = ?
-          AND cc.is_used = 0
-        LIMIT 1
+    SELECT c.rate
+    FROM customer_coupons cc
+    JOIN coupons c ON cc.coupon_id = c.coupon_id
+    WHERE cc.id = ?
+      AND cc.customer_id = ?
+      AND cc.is_used = 0
     ");
-    $stmt->execute([$customer_id, $coupon_id]);
+    $stmt->execute([$customer_coupon_id, $customer_id]);
     $coupon = $stmt->fetch();
 
     if (!$coupon) {
-        exit('不正なクーポンです。');
+        exit('不正なクーポンです');
     }
 
     $discount = floor($total * ($coupon['rate'] / 100));
@@ -82,94 +75,65 @@ $final_total = max(0, $total - $discount - $use_points);
 try {
     $pdo->beginTransaction();
 
-    /* =========================
-       ① purchases 登録
-    ========================= */
+    /* 購入登録 */
     $stmt = $pdo->prepare("
-        INSERT INTO purchases (customer_id, total, purchase_date)
-        VALUES (?, ?, CURRENT_TIMESTAMP)
+    INSERT INTO purchases (customer_id, total, purchase_date)
+    VALUES (?, ?, NOW())
     ");
     $stmt->execute([$customer_id, $final_total]);
     $purchase_id = $pdo->lastInsertId();
 
-    /* =========================
-       ② purchase_details 登録
-    ========================= */
-    $stmtDetail = $pdo->prepare("
-        INSERT INTO purchase_details
-        (purchase_id, product_id, quantity, price)
-        VALUES (?, ?, ?, ?)
+    /* 明細登録 */
+    $stmt = $pdo->prepare("
+    INSERT INTO purchase_details
+    (purchase_id, product_id, quantity, price)
+    VALUES (?, ?, ?, ?)
     ");
-
-    foreach ($cart_items as $item) {
-        $stmtDetail->execute([
-            $purchase_id,
-            $item['product_id'],
-            $item['quantity'],
-            $item['price']
-        ]);
+    foreach ($cart_items as $i) {
+        $stmt->execute([$purchase_id, $i['product_id'], $i['quantity'], $i['price']]);
     }
 
-    /* =========================
-       ③ ✅ ポイント減算（残高チェック）
-    ========================= */
+    /* ポイント減算 */
     if ($use_points > 0) {
         $stmt = $pdo->prepare("
-            UPDATE customers
-            SET points = points - ?
-            WHERE customer_id = ? AND points >= ?
+        UPDATE customers
+        SET points = points - ?
+        WHERE customer_id = ? AND points >= ?
         ");
         $stmt->execute([$use_points, $customer_id, $use_points]);
 
         if ($stmt->rowCount() === 0) {
-            throw new Exception('ポイント残高が不足しています。');
+            throw new Exception('ポイント不足');
         }
     }
 
-    /* =========================
-       ④ ✅ 指定クーポンを使用済みに.
-    ========================= */
-    if ($coupon_id > 0) {
+    /* クーポン使用済み */
+    if ($customer_coupon_id > 0) {
         $stmt = $pdo->prepare("
-            UPDATE customer_coupons
-            SET is_used = 1, used_at = CURRENT_TIMESTAMP
-            WHERE customer_id = ? AND coupon_id = ? AND is_used = 0
+        UPDATE customer_coupons
+        SET is_used = 1, used_at = NOW()
+        WHERE id = ? AND customer_id = ?
         ");
-        $stmt->execute([$customer_id, $coupon_id]);
-
-        if ($stmt->rowCount() === 0) {
-            throw new Exception('クーポンの使用に失敗しました。');
-        }
+        $stmt->execute([$customer_coupon_id, $customer_id]);
     }
-    /* =========================
-        購入ポイント付与（3%）
-    ========================= */
+
+    /* 購入ポイント付与（3％） */
     $add_point = floor($final_total * 0.03);
-
-        $stmt = $pdo->prepare("
-            UPDATE customers
-            SET points = points + ?
-            WHERE customer_id = ?
-        ");
+    $stmt = $pdo->prepare("
+    UPDATE customers SET points = points + ? WHERE customer_id = ?
+    ");
     $stmt->execute([$add_point, $customer_id]);
 
-    /* =========================
-       ⑤ カート削除
-    ========================= */
+    /* カート削除 */
     $stmt = $pdo->prepare("DELETE FROM carts WHERE customer_id = ?");
     $stmt->execute([$customer_id]);
 
     $pdo->commit();
 
 } catch (Exception $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    exit('注文処理に失敗しました：' . $e->getMessage());
+    $pdo->rollBack();
+    exit('注文失敗：' . $e->getMessage());
 }
 
-    /* =========================
-    ⑥ じゃんけんへ遷移
-    ========================= */
-    header("Location: janken.php");
-    exit;
+header("Location: janken.php");
+exit;
