@@ -1,95 +1,169 @@
-<?php 
+<?php
 session_start();
+require 'db-connect.php';
+$pdo = new PDO($connect, USER, PASS);
 
-// セッションにカートがない場合の初期データ
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [
-        ['name' => '長州地サイダー', 'price' => 1080, 'quantity' => 1, 'image' => 'images/cider.jpg']
-    ];
+if (!isset($_SESSION['customer'])) {
+    echo "ログインしてください。";
+    exit;
 }
-$cart = $_SESSION['cart'];
+$customer_id = $_SESSION['customer']['customer_id'];
+
+// ----------------------
+//  追加処理（単品 + セット）
+// ----------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+
+    $product_id = (int)$_POST['id'];
+    $qty        = max(0, (int)($_POST['quantity']     ?? 0));
+    $box        = max(0, (int)($_POST['box_quantity'] ?? 0));
+
+    $check = $pdo->prepare("SELECT quantity, box FROM carts WHERE customer_id=? AND product_id=?");
+    $check->execute([$customer_id, $product_id]);
+    $exist = $check->fetch(PDO::FETCH_ASSOC);
+
+    if ($exist) {
+        $pdo->prepare("UPDATE carts SET quantity = quantity + ?, box = box + ? WHERE customer_id=? AND product_id=?")
+            ->execute([$qty, $box, $customer_id, $product_id]);
+    } else {
+        $pdo->prepare("INSERT INTO carts (customer_id, product_id, quantity, box, added_at) VALUES (?,?,?,?,NOW())")
+            ->execute([$customer_id, $product_id, $qty, $box]);
+    }
+
+    header("Location: cart-confirm.php");
+    exit;
+}
+
+
+// ----------------------
+//  数量変更・削除
+// ----------------------
+if (isset($_GET['action'], $_GET['id'], $_GET['kind'])) {
+
+    $product_id = (int)$_GET['id'];
+    $kind       = $_GET['kind'];
+
+    $stmt = $pdo->prepare("SELECT quantity, box FROM carts WHERE customer_id=? AND product_id=?");
+    $stmt->execute([$customer_id, $product_id]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$data) {
+        header("Location: cart-confirm.php");
+        exit;
+    }
+
+    $qty = $data['quantity'];
+    $box = $data['box'];
+
+    if ($kind === "single") {
+        if ($_GET['action'] === 'plus')  $qty++;
+        if ($_GET['action'] === 'minus') $qty = max(0, $qty - 1);
+    }
+
+    if ($kind === "set") {
+        if ($_GET['action'] === 'plus')  $box++;
+        if ($_GET['action'] === 'minus') $box = max(0, $box - 1);
+    }
+
+    if ($_GET['action'] === 'delete') {
+        $qty = 0;
+        $box = 0;
+    }
+
+    if ($qty == 0 && $box == 0) {
+        $pdo->prepare("DELETE FROM carts WHERE customer_id=? AND product_id=?")
+            ->execute([$customer_id, $product_id]);
+    } else {
+        $pdo->prepare("UPDATE carts SET quantity=?, box=? WHERE customer_id=? AND product_id=?")
+            ->execute([$qty, $box, $customer_id, $product_id]);
+    }
+
+    header("Location: cart-confirm.php");
+    exit;
+}
+
+
+// ----------------------
+//  カート取得
+// ----------------------
+$stmt = $pdo->prepare("
+    SELECT p.product_id, p.name, p.price, p.image,
+           c.quantity, c.box
+    FROM carts c
+    JOIN products p ON c.product_id = p.product_id
+    WHERE c.customer_id=?
+");
+$stmt->execute([$customer_id]);
+$cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ----------------------
+//  合計
+// ----------------------
+$total = 0;
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>カート確認画面</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カート</title>
+<style>
+/* ▼必要最低限だけ */
+img { width:70px; }
+button { padding:6px 12px; }
+</style>
 </head>
 <body>
-<div class="cart-container">
+<?php include('header.php'); ?>
+<h2>カート</h2>
 
-    <!-- ① ロゴ -->
-    <header class="header">
-        <div class="logo">SATONOMI</div>
-        <a href="/mypage" class="is-rounded has-background-light has-text-dark" style="display:inline-flex; justify-content:center; align-items:center; width:40px; height:40px; text-decoration:none; font-size:24px;">
-        👤
-        </a>
+<?php if (empty($cart)): ?>
+    <p>カートに商品はありません。</p>
 
-    </header>
+<?php else: ?>
 
-    <!-- ② カートタイトル -->
-    <h2 class="cart-title">
-        <span style="float: left;">
-            <button type="button" onclick="history.back();" style="border: none; background: none; font-size: 18px;">←</button>
-        </span>
-        カート
-    </h2>
-    <!-- ③ 商品一覧 -->
-    <?php foreach ($cart as $item): ?>
-    <div class="cart-item" data-name="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>">
-        <a href="product-detail.php?name=<?= urlencode($item['name']) ?>" class="item-link">
-            <img src="<?= htmlspecialchars($item['image'], ENT_QUOTES) ?>" 
-                alt="<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>" 
-                class="item-image">
-            <div class="item-info">
-                <p class="item-name"><?= htmlspecialchars($item['name'], ENT_QUOTES) ?></p>
-                <p class="item-price">¥<?= number_format($item['price']) ?></p>
-            </div>
-        </a>
-        <div class="item-quantity">
-            <button class="quantity-btn" data-action="minus">-</button>
-            <span class="quantity"><?= $item['quantity'] ?></span>
-            <button class="quantity-btn" data-action="plus">+</button>
-        </div>
-    </div>
+<?php foreach ($cart as $item): ?>
+<?php
+$id    = $item['product_id'];
+$name  = htmlspecialchars($item['name']);
+$img   = htmlspecialchars($item['image']);
+$qty   = $item['quantity'];
+$box   = $item['box'];
+
+$price_single = $item['price'];
+$price_set    = $item['price'] * 12 * 0.9;
+
+$total += ($price_single * $qty) + ($price_set * $box);
+?>
+
+<!-- 1商品分（最小構成） -->
+<img src="img/<?= $img ?>"><br>
+<b><?= $name ?></b><br>
+
+1本：¥<?= number_format($price_single) ?><br>
+<a href="?action=minus&id=<?= $id ?>&kind=single">－</a>
+<?= $qty ?>
+<a href="?action=plus&id=<?= $id ?>&kind=single">＋</a><br>
+小計（単品）：¥<?= number_format($price_single * $qty) ?><br><br>
+
+12本セット：¥<?= number_format($price_set) ?><br>
+<a href="?action=minus&id=<?= $id ?>&kind=set">－</a>
+<?= $box ?>
+<a href="?action=plus&id=<?= $id ?>&kind=set">＋</a><br>
+小計（セット）：¥<?= number_format($price_set * $box) ?><br><br>
+
+<a href="?action=delete&id=<?= $id ?>&kind=single" style="color:red;">削除</a>
+<hr>
+
 <?php endforeach; ?>
 
-<!-- 合計 -->
-<div class="total">
-    <p>合計</p>
-    <p class="total-price" id="total-price">
-        ¥<?= number_format(array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $cart))) ?>
-    </p>
-</div>
+<p><b>合計：¥<?= number_format($total) ?></b></p>
 
-    <!-- ⑤ 購入ボタン -->
-    <form action="checkout.php" method="post">
-        <button type="submit" class="purchase-button">購入手続きへ</button>
-    </form>
-</div>
-<script>
-document.querySelectorAll('.quantity-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-        const action = e.target.dataset.action;
-        const item = e.target.closest('.cart-item');
-        const name = item.dataset.name;
+<form action="order-confirm.php" method="get">
+    <button type="submit">購入する</button>
+</form>
 
-        // PHPに送信
-        const res = await fetch('update-cart.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `name=${encodeURIComponent(name)}&action=${encodeURIComponent(action)}`
-        });
-
-        // PHPから返ってきたJSONを受け取る
-        const data = await res.json();
-
-        // 数量と合計を更新
-        item.querySelector('.quantity').textContent = data.quantity;
-        document.getElementById('total-price').textContent = `¥${data.total.toLocaleString()}`;
-    });
-});
-</script>
+<?php endif; ?>
 
 </body>
 </html>

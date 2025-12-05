@@ -33,13 +33,13 @@ $customer = $stmt->fetch();
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.mypage-container { max-width: 600px; margin: 20px auto; padding: 20px; background:#f7f7f7; border-radius:8px; }
+.mypage-container { max-width: 600px; margin: auto; padding: 20px; background:#f7f7f7; border-radius:8px; }
 .profile img { width:100px; height:100px; border-radius:50%; }
 .profile .name { font-size:1.5em; font-weight:bold; margin-top:10px; }
 .profile .subscribe, .profile .points { margin-top:5px; }
 .menu { margin-top:20px; }
-.menu button { display:block; width:100%; padding:10px; margin-bottom:10px; border:none; border-radius:5px; text-align:left; background:#90caf9; color:#fff; font-weight:bold; cursor:pointer; }
-.logout { display:block; width:100%; padding:10px; border:none; border-radius:5px; background:#f44336; color:#fff; font-weight:bold; cursor:pointer; }
+.menu button { display:block; width:100%; padding:10px; margin-bottom:10px; border:none; border-radius:5px; text-align:left; background:#dcdcdc; color:#fff; font-weight:bold; cursor:pointer; }
+.logout { display:block; width:30%; margin-left:auto; margin-right:auto; padding: 10px; border:none; border-radius:5px; background:#dcdcdc; color:#fff; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -61,8 +61,6 @@ $customer = $stmt->fetch();
             <?= $customer['subscr_join'] == 1 ? "サブスク登録中" : "サブスク未登録"; ?>
         </div>
         <div class="points">所持ポイント：<?= number_format($customer['points']) ?>P</div>
-    </div>
-
     <div class="menu">
         <button onclick="location.href='profile-view.php'"><i class="fa-solid fa-user"></i> My情報</button>
         <button onclick="location.href='member-history.php'"><i class="fa-solid fa-star"></i>購入履歴</button>
@@ -73,6 +71,7 @@ $customer = $stmt->fetch();
     <form action="logout.php" method="post">
         <button type="submit" class="logout">ログアウト</button>
     </form>
+    </div>
 </div>
 
 </body>
