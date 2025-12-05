@@ -24,6 +24,13 @@ $customer_coupon_id = (int)($_POST['customer_coupon_id'] ?? 0);
 $payment = $_POST['payment'] ?? '';
 
 /* =========================
+   ✅ サブスク加入確認（追加）
+========================= */
+$stmt = $pdo->prepare("SELECT subscr_join FROM customers WHERE customer_id = ?");
+$stmt->execute([$customer_id]);
+$subscr_join = (int)$stmt->fetchColumn();
+
+/* =========================
    カート取得
 ========================= */
 $stmt = $pdo->prepare("
@@ -40,12 +47,15 @@ if (!$cart_items) {
 }
 
 /* =========================
-   合計再計算
+   ✅ 合計再計算（送料込み）
 ========================= */
 $total = 0;
 foreach ($cart_items as $item) {
     $total += $item['price'] * $item['quantity'];
 }
+
+$shipping_fee = ($subscr_join === 1) ? 0 : 500;
+$total += $shipping_fee;
 
 /* =========================
    クーポン割引

@@ -50,6 +50,13 @@ $stmt->execute([$customer_id]);
 $points = (int)$stmt->fetchColumn();
 
 /* =========================
+   ✅ サブスク加入確認（追加）
+========================= */
+$stmt = $pdo->prepare("SELECT subscr_join FROM customers WHERE customer_id = ?");
+$stmt->execute([$customer_id]);
+$subscr_join = (int)$stmt->fetchColumn();
+
+/* =========================
    ✅ ユーザー専用クーポン取得
 ========================= */
 $stmt = $pdo->prepare("
@@ -66,9 +73,9 @@ $stmt->execute([$customer_id]);
 $coupons = $stmt->fetchAll();
 
 /* =========================
-   送料
+   ✅ 送料（サブスクなら0円）
 ========================= */
-$shipping_fee = 500;
+$shipping_fee = ($subscr_join === 1) ? 0 : 500;
 $pre_total = $total + $shipping_fee;
 ?>
 <!DOCTYPE html>
@@ -110,7 +117,9 @@ $set = $item['price'] * 12 * 0.9;
 <hr>
 <?php endforeach; ?>
 
-送料：¥<?= number_format($shipping_fee) ?><br>
+送料：¥<?= number_format($shipping_fee) ?>
+<?php if ($subscr_join === 1): ?>（サブスク特典）<?php endif; ?><br>
+
 <b>合計：¥<?= number_format($pre_total) ?></b><br><br>
 
 ポイント：
