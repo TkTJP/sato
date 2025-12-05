@@ -56,7 +56,7 @@ if ($customer_id) {
     cursor: pointer;
     position: relative;
     user-select: none;
-    padding: 6px;          /* ← iPhoneで必要：タップ領域を広げる */
+    padding: 6px;
 }
 
 .like-btn::before {
@@ -102,23 +102,30 @@ if ($customer_id) {
     <span id="likeCount"><?= $totalLikes ?></span>
 </div>
 
-<p>価格：¥<?= number_format($product['price']); ?></p>
 
 <!-- ========== 単品 ========== -->
 <p>1本 / ¥<?= number_format($product['price']); ?></p>
+
+<!-- ▼▼▼ ここだけ修正（＋と−の左右を入れ替え） ▼▼▼ -->
 <div class="count-box">
-    <button type="button" id="inc">＋</button>
     <button type="button" id="dec">－</button>
     <span id="qty">0</span>
+    <button type="button" id="inc">＋</button>
 </div>
+<!-- ▲▲▲ 修正ここまで ▲▲▲ -->
+
 
 <!-- ========== セット ========== -->
 <p>12本セット（-10%） / ¥<?= number_format($set_price) ?></p>
+
+<!-- ▼▼▼ ここだけ修正（＋と−の左右を入れ替え） ▼▼▼ -->
 <div class="set-box">
-    <button type="button" id="boxInc">＋</button>
     <button type="button" id="boxDec">－</button>
     <span id="boxQty">0</span>
+    <button type="button" id="boxInc">＋</button>
 </div>
+<!-- ▲▲▲ 修正ここまで ▲▲▲ -->
+
 
 <!-- ========== カート送信 ========== -->
 <form method="post" action="cart-confirm.php">
@@ -162,13 +169,13 @@ document.getElementById('descBtn').onclick = ()=>{
     btn.textContent = open ? '説明 ▲' : '説明 ▼';
 };
 
-// -------------------- いいね処理（スマホ対応） --------------------
+// -------------------- いいね処理 --------------------
 const likeBtn = document.getElementById('likeBtn');
 likeBtn.addEventListener('click', toggleLike);
 likeBtn.addEventListener('touchstart', toggleLike);
 
 async function toggleLike(e){
-    e.preventDefault(); // iPhoneのゴーストクリック対策
+    e.preventDefault();
 
     const res = await fetch('like_toggle.php', {
         method:'POST',
