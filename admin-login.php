@@ -121,7 +121,7 @@ button:hover {
 <?php require 'manager-header.php'; ?>
 
 <div class="login-box">
-    <h2>動くかどうかの確認です</h2>
+    <h2>管理者用ログイン画面</h2>
 
     <?php if ($error): ?>
         <div class="error"><?= htmlspecialchars($error) ?></div>

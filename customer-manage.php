@@ -119,7 +119,7 @@ a {color:black;text-decoration:none;}
     <ul>
         <li><a href="product-manage.php">商品管理</a></li>
         <li><a href="customer-manage.php">顧客管理</a></li>
-        <li><a href="adorder-history.php">注文履歴</a></li>
+        <li><a href="order-history.php">注文履歴</a></li>
         <li><a href="admin-logout.php" style="color:red; font-weight:bold;">ログアウト</a></li>
     </ul>
 </div>
@@ -146,7 +146,7 @@ a {color:black;text-decoration:none;}
 <tr>
     <td><?= $i + 1 ?></td>
     <td>
-        <a href="adorder-history.php?customer_id=<?= $row['customer_id'] ?>">
+        <a href="order-history.php?customer_id=<?= $row['customer_id'] ?>">
             <?= htmlspecialchars($row['name']) ?>
         </a>
     </td>

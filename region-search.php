@@ -20,6 +20,7 @@ $products = $stmt->fetchAll();
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($prefecture) ?>エリア | SATONOMI</title>
     <style>
         body {font-family: "Hiragino Kaku Gothic ProN", sans-serif; background: #fafafa; margin: 0;}

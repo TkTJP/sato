@@ -115,7 +115,7 @@ button:hover{background-color:#005fa3;}
         <ul>
             <li><a href="product-manage.php" @click="closeMenu">商品管理</a></li>
             <li><a href="customer-manage.php" @click="closeMenu">顧客管理</a></li>
-            <li><a href="adorder-history.php" @click="closeMenu">注文履歴</a></li>
+            <li><a href="order-history.php" @click="closeMenu">注文履歴</a></li>
         </ul>
         <a href="logout.php" class="logout-btn" @click="closeMenu">ログアウト</a>
     </div>
