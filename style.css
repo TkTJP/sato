@@ -1,5 +1,5 @@
 /* =============================
-   SATONOMI 共通統合CSS（整理済み）
+   SATONOMI 共通統合CSS（重複削除版）
 ============================= */
 
 /* ===== 1. 全体設定 ===== */
@@ -17,7 +17,6 @@ body {
     background-color: #fff;
     min-height: 100vh;
     padding-bottom: 90px;
-    /* フッター分 */
 }
 
 /* =============================
@@ -335,7 +334,7 @@ body {
 }
 
 /* =============================
-   10. 商品一覧・検索
+   10. 商品一覧
 ============================= */
 .page-with-nav .search-box {
     padding: 12px;
@@ -388,20 +387,24 @@ body {
     margin-bottom: 10px;
 }
 
-/* いいねボタン */
+/* いいねボタン（一本化） */
 .like-btn {
     font-size: 32px;
     cursor: pointer;
-    transition: transform 0.2s, color 0.2s;
-    color: #c0c0c0;
+    transition: transform .2s, color .2s;
+    user-select: none;
 }
 
-.like-btn:active {
-    transform: scale(1.3);
+.like-btn::before {
+    content: "\2661";
+    font-size: 28px;
+    color: #aaa;
+    transition: .2s ease;
 }
 
-.like-btn.liked {
-    color: #ff648a;
+.like-btn.liked::before {
+    content: "\2665";
+    color: red;
 }
 
 .like-wrap {
@@ -412,26 +415,14 @@ body {
 }
 
 /* =============================
-   11. 商品詳細ページ（追加）
+   11. 商品詳細
 ============================= */
-
-/* ページ全体レイアウト */
 .product-page {
     max-width: 480px;
     margin: 0 auto;
     padding: 20px 16px 100px;
 }
 
-/* 戻るボタン */
-.back-btn {
-    display: block;
-    font-size: 24px;
-    color: #444;
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
-/* 商品画像 */
 .product-img {
     width: 70%;
     max-width: 260px;
@@ -439,38 +430,25 @@ body {
     margin: 0 auto 20px;
 }
 
-/* 白カード */
 .product-detail-card {
     background: #fff;
-    border-radius: 20px;
-    padding: 22px 20px;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-/* 商品名 */
 .product-title {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-/* いいね */
 .like-area {
     display: flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 16px;
-}
-
-.like-btn {
-    font-size: 30px;
-    cursor: pointer;
-    color: #c0c0c0;
-}
-
-.like-btn.liked {
-    color: #ff648a;
 }
 
 /* 数量カウンター */
@@ -526,48 +504,4 @@ body {
     color: #555;
     font-size: 14px;
     line-height: 1.7;
-}
-
-/* ==============================
-   スマホ対応・CSSハートボタン
-================================= */
-.like-btn {
-    width: 28px;
-    height: 28px;
-    display: inline-block;
-    cursor: pointer;
-    position: relative;
-    user-select: none;
-    padding: 6px;
-}
-
-.like-btn::before {
-    content: "\2661";
-    /* ♡ 白ハート */
-    font-size: 28px;
-    color: #aaa;
-    transition: .2s ease;
-}
-
-.like-btn.liked::before {
-    content: "\2665";
-    /* ♥ 塗りつぶし */
-    color: red;
-}
-
-/* 数量ボタン */
-.count-box,
-.set-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 6px 0;
-}
-
-.count-box button,
-.set-box button {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-    cursor: pointer;
 }
