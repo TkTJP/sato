@@ -1,90 +1,68 @@
 /* =============================
-   SATONOMI 全画面共通統合CSS
-   (header.php, login.php、および全画面スクリーンショットに対応)
+   SATONOMI 共通統合CSS（整理済み）
 ============================= */
 
 /* ===== 1. 全体設定 ===== */
 body {
-    /* 日本語フォントと標準フォント */
     font-family: "Noto Sans JP", sans-serif;
     background-color: #f5f5f5;
-    /* 背景の薄いグレー */
     margin: 0;
-    padding-top: 81px;
-
+    padding-top: 80px;
 }
 
-/* モバイル表示のシミュレーションと中央寄せ */
+/* コンテナ */
 .app-container {
-    max-width: 500px;
+    max-width: 480px;
     margin: 0 auto;
     background-color: #fff;
     min-height: 100vh;
+    padding-bottom: 90px;
+    /* フッター分 */
 }
 
 /* =============================
-   2. ヘッダー部分 (.site-header)
-   - header.phpに記述された共通ヘッダー
+   2. ヘッダー部分
 ============================= */
 .site-header {
-    background-color: #f8eedf;
-    /* 薄いベージュ */
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    height: 60px;
+    width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    width: 90%;
-    height: 60px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
 }
 
 .header-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-left {
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
     display: flex;
     align-items: center;
 }
 
-.header-logo {
-    height: 65px;
-    /* 画像から推定されるロゴのサイズ */
-    margin-right: 10px;
-    /* ロゴ画像のカスタムスタイルがある場合に追加 */
+.back-btn {
+    font-size: 28px;
+    text-decoration: none;
+    color: #444;
 }
 
-.header-title {
+.site-title {
+    flex: 1;
+    text-align: center;
     font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    letter-spacing: 1px;
-    text-decoration: none;
-}
-
-.header-icons {
-    display: flex;
-    align-items: center;
-}
-
-.icon-link {
-    text-decoration: none;
-    color: #333;
-    font-size: 22px;
-    margin-left: 15px;
-    transition: color 0.3s;
+    margin-right: 28px;
 }
 
 /* =============================
-   3. ナビゲーションバー (全画面共通の緑色のバー)
-   - .nav-bar / .mypage-header
+   3. ナビゲーションバー（緑）
 ============================= */
 .nav-bar {
     background-color: #baffba;
-    /* 画面をまたがる薄い緑色 */
     padding: 15px;
     font-weight: bold;
     font-size: 18px;
@@ -94,80 +72,50 @@ body {
     color: #333;
 }
 
-/* マイページからの流用スタイル（ナビゲーションバーとして統一） */
-.mypage-header {
-    background-color: #a2e8a2;
-    padding: 15px;
-    font-weight: bold;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-/* 戻るボタンのスタイル (共通化) */
-.nav-bar .back-button,
-.mypage-header .back-button {
+.nav-bar .back-button {
     position: absolute;
     left: 15px;
     background: none;
     border: none;
-    padding: 0;
     font-size: 18px;
     cursor: pointer;
-    color: #333;
-    z-index: 10;
 }
 
-/* タイトルの中央寄せ */
 .nav-title {
     flex-grow: 1;
     text-align: center;
-    /* 戻るボタンのスペースを考慮し、微調整 */
     transform: translateX(-10px);
 }
 
-/* mypage-header の後擬似要素によるタイトル表示を、nav-barの要素タイトル表示に統一 */
-.mypage-header::after {
-    /* 既存のマイページ用スタイルを削除または上書きし、要素内テキストを使用 */
-    content: none;
-}
-
-
 /* =============================
-   4. 汎用的な緑のボタン (.green-button)
-   - ログイン、カートに入れる、購入確定などに使用
+   4. 汎用的な緑ボタン
 ============================= */
 .green-button {
     display: block;
     width: 90%;
     padding: 12px 20px;
-    border: none;
     border-radius: 25px;
-    /* 画像に合わせたグラデーション */
+    border: none;
     background: linear-gradient(to bottom, #b3f0b3, #85e085);
     color: #333;
     font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
     text-align: center;
+    margin: 0 auto;
+    cursor: pointer;
     text-decoration: none;
-    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .green-button:hover {
     background: linear-gradient(to bottom, #c0f5c0, #95e595);
 }
 
-
 /* =============================
-   5. ログインフォーム専用スタイル (.login.php)
+   5. ログインフォーム
 ============================= */
 .login-form-container {
     padding: 40px 20px 20px;
-    background-color: #f5f5f5;
 }
 
 .login-form-container label {
@@ -176,11 +124,8 @@ body {
     margin-bottom: 5px;
     font-size: 14px;
     font-weight: bold;
-    color: #555;
 }
 
-/* 入力フィールドのスタイル (角丸) */
-/* login.phpに class="input-field" を追加したため、この既存スタイルが適用されます */
 .input-field {
     width: 100%;
     padding: 10px 15px;
@@ -188,9 +133,7 @@ body {
     border-radius: 20px;
     box-sizing: border-box;
     font-size: 16px;
-    appearance: none;
     margin-bottom: 25px;
-    /* ボタンとの間にスペースを追加 */
 }
 
 .error-message {
@@ -199,40 +142,24 @@ body {
     margin-bottom: 20px;
 }
 
-/* ログインボタン (input[type="submit"]) に緑ボタンのスタイルを直接適用 */
 .login-form-container input[type="submit"] {
-    /* ... センタリングやサイズの設定 ... */
-
-    /* 必須: 緑色のグラデーション */
-    background: linear-gradient(to bottom, #baffba, #85e085);
-
-    /* 必須: 角丸 */
-    border-radius: 25px;
-
-    /* 必須: 枠線をなくす */
-    border: none;
-
-    /* 文字の色 (黒っぽい色) */
-    color: #333;
-    font-weight: bold;
-
-    /* 薄い影 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    /* ... その他の設定 ... */
     width: 120px;
     padding: 12px;
-
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(to bottom, #baffba, #85e085);
+    color: #333;
+    font-weight: bold;
+    margin: 10px auto 0;
+    display: block;
 }
 
-/* ホバー時の色変更（少し明るい緑） */
 .login-form-container input[type="submit"]:hover {
     background: linear-gradient(to bottom, #c0f5c0, #95e595);
 }
 
 /* =============================
-   6. 汎用的なカードデザイン (.content-card)
-   - カート、商品一覧、注文履歴に使用
+   6. 汎用カードデザイン
 ============================= */
 .content-card {
     background-color: #fff;
@@ -242,7 +169,6 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* 商品画像と情報の共通レイアウト */
 .item-detail {
     display: flex;
     align-items: center;
@@ -262,20 +188,16 @@ body {
 .item-name {
     font-weight: bold;
     font-size: 16px;
-    margin-bottom: 5px;
 }
 
 .item-price {
     font-size: 14px;
-    color: #333;
     font-weight: 600;
 }
 
-
 /* =============================
-   7. カート/購入確認 画面関連
+   7. カート / 購入確認
 ============================= */
-/* 数量コントロール */
 .quantity-control {
     display: flex;
     align-items: center;
@@ -285,7 +207,6 @@ body {
 .quantity-control span {
     font-size: 18px;
     padding: 0 10px;
-    font-weight: bold;
 }
 
 .quantity-control button {
@@ -294,50 +215,47 @@ body {
     border-radius: 50%;
     width: 24px;
     height: 24px;
-    font-size: 16px;
     cursor: pointer;
-    line-height: 1;
-    color: #333;
 }
 
-/* 画面下部の合計とボタン */
 .fixed-footer {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
-    background-color: #a2e8a2;
-    /* 下部の薄い緑色 */
-    padding: 15px 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    /* モバイル表示幅に制限 */
-    max-width: 500px;
+}
+
+.footer-inner {
+    max-width: 480px;
+    width: 100%;
+    padding: 0 16px;
     margin: 0 auto;
 }
 
-.total-summary {
-    display: flex;
-    justify-content: space-between;
+.buy-btn {
+    background: #4a4a4a;
+    color: #fff;
     width: 100%;
-    max-width: 460px;
-    /* 適切な幅に調整 */
+    padding: 12px 0;
+    border-radius: 12px;
     font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    border: none;
 }
 
 /* =============================
-   8. マイページ本体 (旧 mypage-header/profile/menu スタイル)
+   8. マイページ
 ============================= */
 .mypage-container {
     text-align: center;
     padding-bottom: 50px;
 }
 
-/* ===== プロフィール情報 ===== */
 .profile {
     background-color: #fff;
     padding: 30px 0;
@@ -353,68 +271,38 @@ body {
 .profile .name {
     font-size: 18px;
     font-weight: bold;
-    margin-top: 10px;
 }
 
 .profile .points {
-    color: #555;
     font-size: 14px;
-    margin-top: 5px;
+    color: #555;
 }
 
-/* ===== メニュー部分 ===== */
 .menu {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
 }
 
 .menu button {
     width: 80%;
     background-color: #b2f2d1;
-    border: none;
     border-radius: 10px;
     padding: 15px;
     margin: 8px 0;
     font-size: 16px;
-    text-align: left;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    transition: background-color 0.3s;
+    border: none;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    color: #000;
 }
 
 .menu button:hover {
     background-color: #a0e5c3;
 }
 
-.menu button i {
-    margin-right: 10px;
-    color: #000;
-}
-
-/* ボタン内の文字色を黒に固定 */
-.menu button,
-.menu button * {
-    color: #000 !important;
-    -webkit-text-fill-color: #000 !important;
-}
-
-/* ===== ログアウト部分 ===== */
-.logout {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 14px;
-    color: #333;
-}
-
 /* =============================
-   9. 注文履歴画面 (.order-history-container)
+   9. 注文履歴
 ============================= */
 .order-history-container {
     padding-top: 20px;
@@ -423,7 +311,6 @@ body {
 .date-range-filter {
     display: flex;
     justify-content: center;
-    align-items: center;
     padding: 0 15px 20px;
 }
 
@@ -434,68 +321,36 @@ body {
     border-radius: 5px;
 }
 
-.date-range-filter span {
-    margin: 0 10px;
-}
-
 .order-item-card {
-    background-color: #fff;
+    background: #fff;
     border-radius: 10px;
-    margin: 10px 15px 20px;
+    margin: 10px 15px;
     padding: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.order-item-card .item-detail {
-    margin-bottom: 10px;
 }
 
 .order-summary {
     text-align: right;
     border-top: 1px solid #eee;
     padding-top: 10px;
-    font-size: 14px;
-}
-
-.order-summary div {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 5px;
-}
-
-.order-summary .label {
-    margin-right: 15px;
-    color: #555;
-}
-
-.order-summary .value {
-    font-weight: bold;
 }
 
 /* =============================
-   10. 商品一覧・検索画面
+   10. 商品一覧・検索
 ============================= */
-
-/* 🔍 検索 */
 .page-with-nav .search-box {
     padding: 12px;
-    display: flex;
-    justify-content: center;
     background: #a2e8a2;
-    border-bottom: 1px solid #ddd;
     position: fixed;
     top: 80px;
-    height: 40px;
-    width: 96.3%;
+    width: 100%;
     z-index: 900;
 }
 
 .search-box form {
     width: 90%;
-    max-width: 500px;
+    margin: 0 auto;
     display: flex;
     gap: 8px;
-    color: #f5f5f5;
 }
 
 .search-box input {
@@ -508,103 +363,19 @@ body {
 .search-box button {
     padding: 10px 16px;
     background: #5cc4a3;
+    border-radius: 20px;
+    color: #fff;
     border: none;
-    border-radius: 20px;
-    color: #f5f5f5;
-    cursor: pointer;
-}
-
-.page-with-nav {
-    padding-top: 120px;
-}
-
-
-/* ⭐ 人気ランキング */
-.ranking-area {
-    padding: 20px 0;
-}
-
-.ranking-title {
-    text-align: center;
-    font-size: 18px;
-}
-
-.ranking-list {
-    width: 90%;
-    margin: 10px auto;
-    background: #f5f5f5;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-}
-
-.ranking-card {
-    text-align: center;
-    margin: 20px 0;
-    position: relative;
-}
-
-.rank-badge {
-    background: #f7b500;
-    color: #f5f5f5;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
-    position: absolute;
-    left: 10px;
-    top: -5px;
-}
-
-.ranking-card img {
-    margin-bottom: 8px;
-}
-
-.ranking-name {
-    font-weight: bold;
-}
-
-.ranking-price {
-    color: #e00;
-    font-weight: bold;
-    margin: 4px 0;
-}
-
-.ranking-explain {
-    color: #666;
-    font-size: 13px;
-}
-
-
-/* 🗺️ 名産マップ */
-.map-area {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.map-btn {
-    padding: 10px 18px;
-    background: #ffa64d;
-    color: #f5f5f5;
-    border-radius: 20px;
-    text-decoration: none;
-}
-
-
-/* 🛒 商品一覧 */
-.section-title {
-    text-align: center;
-    font-size: 20px;
-    margin-top: 20px;
 }
 
 .product-list {
+    padding-top: 120px;
     padding-bottom: 40px;
 }
 
+/* 商品カード */
 .product-card {
-    background: #f5f5f5;
+    background: #fff;
     width: 90%;
     margin: 20px auto;
     padding: 16px;
@@ -617,59 +388,25 @@ body {
     margin-bottom: 10px;
 }
 
-.product-name {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 6px;
-}
-
-.product-price {
-    font-size: 22px;
-    color: #e00;
-    font-weight: bold;
-}
-
-.no-result {
-    text-align: center;
-    color: #777;
-}
-
-/*いいねボタン*/
-
+/* いいねボタン */
 .like-btn {
     font-size: 32px;
-    /* スマホで見やすい大きさ */
     cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform 0.2s, color 0.2s;
     color: #c0c0c0;
-    /* 未いいね時の薄いグレー */
-    user-select: none;
-    display: inline-flex;
-    align-items: center;
 }
 
-/* 押した瞬間にポンッと大きくなる */
 .like-btn:active {
     transform: scale(1.3);
 }
 
-/* いいね済（ピンク色） */
 .like-btn.liked {
     color: #ff648a;
 }
 
-/* カウントも少しポップに */
-#likeCount {
-    font-size: 20px;
-    margin-left: 6px;
-    color: #555;
-}
-
-/* スマホでのタップ範囲を広げる（押しやすい） */
 .like-wrap {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 8px;
-    border-radius: 12px;
 }
