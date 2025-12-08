@@ -82,6 +82,14 @@ try {
             ]);
         }
 
+        // ===== 新規登録後に自動ログイン =====
+        $_SESSION['customer'] = [
+            'customer_id' => $customer_id,
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'subscr_join' => 0 // デフォルト値
+        ];
+
         // ===== 正常完了 → リダイレクト =====
         header('Location: member-signUp-complete.php');
         exit;
@@ -93,4 +101,3 @@ try {
 } catch (PDOException $e) {
     echo "<p style='color:red;'>DBエラー: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
 }
-?>
