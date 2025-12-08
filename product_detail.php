@@ -45,46 +45,6 @@ if ($customer_id) {
 <title><?= htmlspecialchars($product['name']); ?></title>
 <link rel="stylesheet" href="style.css">
 
-<style>
-/* ==============================
-   スマホ対応・CSSハートボタン
-================================= */
-.like-btn {
-    width: 28px;
-    height: 28px;
-    display: inline-block;
-    cursor: pointer;
-    position: relative;
-    user-select: none;
-    padding: 6px;
-}
-
-.like-btn::before {
-    content: "\2661"; /* ♡ 白ハート */
-    font-size: 28px;
-    color: #aaa;
-    transition: .2s ease;
-}
-
-.like-btn.liked::before {
-    content: "\2665"; /* ♥ 塗りつぶし */
-    color: red;
-}
-
-/* 数量ボタン */
-.count-box, .set-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 6px 0;
-}
-.count-box button, .set-box button {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-    cursor: pointer;
-}
-</style>
 </head>
 
 <body>
@@ -96,6 +56,8 @@ if ($customer_id) {
 
 <!-- ★ 商品画像（スクショ通りフル幅にするため class 追加） -->
 <img src="img/<?= htmlspecialchars($product['image']); ?>" class="product-img">
+
+<div class="product-detail-card">
 
 <!-- ★ タイトルエリア（スクショは中央寄せ） -->
 <h2 class="product-title"><?= htmlspecialchars($product['name']); ?></h2>
@@ -139,6 +101,8 @@ if ($customer_id) {
 <p id="desc" class="desc-box" style="display:none;">
     <?= nl2br(htmlspecialchars($product['description'] ?? '説明なし')); ?>
 </p>
+
+</div>
 
 <script>
 // -------------------- 単品 --------------------
