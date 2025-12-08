@@ -7,16 +7,145 @@ require 'db-connect.php';
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>会員登録画面</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6f8;
+}
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 0 10px;
+}
+
+.nav-title {
+    margin: 0 auto;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 全体 */
+.app-container {
+    display: flex;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.registration-form-container {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px 20px 30px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* アイコン選択 */
+.icon-select {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.icon-select label {
+    margin: 0 6px;
+    cursor: pointer;
+}
+
+.icon-select input {
+    display: none;
+}
+
+.icon-select img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: 0.2s;
+}
+
+.icon-select input:checked + img {
+    border: 3px solid #ff5722;
+    box-shadow: 0 0 8px rgba(255,87,34,0.6);
+    transform: scale(1.05);
+}
+
+/* フォーム */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+/* 郵便番号 */
+.postal-group {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.postal-group input {
+    flex: 1;
+}
+
+.search-button {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #9c27b0, #673ab7);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* 登録 */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff9800, #ff5722);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <script>
 function searchAddress() {
     const postalCode = document.getElementById('postal_code').value.replace('-', '').trim();
-
     if (!postalCode.match(/^\d{7}$/)) {
-        alert('郵便番号は7桁の数字で入力してください');
+        alert('郵便番号は7桁で入力してください');
         return;
     }
 
@@ -28,10 +157,10 @@ function searchAddress() {
                 document.getElementById('prefecture').value = r.address1;
                 document.getElementById('city').value = r.address2 + r.address3;
             } else {
-                alert('住所が見つかりませんでした');
+                alert('住所が見つかりません');
             }
         })
-        .catch(() => alert('通信エラーが発生しました'));
+        .catch(() => alert('通信エラー'));
 }
 </script>
 </head>
@@ -40,87 +169,68 @@ function searchAddress() {
 
 <?php include('header.php'); ?>
 
-<div class="app-container">
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">会員登録</span>
+</nav>
 
+<div class="app-container">
 <main class="registration-form-container">
 
-<button class="back-button" onclick="location.href='member.php'">←</button>
+<form action="member-signUp-function.php" method="post">
 
-<div class="field-image-area">
-    <div class="profile-image-placeholder">
-        ここにプロフィール画像を入れる
+    <!-- ✅ アイコン選択 -->
+    <div class="form-group icon-select">
+        <label>プロフィール画像</label>
+        <div>
+            <?php for ($i=1; $i<=4; $i++): ?>
+                <label>
+                    <input type="radio" name="customer_image" value="<?= $i ?>" <?= $i===1?'checked':'' ?>>
+                    <img src="img/icon<?= $i ?>.png" alt="icon<?= $i ?>">
+                </label>
+            <?php endfor; ?>
+        </div>
     </div>
-</div>
 
-<form class="registration-form" action="member-signUp-function.php" method="post">
-
-    <!-- 名前 -->
     <div class="form-group">
-        <label for="name">名前</label>
-        <input type="text" id="name" name="name" maxlength="32" required>
+        <label>名前</label>
+        <input type="text" name="name" required>
     </div>
 
-    <!-- メールアドレス -->
     <div class="form-group">
-        <label for="email">メールアドレス</label>
-        <input type="email" id="email" name="email" maxlength="64" required>
+        <label>メールアドレス</label>
+        <input type="email" name="email" required>
     </div>
 
-    <!-- パスワード -->
     <div class="form-group">
-        <label for="password">パスワード</label>
-        <input type="password" id="password" name="password" maxlength="64" required>
+        <label>パスワード</label>
+        <input type="password" name="password" required>
     </div>
 
-    <!-- 郵便番号 -->
     <div class="form-group postal-group">
-        <label for="postal_code">郵便番号</label>
-        <input
-            type="text"
-            id="postal_code"
-            name="postal_code"
-            maxlength="8"
-            placeholder="例：1000001"
-            required
-        >
+        <input type="text" id="postal_code" name="postal_code" placeholder="1000001" required>
         <button type="button" class="search-button" onclick="searchAddress()">検索</button>
     </div>
 
-    <!-- 都道府県 -->
     <div class="form-group">
-        <label for="prefecture">都道府県</label>
-        <input type="text" id="prefecture" name="prefecture" maxlength="64" required>
+        <input type="text" id="prefecture" name="prefecture" placeholder="都道府県" required>
     </div>
 
-    <!-- 市区町村 -->
     <div class="form-group">
-        <label for="city">市区町村</label>
-        <input type="text" id="city" name="city" maxlength="64" required>
+        <input type="text" id="city" name="city" placeholder="市区町村" required>
     </div>
 
-    <!-- 番地・建物名 -->
     <div class="form-group">
-        <label for="street">番地・建物名・部屋番号</label>
-        <input type="text" id="street" name="street" maxlength="128" required>
+        <input type="text" name="street" placeholder="番地・建物名・部屋番号" required>
     </div>
 
-    <!-- 電話番号 -->
     <div class="form-group">
-        <label for="phone_number">電話番号</label>
-        <input
-            type="tel"
-            id="phone_number"
-            name="phone_number"
-            maxlength="15"
-            placeholder="09012345678"
-            required
-        >
+        <input type="tel" name="phone_number" placeholder="09012345678" required>
     </div>
 
-    <!-- 登録ボタン -->
-    <div class="form-group submit-group">
-        <button type="submit" class="submit-button">登録</button>
-    </div>
+    <button type="submit" class="submit-button">登録</button>
 
 </form>
 </main>
