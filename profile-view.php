@@ -18,7 +18,7 @@ if (!isset($_SESSION['customer']['customer_id'])) {
 
 $customer_id = $_SESSION['customer']['customer_id'];
 
-// ユーザー情報取得（画像含む）
+// ユーザー情報取得
 $sql = $pdo->prepare('
     SELECT c.name, c.email, c.customer_image,
            a.postal_code, a.prefecture, a.city, a.street, a.phone_number
@@ -34,9 +34,102 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<title>My情報閲覧</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My情報閲覧画面</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6f8;
+}
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 0 10px;
+}
+
+.nav-title {
+    margin: 0 auto;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.app-container {
+    display: flex;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px 20px 30px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.form-group p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.profile-image {
+    text-align: center;
+}
+
+.profile-image img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.edit-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2196f3, #0d47a1);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: 0.3s;
+}
+
+.edit-button:hover {
+    opacity: 0.9;
+    transform: translateY(-3px);
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -51,12 +144,12 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
 
 <div class="app-container">
 
-    <?php if ($customer): ?>
+<?php if ($customer): ?>
+    <div class="profile-card">
+
         <div class="form-group profile-image">
             <label>プロフィール画像</label>
-            <p>
-                <img src="img/icon<?= (int)$customer['customer_image'] ?>.png" alt="プロフィール画像" style="width:100px; height:100px; border-radius:50%;">
-            </p>
+            <img src="img/icon<?= (int)$customer['customer_image'] ?>.png" alt="プロフィール画像">
         </div>
 
         <div class="form-group">
@@ -88,9 +181,10 @@ $customer = $sql->fetch(PDO::FETCH_ASSOC);
             <button type="submit" class="edit-button">編集</button>
         </form>
 
-    <?php else: ?>
-        <p>データが見つかりません。</p>
-    <?php endif; ?>
+    </div>
+<?php else: ?>
+    <p>データが見つかりません。</p>
+<?php endif; ?>
 
 </div>
 </body>
