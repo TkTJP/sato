@@ -54,10 +54,10 @@ if ($customer_id) {
 <!-- ★ 戻るボタン -->
 <a href="top.php" class="back-btn">←</a>
 
+<div class="product-detail-card">
+
 <!-- ★ 商品画像（スクショ通りフル幅にするため class 追加） -->
 <img src="img/<?= htmlspecialchars($product['image']); ?>" class="product-img">
-
-<div class="product-detail-card">
 
 <!-- ★ タイトルエリア（スクショは中央寄せ） -->
 <h2 class="product-title"><?= htmlspecialchars($product['name']); ?></h2>
