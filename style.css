@@ -410,3 +410,164 @@ body {
     gap: 8px;
     padding: 6px 8px;
 }
+
+/* =============================
+   11. 商品詳細ページ（追加）
+============================= */
+
+/* ページ全体レイアウト */
+.product-page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+}
+
+/* 戻るボタン */
+.back-btn {
+    display: block;
+    font-size: 24px;
+    color: #444;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+/* 商品画像 */
+.product-img {
+    width: 70%;
+    max-width: 260px;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+/* 白カード */
+.product-detail-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px 20px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 商品名 */
+.product-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* いいね */
+.like-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.like-btn {
+    font-size: 30px;
+    cursor: pointer;
+    color: #c0c0c0;
+}
+
+.like-btn.liked {
+    color: #ff648a;
+}
+
+/* 数量カウンター */
+.amount-box {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 6px 0 16px;
+}
+
+.btn-minus,
+.btn-plus {
+    width: 35px;
+    height: 35px;
+    font-size: 22px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+}
+
+.amount-num {
+    font-size: 20px;
+    width: 32px;
+    text-align: center;
+}
+
+/* カートボタン */
+.cart-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to bottom, #b3f0b3, #85e085);
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    margin-top: 15px;
+}
+
+/* 説明部分 */
+.desc-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 12px 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.desc-box {
+    padding-top: 10px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ==============================
+   スマホ対応・CSSハートボタン
+================================= */
+.like-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    padding: 6px;
+}
+
+.like-btn::before {
+    content: "\2661";
+    /* ♡ 白ハート */
+    font-size: 28px;
+    color: #aaa;
+    transition: .2s ease;
+}
+
+.like-btn.liked::before {
+    content: "\2665";
+    /* ♥ 塗りつぶし */
+    color: red;
+}
+
+/* 数量ボタン */
+.count-box,
+.set-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+}
+
+.count-box button,
+.set-box button {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+}
