@@ -5,11 +5,25 @@ $pdo = new PDO($connect, USER, PASS);
 
 if (!isset($_SESSION['customer'])) {
     ?>
-    <?php include("header.php"); ?>
-    <p>ログインしてください。</p>
-    <form action="login.php" method="get">
-        <button type="submit">ログインする</button>
-    </form>
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ログインしてください</title>
+    </head>
+    <body>
+        <?php include("header.php"); ?>
+
+        <h2>ログインが必要です</h2>
+        <p>カートを表示するにはログインしてください。</p>
+
+        <form action="login.php" method="get">
+            <button type="submit">ログインする</button>
+        </form>
+
+    </body>
+    </html>
     <?php
     exit;
 }
