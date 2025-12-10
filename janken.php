@@ -26,7 +26,6 @@ $customer_id = (int)$_SESSION['customer']['customer_id'];
 if (empty($_SESSION['janken_token'])) {
     $_SESSION['janken_token'] = bin2hex(random_bytes(16));
 }
-
 $token = $_SESSION['janken_token'];
 
 /* -----------------------------------
@@ -63,8 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = 'lose';
     }
 
-    /* ✅ 勝ち・あいこはスタンプ +1 */
-    if ($result === 'win' || $result === 'draw') {
+    /* -----------------------------------
+       ✅ 勝ち → スタンプ +1
+    ----------------------------------- */
+    if ($result === 'win') {
         $stmt = $pdo->prepare("
             UPDATE stamp_cards
             SET stamp_count = stamp_count + 1,
@@ -74,12 +75,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$customer_id]);
     }
 
+    /* -----------------------------------
+       ✅ あいこ → ポイント +10pt
+       customers.points を加算
+    ----------------------------------- */
+    if ($result === 'draw') {
+        $stmt = $pdo->prepare("
+            UPDATE customers
+            SET points = points + 10
+            WHERE customer_id = ?
+        ");
+        $stmt->execute([$customer_id]);
+    }
+
+    /* ✅ 結果メッセージ */
     if ($result === 'win') {
         $_SESSION['stamp_message'] = "🎉 勝ちました！スタンプを1個獲得！";
     } elseif ($result === 'draw') {
-        $_SESSION['stamp_message'] = "😐 あいこです！スタンプを1個獲得！";
+        $_SESSION['stamp_message'] = "😐 あいこです！ポイントを10pt獲得！";
     } else {
-        $_SESSION['stamp_message'] = "😭 負けました…スタンプは増えません。";
+        $_SESSION['stamp_message'] = "😭 負けました…何も獲得できません。";
     }
 
     header("Location: stamp.php");
@@ -115,7 +130,7 @@ body {
 }
 
 .janken-btn img {
-    width: 140px;   /* ✅ 画像サイズ統一 */
+    width: 140px;
     height: auto;
     transition: transform 0.2s;
 }
@@ -124,8 +139,8 @@ body {
     transform: scale(1.1);
 }
 </style>
-
 </head>
+
 <body>
 
 <h2>じゃんけん</h2>
