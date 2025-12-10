@@ -4,14 +4,61 @@ require 'db-connect.php';
 $pdo = new PDO($connect, USER, PASS);
 
 if (!isset($_SESSION['customer'])) {
-    echo "ログインしてください。";
-    exit;
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログインしてください</title>
+<style>
+body {
+    font-family: "Noto Sans JP", sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding-top:80px;
+    text-align:center;
 }
+.login-box{
+    background:#fff;
+    width:90%;
+    max-width:400px;
+    margin:60px auto;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+button{
+    padding:10px 20px;
+    font-size:16px;
+    border:none;
+    background:#007bff;
+    color:#fff;
+    border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<?php include("header.php"); ?>
+
+<div class="login-box">
+    <h2>ログインが必要です</h2>
+    <p>カートを表示するにはログインしてください。</p>
+    <form action="login.php" method="get">
+        <button type="submit">ログインする</button>
+    </form>
+</div>
+
+</body>
+</html>
+<?php
+exit;
+}
+
 $customer_id = $_SESSION['customer']['customer_id'];
 
-// ----------------------
-//  追加処理（単品 + セット）
-// ----------------------
+/* --- POST商品追加処理 --- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
 
     $product_id = (int)$_POST['id'];
@@ -34,10 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     exit;
 }
 
-
-// ----------------------
-//  数量変更・削除
-// ----------------------
+/* --- 数量変更 / 削除 --- */
 if (isset($_GET['action'], $_GET['id'], $_GET['kind'])) {
 
     $product_id = (int)$_GET['id'];
@@ -82,10 +126,7 @@ if (isset($_GET['action'], $_GET['id'], $_GET['kind'])) {
     exit;
 }
 
-
-// ----------------------
-//  カート取得
-// ----------------------
+/* --- カート取得 --- */
 $stmt = $pdo->prepare("
     SELECT p.product_id, p.name, p.price, p.image,
            c.quantity, c.box
@@ -96,9 +137,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$customer_id]);
 $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ----------------------
-//  合計
-// ----------------------
 $total = 0;
 ?>
 <!DOCTYPE html>
@@ -107,21 +145,88 @@ $total = 0;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>カート</title>
+
 <style>
-/* ▼必要最低限だけ */
-img { width:70px; }
-button { padding:6px 12px; }
+body {
+    font-family: "Noto Sans JP", sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding-top:80px;
+}
+.cart-container {
+    width: 95%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.item-card {
+    background:#fff;
+    padding:15px;
+    margin:15px 0;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.item-header {
+    display:flex;
+    align-items:center;
+}
+.item-header img {
+    width:80px;
+    height:80px;
+    object-fit:cover;
+    border-radius:8px;
+}
+.item-info {
+    margin-left:15px;
+}
+.item-name {
+    font-weight:bold;
+    font-size:18px;
+}
+.qty-box {
+    margin-top:10px;
+}
+.qty-box a {
+    padding:4px 10px;
+    background:#ddd;
+    border-radius:6px;
+    margin:0 5px;
+    text-decoration:none;
+    color:#333;
+}
+.delete-link {
+    color:red;
+    text-decoration:none;
+    font-size:14px;
+}
+.total-box {
+    text-align:center;
+    font-size:22px;
+    margin:20px 0;
+}
+.buy-btn {
+    display:block;
+    width:100%;
+    background:#007bff;
+    color:#fff;
+    padding:14px 0;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+}
 </style>
+
 </head>
 <body>
+
 <?php include('header.php'); ?>
+
+<div class="cart-container">
 <h2>カート</h2>
 
 <?php if (empty($cart)): ?>
     <p>カートに商品はありません。</p>
 
 <?php else: ?>
-
 <?php foreach ($cart as $item): ?>
 <?php
 $id    = $item['product_id'];
@@ -136,34 +241,50 @@ $price_set    = $item['price'] * 12 * 0.9;
 $total += ($price_single * $qty) + ($price_set * $box);
 ?>
 
-<!-- 1商品分（最小構成） -->
-<img src="img/<?= $img ?>"><br>
-<b><?= $name ?></b><br>
+<div class="item-card">
+    <div class="item-header">
+        <img src="img/<?= $img ?>" alt="">
+        <div class="item-info">
+            <div class="item-name"><?= $name ?></div>
+        </div>
+    </div>
 
-1本：¥<?= number_format($price_single) ?><br>
-<a href="?action=minus&id=<?= $id ?>&kind=single">－</a>
-<?= $qty ?>
-<a href="?action=plus&id=<?= $id ?>&kind=single">＋</a><br>
-小計（単品）：¥<?= number_format($price_single * $qty) ?><br><br>
+    <!-- 単品 -->
+    <div class="qty-box">
+        1本：¥<?= number_format($price_single) ?><br>
+        <a href="?action=minus&id=<?= $id ?>&kind=single">－</a>
+        <?= $qty ?>
+        <a href="?action=plus&id=<?= $id ?>&kind=single">＋</a><br>
+        小計：¥<?= number_format($price_single * $qty) ?>
+    </div>
 
-12本セット：¥<?= number_format($price_set) ?><br>
-<a href="?action=minus&id=<?= $id ?>&kind=set">－</a>
-<?= $box ?>
-<a href="?action=plus&id=<?= $id ?>&kind=set">＋</a><br>
-小計（セット）：¥<?= number_format($price_set * $box) ?><br><br>
+    <br>
 
-<a href="?action=delete&id=<?= $id ?>&kind=single" style="color:red;">削除</a>
-<hr>
+    <!-- セット -->
+    <div class="qty-box">
+        12本セット：¥<?= number_format($price_set) ?><br>
+        <a href="?action=minus&id=<?= $id ?>&kind=set">－</a>
+        <?= $box ?>
+        <a href="?action=plus&id=<?= $id ?>&kind=set">＋</a><br>
+        小計：¥<?= number_format($price_set * $box) ?>
+    </div>
+
+    <br>
+    <a href="?action=delete&id=<?= $id ?>&kind=single" class="delete-link">削除</a>
+</div>
 
 <?php endforeach; ?>
 
-<p><b>合計：¥<?= number_format($total) ?></b></p>
+<div class="total-box">
+<b>合計：¥<?= number_format($total) ?></b>
+</div>
 
 <form action="order-confirm.php" method="get">
-    <button type="submit">購入する</button>
+    <button class="buy-btn">購入する</button>
 </form>
 
 <?php endif; ?>
+</div>
 
 </body>
 </html>
