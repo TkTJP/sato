@@ -157,6 +157,22 @@ body {
     font-size:16px;
     cursor:pointer;
 }
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #333;               /* 青色リンクを消す・黒字にする */
+    text-decoration: none;     /* 下線を消す */
+    font-size: 16px;
+    font-weight: 500;
+    padding: 6px 4px;
+}
+
+.back-link:hover {
+    color: #000;               /* ホバー時に少し濃く */
+    text-decoration: underline; /* うっすら下線 */
+}
+
 </style>
 </head>
 
@@ -166,7 +182,7 @@ body {
 
 <div class="page-container">
 
-<a href="top.php" style="text-decoration:none;">← 戻る</a>
+<a href="top.php" class="back-link">← 戻る</a>
 
 <div class="product-card">
 
