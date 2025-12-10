@@ -4,7 +4,13 @@ require 'db-connect.php';
 $pdo = new PDO($connect, USER, PASS);
 
 if (!isset($_SESSION['customer'])) {
-    echo "ログインしてください。";
+    echo '<?php include("header.php"); ?>';
+    echo "<p>ログインしてください。</p>";
+    echo '
+        <form action="login.php" method="get">
+            <button type="submit">ログインする</button>
+        </form>
+    ';
     exit;
 }
 $customer_id = $_SESSION['customer']['customer_id'];
