@@ -45,64 +45,94 @@ if ($customer_id) {
 <title><?= htmlspecialchars($product['name']); ?></title>
 <link rel="stylesheet" href="style.css">
 
+<style>
+/* ==============================
+   スマホ対応・CSSハートボタン
+================================= */
+.like-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    padding: 6px;          /* ← iPhoneで必要：タップ領域を広げる */
+}
+
+.like-btn::before {
+    content: "\2661"; /* ♡ 白ハート */
+    font-size: 28px;
+    color: #aaa;
+    transition: .2s ease;
+}
+
+.like-btn.liked::before {
+    content: "\2665"; /* ♥ 塗りつぶし */
+    color: red;
+}
+
+/* 数量ボタン */
+.count-box, .set-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+}
+.count-box button, .set-box button {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
 <?php include('header.php'); ?>
+<a href="top.php">← 戻る</a>
 
-<!-- ★ 戻るボタン -->
-<a href="top.php" class="back-btn">←</a>
+<h2><?= htmlspecialchars($product['name']); ?></h2>
 
-<div class="product-detail-card">
+<img src="img/<?= htmlspecialchars($product['image']); ?>" width="200"><br>
 
-<!-- ★ 商品画像（スクショ通りフル幅にするため class 追加） -->
-<img src="img/<?= htmlspecialchars($product['image']); ?>" class="product-img">
-
-<!-- ★ タイトルエリア（スクショは中央寄せ） -->
-<h2 class="product-title"><?= htmlspecialchars($product['name']); ?></h2>
-
-<!-- ★ いいねボタンの位置調整用ラッパ -->
-<div class="like-area">
+<!-- ========== いいね ========== -->
+<div class="like-wrap">
     <span id="likeBtn" class="like-btn <?= $isLiked ? 'liked' : '' ?>"></span>
-    <span id="likeCount" class="like-count"><?= $totalLikes ?></span>
+    <span id="likeCount"><?= $totalLikes ?></span>
 </div>
 
-<!-- 金額表示 -->
-<p class="price-text">1本 / ¥<?= number_format($product['price']); ?></p>
+<p>価格：¥<?= number_format($product['price']); ?></p>
 
-<!-- ★ 数量カウンター（スクショと同じクラス名に変更） -->
-<div class="amount-box">
-    <button type="button" id="dec" class="btn-minus">－</button>
-    <span id="qty" class="amount-num">0</span>
-    <button type="button" id="inc" class="btn-plus">＋</button>
+<!-- ========== 単品 ========== -->
+<p>1本 / ¥<?= number_format($product['price']); ?></p>
+<div class="count-box">
+    <button type="button" id="inc">＋</button>
+    <button type="button" id="dec">－</button>
+    <span id="qty">0</span>
 </div>
 
-<!-- セット価格 -->
-<p class="price-text">12本セット（-10%） / ¥<?= number_format($set_price) ?></p>
-
-<!-- ★ セット数量カウンター -->
-<div class="amount-box">
-    <button type="button" id="boxDec" class="btn-minus">－</button>
-    <span id="boxQty" class="amount-num">0</span>
-    <button type="button" id="boxInc" class="btn-plus">＋</button>
+<!-- ========== セット ========== -->
+<p>12本セット（-10%） / ¥<?= number_format($set_price) ?></p>
+<div class="set-box">
+    <button type="button" id="boxInc">＋</button>
+    <button type="button" id="boxDec">－</button>
+    <span id="boxQty">0</span>
 </div>
 
-<!-- カートボタン（スクショは幅いっぱい） -->
-<form method="post" action="cart-confirm.php" class="cart-form">
+<!-- ========== カート送信 ========== -->
+<form method="post" action="cart-confirm.php">
     <input type="hidden" name="id" value="<?= $product_id ?>">
     <input type="hidden" id="qtyInput" name="quantity" value="0">
     <input type="hidden" id="boxInput" name="box_quantity" value="0">
-    <button type="submit" class="cart-btn">カートに入れる</button>
+    <button type="submit">カートに入れる</button>
 </form>
 
-<!-- 説明 -->
-<button id="descBtn" class="desc-toggle">商品説明 ▼</button>
-<p id="desc" class="desc-box" style="display:none;">
-    <?= nl2br(htmlspecialchars($product['description'] ?? '説明なし')); ?>
+<!-- ========== 説明 ========== -->
+<button id="descBtn">商品説明 ▼</button>
+<p id="desc" style="display:none;">
+<?= nl2br(htmlspecialchars($product['description'] ?? '説明なし')); ?>
 </p>
-
-</div>
 
 <script>
 // -------------------- 単品 --------------------
@@ -132,13 +162,13 @@ document.getElementById('descBtn').onclick = ()=>{
     btn.textContent = open ? '説明 ▲' : '説明 ▼';
 };
 
-// -------------------- いいね処理 --------------------
+// -------------------- いいね処理（スマホ対応） --------------------
 const likeBtn = document.getElementById('likeBtn');
 likeBtn.addEventListener('click', toggleLike);
 likeBtn.addEventListener('touchstart', toggleLike);
 
 async function toggleLike(e){
-    e.preventDefault();
+    e.preventDefault(); // iPhoneのゴーストクリック対策
 
     const res = await fetch('like_toggle.php', {
         method:'POST',
