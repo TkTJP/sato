@@ -2,7 +2,7 @@
 session_start();
 require 'header.php';
 
-// 地方＋都道府県データ（三重県を追加し、中部・近畿地方の座標を再々調整）
+// 地方＋都道府県データ（三重県を近畿地方に移動し、全座標を最終調整）
 $allRegions = [
     'hokkaido' => ['name'=>'北海道地方','prefectures'=>[
         ['name'=>'北海道','top'=>'48%','left'=>'52%']
@@ -25,26 +25,26 @@ $allRegions = [
         ['name'=>'神奈川県','top'=>'75%','left'=>'40%']
     ]],
     'chubu' => ['name'=>'中部地方','prefectures'=>[
-        // 三重県を追加し、周辺を再配置
+        // 三重県を削除し、残りの県の座標を調整
         ['name'=>'新潟県','top'=>'25%','left'=>'75%'],
         ['name'=>'富山県','top'=>'35%','left'=>'50%'],
         ['name'=>'石川県','top'=>'30%','left'=>'25%'],
         ['name'=>'福井県','top'=>'50%','left'=>'20%'],
         ['name'=>'長野県','top'=>'55%','left'=>'65%'],
-        ['name'=>'岐阜県','top'=>'60%','left'=>'40%'], // 位置調整
+        ['name'=>'岐阜県','top'=>'65%','left'=>'35%'],
         ['name'=>'山梨県','top'=>'70%','left'=>'70%'],
-        ['name'=>'愛知県','top'=>'75%','left'=>'55%'], // 三重から離す
-        ['name'=>'静岡県','top'=>'85%','left'=>'70%'],
-        ['name'=>'三重県','top'=>'75%','left'=>'35%'] // ★ここが追加されました★
+        ['name'=>'愛知県','top'=>'80%','left'=>'45%'],
+        ['name'=>'静岡県','top'=>'85%','left'=>'75%']
     ]],
     'kinki' => ['name'=>'近畿地方','prefectures'=>[
-        // 三重県の追加に伴い、近隣を微調整
+        // ★三重県を近畿地方に追加★し、周辺の座標を調整
         ['name'=>'滋賀県','top'=>'40%','left'=>'70%'],
         ['name'=>'京都府','top'=>'35%','left'=>'45%'],
         ['name'=>'兵庫県','top'=>'45%','left'=>'25%'],
         ['name'=>'大阪府','top'=>'60%','left'=>'45%'],
         ['name'=>'奈良県','top'=>'65%','left'=>'65%'],
-        ['name'=>'和歌山県','top'=>'80%','left'=>'50%']
+        ['name'=>'和歌山県','top'=>'80%','left'=>'50%'],
+        ['name'=>'三重県','top'=>'70%','left'=>'80%'] // 三重を右下に配置
     ]],
     'chugoku' => ['name'=>'中国地方','prefectures'=>[
         ['name'=>'鳥取県','top'=>'35%','left'=>'70%'],
@@ -98,7 +98,7 @@ $regionData = $allRegions[$regionKey];
     background: radial-gradient(circle at 30% 30%, #555,#000);
     border-radius:50% 50% 50% 0;
     
-    /* 座標ズレ防止の肝: 位置合わせ(translate)を先に実行 */
+    /* ピンのズレを解消するCSSの順序を維持 */
     transform: translate(-50%, -100%) rotate(-45deg); 
     
     cursor:pointer; box-shadow:0 3px 6px rgba(0,0,0,0.4);
