@@ -2,7 +2,7 @@
 session_start();
 require 'header.php';
 
-// 地方＋都道府県データ (変更なし)
+// 地方＋都道府県データ
 $allRegions = [
     'hokkaido' => ['name'=>'北海道地方','prefectures'=>[['name'=>'北海道','top'=>'10%','left'=>'70%']]],
     'tohoku' => ['name'=>'東北地方','prefectures'=>[
@@ -49,10 +49,10 @@ $allRegions = [
         ['name'=>'山口県','top'=>'70%','left'=>'20%']
     ]],
     'shikoku' => ['name'=>'四国地方','prefectures'=>[
-        ['name'=>'香川県','top'=>'8%','left'=>'75%'],
-        ['name'=>'徳島県','top'=>'23%','left'=>'80%'],
-        ['name'=>'愛媛県','top'=>'28%','left'=>'35%'],
-        ['name'=>'高知県','top'=>'48%','left'=>'50%']
+        ['name'=>'香川県','top'=>'15%','left'=>'60%'],
+        ['name'=>'徳島県','top'=>'35%','left'=>'70%'],
+        ['name'=>'愛媛県','top'=>'35%','left'=>'30%'],
+        ['name'=>'高知県','top'=>'65%','left'=>'50%']
     ]],
     'kyushu' => ['name'=>'九州地方','prefectures'=>[
         ['name'=>'福岡県','top'=>'78%','left'=>'15%'],
@@ -88,7 +88,7 @@ $regionData = $allRegions[$regionKey];
     background: radial-gradient(circle at 30% 30%, #555,#000);
     border-radius:50% 50% 50% 0;
     
-    /* ★★★ 修正箇所: translateを先に実行し、位置合わせを安定させる ★★★ */
+    /* ★★★ CSSは前回修正済みの安定版を維持 ★★★ */
     transform: translate(-50%, -100%) rotate(-45deg); 
     
     cursor:pointer; box-shadow:0 3px 6px rgba(0,0,0,0.4);
@@ -99,16 +99,13 @@ $regionData = $allRegions[$regionKey];
     background:#fff; border-radius:50%; box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
 }
 .pin:hover { 
-    /* ★★★ 修正箇所: hover時の transform も順序を合わせる ★★★ */
     transform: translate(-50%, -100%) rotate(-45deg) scale(1.3); 
     box-shadow:0 6px 10px rgba(0,0,0,0.5); 
 }
 @media(max-width:768px){ 
-    /* ピンのサイズ変更はズレの原因となるが、デザイン上の理由で残す場合はこのまま */
     .pin{width:8%;} 
 }
 @media(max-width:480px){ 
-    /* ピンのサイズ変更はズレの原因となるが、デザイン上の理由で残す場合はこのまま */
     .pin{width:10%;} 
     h2{font-size:18px;} 
 }
