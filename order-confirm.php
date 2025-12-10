@@ -82,6 +82,7 @@ $pre_total = $total + $shipping_fee;
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>注文確認</title>
 <style>
 body { font-family: sans-serif; max-width: 650px; margin: auto; }
@@ -92,6 +93,12 @@ hr { margin:12px 0; }
 <body>
 
 <?php include('header.php'); ?>
+<nav class="nav-bar">
+    <button class="back-button" onclick="history.back()">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="nav-title">購入画面</span>
+</nav>
 <h2>注文内容確認</h2>
 
 <?php foreach ($cart as $item): ?>
