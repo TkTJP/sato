@@ -57,6 +57,11 @@ body {
     /* ロゴ画像のカスタムスタイルがある場合に追加 */
 }
 
+.header-logo-link {
+  text-decoration: none;
+}
+
+
 .header-title {
     font-size: 20px;
     font-weight: 600;
@@ -76,6 +81,7 @@ body {
     font-size: 22px;
     margin-left: 15px;
     transition: color 0.3s;
+
 }
 
 /* =============================
