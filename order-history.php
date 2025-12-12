@@ -34,7 +34,8 @@ $sql = "
         p.total,
         c.name AS customer_name,
         pr.name AS product_name,
-        pd.quantity
+        pd.quantity,
+        pd.box
     FROM purchases p
     INNER JOIN customers c ON p.customer_id = c.customer_id
     INNER JOIN purchase_details pd ON p.purchase_id = pd.purchase_id
@@ -104,12 +105,23 @@ foreach ($rawRows as $r) {
         $total_sum += $r['total'];
     }
 
-    // 商品名リンク化（product-manage.php への検索対応）
-    $link = '<a href="product-manage.php?name=' . urlencode(trim($r['product_name'])) . '">' .
-            htmlspecialchars($r['product_name']) .
-            '</a> × ' . intval($r['quantity']);
+    // ▼ 商品名リンク化（product-manage.php への検索対応）
+    $itemText = '';
 
-    $rows[$pid]['items'][] = $link;
+    // 単品
+    if ((int)$r['quantity'] > 0) {
+        $itemText .= '<a href="product-manage.php?name=' . urlencode(trim($r['product_name'])) . '">'
+                   . htmlspecialchars($r['product_name']) . '</a> × ' . (int)$r['quantity'];
+    }
+
+    // 12本セット（box）
+    if ((int)$r['box'] > 0) {
+        if ($itemText !== '') $itemText .= "<br>";
+        $itemText .= '<a href="product-manage.php?name=' . urlencode(trim($r['product_name'])) . '">'
+                   . htmlspecialchars($r['product_name']) . '</a>（12本セット） × ' . (int)$r['box'];
+    }
+
+    $rows[$pid]['items'][] = $itemText;
 }
 
 /* items をまとめる */
