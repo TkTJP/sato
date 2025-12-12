@@ -36,7 +36,6 @@ SELECT
     d.product_id,
     d.quantity,
     d.price,
-    d.box,                     -- ★ boxを追加（箱買いフラグ）
     pr.name AS product_name,
     pr.image
 FROM purchases p
@@ -59,7 +58,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// 日付ごとにまとめる
+// 日付ごとにまとめる（購入単位で小計、日付合計も計算）
 $histories = [];
 foreach ($rows as $row) {
     $date = $row['purchase_date'];
@@ -67,7 +66,7 @@ foreach ($rows as $row) {
 
     if (!isset($histories[$date])) {
         $histories[$date] = [
-            'total_sum' => 0,
+            'total_sum' => 0,   // 日付合計
             'purchases' => []
         ];
     }
@@ -77,13 +76,14 @@ foreach ($rows as $row) {
             'purchase_total' => $row['purchase_total'],
             'items' => []
         ];
+        // 日付合計に購入ごとの合計を加算
         $histories[$date]['total_sum'] += $row['purchase_total'];
     }
 
     $histories[$date]['purchases'][$pid]['items'][] = $row;
 }
 
-// 画像取得関数
+// 画像取得関数（JPG・PNG 両方対応）
 function getProductImage($filename) {
     $imgFolder = 'img/';
     if (!$filename) {
@@ -127,7 +127,6 @@ function getProductImage($filename) {
 .item-img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #ddd; margin-right: 10px; background: #fff; }
 .item-info { display: flex; flex-direction: column; justify-content: center; }
 .item-name { font-weight: bold; margin-bottom: 3px; font-size: 0.95em; }
-.box-label { color: #d32f2f; font-size: 0.85em; font-weight: bold; } /* ★ 追加：箱買いラベル */
 .item-price { color: #555; font-size: 0.9em; }
 .total-row { display: flex; justify-content: space-between; font-weight: bold; margin-top: 8px; border-top: 1px solid #ddd; padding-top: 8px; font-size: 0.95em; }
 .date-total { display: flex; justify-content: flex-end; font-weight: bold; margin-top: 5px; font-size: 1em; color: #333; }
@@ -169,12 +168,6 @@ function getProductImage($filename) {
                             <img src="<?= htmlspecialchars(getProductImage($item['image'])) ?>" class="item-img" alt="商品画像">
                             <div class="item-info">
                                 <p class="item-name"><?= htmlspecialchars($item['product_name']) ?></p>
-
-                                <!-- ★ 箱買いフラグ表示 -->
-                                <?php if (!empty($item['box']) && $item['box'] == 1): ?>
-                                    <span class="box-label">箱買い</span>
-                                <?php endif; ?>
-
                                 <p class="item-price">
                                     ¥<?= number_format($item['price']) ?> × <?= (int)$item['quantity'] ?>
                                 </p>
